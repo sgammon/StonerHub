@@ -6,11 +6,10 @@ import logging
 import datetime
 import simplejson as json
 
-from tipfy import abort
-from tipfy import Tipfy
-from tipfy import redirect
-from tipfy import redirect_to
-from tipfy import cached_property
+from webapp2 import abort
+from webapp2 import redirect
+from webapp2 import redirect_to
+from webapp2 import cached_property
 
 from openid import fetchers as OpenIDFetchers
 from openid.extensions import pape as OpenIDPAPE
@@ -20,11 +19,11 @@ from openid.consumer import consumer as OpenIDConsumer
 from google.appengine.ext import db
 from google.appengine.api import memcache
 
-from wirestone.spi.models.security import User as WirestoneUser
-from wirestone.spi.models.security import AuthSession as WirestoneSession
+from project.models.security import User as WirestoneUser
+from project.models.security import AuthSession as WirestoneSession
 
-from wirestone.spi.core.security.store import DatastoreStore
-from wirestone.spi.core.security.fetcher import UrlfetchFetcher
+from project.core.security.store import DatastoreStore
+from project.core.security.fetcher import UrlfetchFetcher
 
 _auth_obj = {}
 

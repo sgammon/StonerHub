@@ -11,8 +11,8 @@ from project.forms.dev import FileBugForm
 
 from project.dev.default_data import all_functions
 
-from wirestone.spi.models.dev import Bug
-from wirestone.spi.models.content_item import ContentItem
+from project.models.dev import Bug
+from project.models.content_item import ContentItem
 
 
 class SPIDevHandler(WebHandler):

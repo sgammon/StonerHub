@@ -29,9 +29,9 @@ _config['webapp2'] = {
 }
 _config['webapp2_extras.sessions'] = {
 
-	'secret_key':'ASDLKJOVIBBVC*@()#HD)(VH$(*GC@(E*C(CBDCS))))',
-    'default_backend': 'securecookie',
-    'cookie_name':     'appsession',
+	'secret_key':'vnuvb97P83H89PHP(*H(#*HHfdh839bcdAShd))',
+    'default_backend': 'datastore',
+    'cookie_name':     'wirestone.stonerhub.session',
     'session_max_age': None,
     'cookie_args': {
         'max_age':     86400,

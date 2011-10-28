@@ -2,9 +2,9 @@ import string
 import logging
 from project.handlers import WebHandler
 
-from wirestone.spi.models.search import Tag
-from wirestone.spi.models.content import Repository
-from wirestone.spi.models.content_item import ContentItem
+from project.models.search import Tag
+from project.models.content import Repository
+from project.models.content_item import ContentItem
 
 
 class Landing(WebHandler):

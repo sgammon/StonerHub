@@ -1,4 +1,5 @@
-from webapp2 import url_for
+from webapp2 import Router
+url_for = Router.build
 
 from google.appengine.ext import db
 from google.appengine.api import images
