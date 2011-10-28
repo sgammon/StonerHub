@@ -1,0 +1,32 @@
+{% extends "core/base_web.html" %}
+{% from "macros/form.html" import renderForm %}
+
+{% block body %}
+
+<div class="col full">
+	
+	<div class="m-trbl">
+	
+		<div id="content_header" class="header">
+			{% block header %}{% endblock %}
+		</div>
+		
+	</div>
+	
+	<div class="m-trbl">
+		
+		<div id='content_body'>
+			
+			<div id='content_body_content' class="content">
+				{% block content_body_header %}
+				{% endblock %}
+				{% block content %}<p>Content</p>{% endblock %}
+			</div>
+			
+		</div>
+		
+	</div>
+	
+</div>
+
+{% endblock body %}

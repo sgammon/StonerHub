@@ -1,0 +1,74 @@
+{% extends "layouts/main-twocolumn.html" %}
+
+{% block title %}Newsfeed{% endblock %}
+
+{% block header %}
+<h1><b>Stonerhub - Newsfeed</b></h1>
+
+{% endblock %}
+
+{% block content_body_header %}{% endblock %}
+
+{% block landing_page_search_box %}
+<div id="home-search" class="m-rbl">
+	<form action="/search" method='get' id='inlinesearch'>
+		<input type='hidden' name='s' value='quicksearch' />
+		<input name='a' type='hidden' value='sR' />
+		<input type='search' name='query' placeholder='search' x-webkit-speech id='quicksearch' />
+		
+		<a href="#" class='fancybutton mainbutton' role='button'>
+			<span class='iconButtonBox searchButtonBox'></span>
+		</a>
+		
+	</form>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div id='newsfeed'>
+
+	<div id='newsfeed_controls'>
+		<form id='controlsForm'>
+
+		<a id='refreshLink' href="#" onclick="refreshNewsfeed();">Refresh</a>
+		<ul>
+
+			<li class='newsfeed_control'><input type='checkbox' checked='checked' id='showAll' /> <span class='newsfeedFilter'>Show All</span></li>
+			
+			<li class='newsfeed_control_header'>Types:</li>
+			<li class='newsfeed_control'><input type='checkbox' id='showSocial' /> <span class='newsfeedFilter'>Social</span></li>
+			<li class='newsfeed_control'><input type='checkbox' id='showContent' /> <span class='newsfeedFilter'>Content</span></li>			
+			
+			<li class='newsfeed_control_header'>Views:</li>
+			<li class='newsfeed_control'><input type='checkbox' id='showPublic' /> <span class='newsfeedFilter'>Public</span></li>
+			<li class='newsfeed_control'><input type='checkbox' id='showSubscribed' /> <span class='newsfeedFilter'>Subscribed</span></li>
+		</ul>
+		</form>
+	</div>
+
+	<div id='newsfeed_entries' class='hidden'>
+
+	</div>
+	
+	<div class='newsfeed_loading_wrapper'>
+		<div class='newsfeed_loading'>Loading...</div>
+	</div>
+	
+</div>
+
+{% endblock %}
+
+{% block sidebar_header %}<span class='iconButtonBox infoButtonBox'>Guide for Beta Users</span>{% endblock %}
+
+{% block sidebar_content %}
+	Now that your user account is active and registered, you are free to roam about the cabin.<br />
+	
+	If you encounter a problem, please <a href="{{ link('file-bug') }}">file a bug report</a>.
+{% endblock %}
+
+{% block postsouth %}
+<script type='text/javascript'>
+	retrieveNewsfeed("{{ util.api.users.get_current_user().key().name() }}");
+</script>
+{% endblock %}

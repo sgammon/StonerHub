@@ -1,0 +1,21 @@
+backends:
+- name: webcache
+  class: B4
+  instances: 3
+  options: public
+- name: indexer
+  class: B1
+  instances: 5
+  options: dynamic, failfast
+- name: api
+  class: B1
+  instances: 10
+  options: dynamic, public
+- name: incoming
+  class: B4
+  instances: 5
+  options: dynamic, public
+- name: ifxcluster
+  class: B4
+  instances: 2
+  options: dynamic, public

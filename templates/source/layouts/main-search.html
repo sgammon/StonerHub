@@ -1,0 +1,189 @@
+{% extends "core/base_web.html" %}
+{% from "macros/form.html" import renderForm %}
+
+{% block body %}
+
+<div class="col full">
+
+	<div class="m-trbl">
+		
+		<div id="content_header" class="header folded">
+
+			
+			<h1>Search</h1>
+			
+		</div>
+		
+	</div>
+</div>
+
+	
+<div class="col threequarters clear">
+
+	<div id="home-search" class="m-rbl">
+			
+
+		<div id='search-form-wrapper'>
+			<form action="/search" method='get' id='search-form'>
+				<div id='searchleft'>
+					<input name='a' type='hidden' value='sR' />
+					<input name='s' type='hidden' value='main' />
+					<input name='query' type='search' placeholder='e.g. "e-commerce"'  id='search-unibox' class='noquery' {% if query %}value='{{ query }}'{% endif %} x-webkit-speech />
+					<button onclick='javscript:doSearch();' id='search-submit'>Search</button>
+				</div>
+	
+				<div id='searchright' style="display:none">
+					<a href='javascript:toggleShowSearchOptions();' id='toggleSearchOptionsPane'>Show more search options</a>
+				</div>
+	
+				<div class='clearboth'></div>
+	
+				<div id='search-options-pane'>
+					<div class='box'>
+						Other filters will go in this area.
+					</div>
+				</div>
+				
+			</form>	
+	
+		</div>
+	
+	</div>
+
+
+
+
+
+	
+	<div id='content_body' class="m-rbl">
+		
+		<div id='content_body_content' class="content">
+			
+			
+			
+			
+					<div id='results_pane' class=" clear">
+
+						<div id='content_body_search'>
+							
+
+							{% block content_body_header %}
+								<h2 class="grid-title">Content Header</h2>
+							{% endblock %}
+
+					
+							<div id='content_body_content' class="content">
+								{% block content %}<p>Content</p>{% endblock %}
+							</div>
+						</div>
+					
+					</div>
+
+
+
+		</div>
+		
+	</div>
+
+</div>
+
+
+
+
+
+<div id='sidebar' class="col quarter">
+	
+	<div class="m-rb">
+		
+		
+		
+				<div id='sidebar_pane'>
+					
+					<div id='sidebar_pane_header'>Filters</div>
+				
+					<div id='sidebar_pane_content' class='folded'>
+					
+						<div class='meta_pane' id='repository_filters'>
+					
+							<div class='meta_pane_header'>
+								<p>Repository <span>+</span></p>
+							</div>
+					
+							<div class='meta_pane_content'>
+								<p>Repository filters here!</p>
+							</div>
+					
+						</div>
+				
+						<div class='meta_pane' id='category_filters'>
+					
+							<div class='meta_pane_header'>
+								<p>Category <span>+</span></p>
+							</div>
+					
+							<div class='meta_pane_content'>
+								<p>Category filters here!</p>
+							</div>
+					
+						</div>
+				
+						<div class='meta_pane' id='tag_filters'>
+					
+							<div class='meta_pane_header'>
+								<p>Tag <span>+</span></p>
+							</div>
+					
+							<div class='meta_pane_content'>
+								<p>Tag filters here!</p>
+							</div>
+					
+						</div>	
+					
+						<div class='meta_pane' id='type_filters'>
+					
+							<div class='meta_pane_header'>
+								<p>File Type <span>+</span></p>
+							</div>
+					
+							<div class='meta_pane_content'>
+								<p>Sidebar Content</p>
+							</div>
+					
+						</div>		
+					
+						<div class='meta_pane' id='user_filters'>
+					
+							<div class='meta_pane_header'>
+								<p>User <span>+</span></p>
+							</div>
+					
+							<div class='meta_pane_content'>
+								<p>Sidebar Content</p>
+							</div>
+					
+						</div>		
+					
+						<div class='meta_pane' id='datetime_filters'>
+					
+							<div class='meta_pane_header'>
+								<p>Date &amp; Time <span>+</span></p>
+							</div>
+					
+							<div class='meta_pane_content'>
+								<p>Sidebar Content</p>
+							</div>
+					
+						</div>		
+					
+					</div>
+					
+				</div>
+
+
+
+
+		
+	</div>
+	
+</div>
+{% endblock body %}

@@ -1,0 +1,13 @@
+cron:
+    
+- description: "Data: Ticket Manager (Garbage Collection)"
+  url: /_workers/data/ticketManager/collectGarbage
+  schedule: every 5 hours
+  
+- description: "Data: Session Manager (Garbage Collection)"
+  url: /_workers/data/sessionManager/collectGarbage
+  schedule: every 5 hours
+    
+- description: "Data: Pipeline Manager (Garbage Collection)"
+  url: /_workers/data/pipelineManager/collectGarbage
+  schedule: every 5 hours

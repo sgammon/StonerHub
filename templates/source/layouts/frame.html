@@ -1,0 +1,16 @@
+<div class='spiFrame {% block frame_class %}{% endblock %}'>
+	
+	<div class='panelHeader {% block header_class %}{% endblock %}'>
+		{% block panel_header %}<h2>Header</h2>{% endblock %}
+	</div>
+	
+	<div class='panelContent {% block content_class %}{% endblock %}'>
+		{% block panel_notice %}<div class='panelNotice {% block notice_class %}{% endblock %}' style='display:none;'></div>{% endblock %}
+		{% block panel_content %}<p>{{ lipsum(1) }}</p>{% endblock %}
+	</div>
+	
+	<div class='panelFooter {% block footer_class %}{% endblock %}'>
+		{% block panel_footer %}<h2>Footer</h2>{% endblock %}
+	</div>
+	
+</div>

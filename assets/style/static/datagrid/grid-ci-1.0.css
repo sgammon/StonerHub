@@ -1,0 +1,93 @@
+#datagrid
+{
+	font-size:75%;
+}
+#datagrid tbody tr
+{
+	height:65px;
+}
+#datagrid_info
+{
+	font-size:85%;
+	font-weight: normal;
+}
+#datagrid_length
+{
+	font-size:85%;
+	float:right !important;
+	text-align:right;
+	margin-right:2%;
+	font-weight: normal;
+}
+#gridTitle
+{
+	float:left;
+	display:inline;
+	position:absolute;
+	margin-left:2%;
+	padding-top:7px;
+}
+.dataTables_empty
+{
+	height:200px;
+	line-height:200px;
+}
+#datagrid_info
+{
+	margin-left:2%;
+}
+#datagrid_paginate
+{
+	margin-right:2%;
+}
+#datagrid tbody tr td a.ciTitleAnchor
+{
+	font-size:14px;
+}
+#datagrid tbody tr td p.ciDescription
+{
+	font-size: 13px;
+}
+#datagrid_wrapper .ui-widget-header
+{
+	background:transparent !important;
+	border: none !important;
+}
+
+/* CI Result CSS */
+.ci_result .parentLinks
+{
+	margin-top:4px;
+	margin-left:30px;
+	font-size:10px;
+	color: #0E774A !important;	
+	display:block;
+}
+.ci_result .parentLinks a
+{
+	font-size:11px !important;
+	color: #0E774A !important;
+	background: transparent !important;
+	text-decoration:underline;
+}
+.ci_result .parentLinks a:hover
+{
+	background: #0E774a !important;
+	color:white !important;
+	cursor:pointer;
+}
+.parentLinks a {
+	font-size:12px !important;
+	font-weight:bold;
+	color:green !important;
+	background: transparent !important;
+	padding: 2px 4px;
+	-moz-border-radius:2px;
+	-webkit-border-radius:2px;
+	border-radius:2px;
+}
+.parentLinks a:hover
+{
+	background: transparent !important;
+	color: green !important;
+}

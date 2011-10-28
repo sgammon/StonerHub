@@ -1,0 +1,19 @@
+<!doctype html>
+
+<html lang="en"{% if page.appcache.enabled == true %} manifest="{{ page.appcache.location }}"{% endif %}>
+
+<head>
+	{% block prenorth %}{% endblock %}	
+	{% include "core/__north.html" %}
+	{% block postnorth %}{% endblock %}
+</head>
+
+<body>
+{% block _top %}
+{% endblock _top %}
+
+{% block presouth %}
+{% include "core/__south.html" %}
+{% endblock %}
+</body>
+</html>

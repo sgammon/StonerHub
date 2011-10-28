@@ -1,0 +1,91 @@
+{% extends "core/base_web.html" %}
+{% from "macros/form.html" import renderForm %}
+
+{% block body %}
+
+
+
+<div class="col full">
+
+	<div class="m-trbl">
+		
+		<div id="content_header" class="header">
+			{% block header %}{% endblock %}
+		</div>
+		
+	</div>
+
+</div>
+
+
+
+<div class="col threequarters clear">
+
+	<div id='content_body' class="m-rbl">
+		
+		<div id='content_body_content' class="content">
+			{% block content_body_header %}
+			{% endblock %}				
+			{% block content %}<p>Content</p>{% endblock %}
+		</div>
+	</div>
+
+</div>
+
+<div id='sidebar' class="col quarter">
+	
+	<div class="m-rb">
+		
+		<div id='sidebar_header'>
+			{% block sidebar_header %}<p>Sidebar Header</p>{% endblock %}
+		</div>
+		
+		<div id='sidebar_content'>
+			{% block sidebar_content %}<p>Sidebar Content</p>{% endblock %}
+		</div>
+		
+	
+		<div id='socialComments'>
+			<h2><span class='iconButtonBox commentTextButtonBox'>Comments (<span class='commentCount'>{{ content_item.comment_count }}</span>):</span></h2>
+	
+			<div id='commentsBox'>
+	
+				<div id='commentsContainer'>			
+				{% if util.len(comments) > 0 %}
+				
+					{% for comment in comments %}
+				
+				
+						<div class='commentBox' id='{{ comment.key() }}'>
+							<div class='floatleft profilepic'>
+								<img src='{{ comment.user.profilePicHref("=s48-c") }}' alt='dummy profile pic' />
+							</div>
+							<div class='floatleft commentBody'>
+								<div class='commentText'><a href="#">{{ comment.user.firstname }} {{ comment.user.lastname }}</a> {{ comment.text }}</div><div class='commentTagline'>{{ util.converters.timesince(comment.createdAt) }} - <a href="#" class='commentDelete' onclick='deleteComment("{{ comment.key() }}");'>Delete</a></div>
+							</div>
+							<div class='clearboth'></div>
+						</div>
+					
+					{% endfor %}
+					
+				{% endif %}
+				</div>			
+			
+				<div class='commentBox' id='addCommentBox'>
+					<form action='#' method='post'>
+						<textarea name='body' id='commentBodyInput'>Write a comment...</textarea><br />
+						<div class='floatright' id='commentButton'><span class='iconButtonBox commentButtonBox'><a href='#' id='commentAction' onclick='makeComment();'>Comment</a></span></div>
+						<div class='clearboth'></div>
+					</form>
+				</div>			
+				
+			</div>
+			
+		</div>
+		
+	</div>
+	
+</div>
+
+
+{% endblock body %}

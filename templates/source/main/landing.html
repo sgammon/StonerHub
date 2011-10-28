@@ -1,0 +1,234 @@
+{% extends "layouts/main-twocolumn.html" %}
+{% from "macros/datagrid.html" import new_datagrid %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block header %}
+<h1><b>StonerHub - Dashboard</b></h1>
+
+{% endblock %}
+
+{% block content_body_header %}{% endblock %}
+
+{% block landing_page_search_box %}
+<div id="home-search" class="m-rbl">
+	<form action="/search" method='get' id='inlinesearch'>
+		<input type='hidden' name='s' value='quicksearch' />
+		<input name='a' type='hidden' value='sR' />
+		<input type='search' name='query' placeholder='search' x-webkit-speech id='quicksearch' />
+		
+		<a href="#" class='fancybutton mainbutton' role='button'>
+			<span class='iconButtonBox searchButtonBox'></span>
+		</a>
+		
+	</form>
+	
+	<div id='inlineupload'>
+		<a href="#" id='inlineUploadTrigger' class='fancybutton mainbutton' role='button'>
+			<span class='iconButtonBox uploadButtonBox'></span>
+			<p id='uploadTriggerText'>Upload</p>
+		</a>
+
+		<a href="#" id='startUploadTrigger' class='fancybutton mainbutton hidden' role='button'>
+			<span class='iconButtonBox checkboxButtonBox'></span>
+			<p>Start</p>
+		</a>
+		
+		<span id='dragDropHint' class='hidden'>(Drag files here)</span>
+		<span id='uploadProgress' class='hidden'>starting upload...</span>
+	</div>
+		
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div>
+
+	<div id='gridTitle'><h2>Recent Uploads</h2></div>
+
+	<div id='results'>
+		Waiting for results...
+	</div>	
+</div>
+
+{% endblock %}
+
+{% block sidebar_header %}<span class='iconButtonBox infoButtonBox'>Guide for Beta Users</span>{% endblock %}
+
+{% block sidebar_content %}
+	Now that your user account is active and registered, you are free to roam about the cabin.<br />
+	
+	If you encounter a problem, please <a href="{{ link('file-bug') }}">file a bug report</a>.
+{% endblock %}
+
+{% block postsouth %}
+
+{{ new_datagrid('#results', grid) }}
+
+<script type='text/javascript'>	
+$(document).ready( function loadInlineUploader()
+{
+	bodyelement = document.body;
+	dropelement = document.getElementById('inlineupload');
+
+	function dragEnter(evt)
+	{
+		evt.stopPropagation();
+		evt.preventDefault();
+		$('#inlineupload').addClass('uploadDragDrop');
+		$('#uploadProgress').hide();
+		$('#dragDropHint').removeClass('hidden');
+	}
+	
+	function dragExit(evt)
+	{
+		evt.stopPropagation();
+		evt.preventDefault();
+		$('#inlineupload').removeClass('uploadDragDrop');
+		$('#dragDropHint').addClass('hidden');
+		$('#uploadProgress').show();
+	}
+	
+	function dropItem(evt)
+	{
+		dragExit(evt);
+	}
+	
+	function dragOver(item)
+	{
+		evt.stopPropagation();
+		evt.preventDefault();		
+	}
+
+	bodyelement.addEventListener('dragenter', dragEnter, false);
+	bodyelement.addEventListener('dragexit', dragExit, false);
+	dropelement.addEventListener('drop', dropItem, false);	
+	dropelement.addEventListener('dragOver', dragOver, false);
+	
+	function getUploadRPCEndpoint(uploader)
+	{
+		base_rpc_url = "{{ link('ajax-upload-generate-url') }}";
+		rpc_url = base_rpc_url+"?createNewUploadSession=false";
+		rpc_url += "&uploadCount="+uploader.total.queued.toString();
+		return rpc_url
+	}
+	var uploader = new plupload.Uploader({
+	
+		runtimes: 'html5,gears,flash,silverlight,browserplus,html4',
+		browse_button: 'inlineUploadTrigger',
+		drop_element: 'inlineupload',
+		container: 'inlineupload',
+		url: '#',
+		use_query_string: false,
+		multipart: true,
+		flash_swf_url: '/assets/ext/static/plupload/runtime.flash-0.1.swf',
+		silverlight_xap_url: '/assets/ext/static/plupload/runtime.silverlight-0.1.xap',
+		filters : [
+			{title: "Image Files", extensions: "jpg,jpeg,gif,png,tiff,ico,svg"},
+			{title: "Document Files", extensions: "doc,docx,dot,pdf,rtf,txt"},
+			{title: "Spreadsheet Files", extensions: "xls,xlsx"},
+			{title: "Presentation Files", extensions: "ppt,pptx"},
+			{title: "Movie Files", extensions: "mpg,mov,avi,wmv"},
+			{title: "Drawing Files", extensions: "ai,eps,ps,dxf,ttf"},
+			{title: "Archive Files", extensions: "zip"}
+		],
+	});
+	
+	function startUploader()
+	{
+		uploader.start();
+	}
+
+	$('#startUploadTrigger').click(startUploader);
+
+	uploader.init();
+
+	uploader.bind('FilesAdded', function(up, files){
+		if (files.length > 1)
+		{
+			$('#uploadProgress').html(files.length.toString()+' files ready to upload').removeClass('hidden');
+		}
+		else
+		{
+			$('#uploadProgress').html('1 file ready to upload').removeClass('hidden');
+		}
+		up.refresh();
+		
+		$('#uploadTriggerText').html('Add files');
+		$('#startUploadTrigger').removeClass('hidden');
+
+	});
+
+	// Retrieve blobstore upload URL for 
+	uploader.bind('UploadFile', function(up, file)
+	{
+
+	mime_type = getMIMEtype(file.name);
+
+	$.ajax({
+		url: getUploadRPCEndpoint(up),
+		async: false,
+		success: function(api_response)
+			 {
+				// Quick sanity check...
+				if (api_response.operation == 'generate_ajax_upload_url')
+				{
+					if (api_response.result == 'success')
+					{
+						// Set upload URL to returned Blobstore URL
+						up.settings.url = api_response.response.upload_url;
+						up.settings.multipart_params = {'blob_content_type': mime_type};
+					}
+					else
+					{
+						alert('Generate URL operation failed for file "'+file.name+'". Reason: '+api_response.reason);
+					}
+				}
+				else
+				{
+					alert('There was an error generating an AJAX upload URL: Invalid response operation.');
+				}
+			}
+		}
+	);
+	});
+	
+	uploader.bind('UploadProgress', function(up, file) {
+	
+		$("#uploadProgress").html(file.percent + "%");
+		if(file.percent.toString() == '100')
+		{
+			$("#uploadProgress").html('finished!');
+		}
+	
+	});
+	
+	 uploader.bind('FileUploaded', function(up, file, raw_api_response)
+	 {
+		api_response = JSON.parse(raw_api_response.response);
+		rawRpcResponse = raw_api_response;
+		rpcResponse = api_response;
+
+		// Quick sanity check...
+		if (api_response.operation == 'upload_callback')
+		{
+
+			if (api_response.result == 'success')
+			{
+				$('#inlineUploadForm div').append(generateHiddenInputControl('blob_object', api_response.response.blob.key, getMIMEtype(file.name)));
+			}
+			else
+			{
+				alert('There was an error storing the file "'+file.name+'". Failure reason: "'+api_response.response.failure_reason+'".');
+			}
+
+		}
+		else
+		{
+			alert('operation is wrong... it is: '+api_response.operation);
+		}
+	 }
+	)});
+</script>
+{% endblock %}

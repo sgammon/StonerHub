@@ -1,0 +1,24 @@
+queue:
+    
+- name: default
+  rate: 20/s
+- name: mail
+  rate: 2000/d
+  bucket_size: 10
+- name: xmpp
+  rate: 5/s
+  bucket_size: 5
+- name: channel
+  rate: 5/s
+  bucket_size: 10
+- name: indexer
+  rate: 10/s
+  bucket_size: 40
+  max_concurrent_requests: 40
+- name: social
+  rate: 20/s
+  bucket_size: 40
+  max_concurrent_requests: 40
+- name: media
+  rate: 5/s
+  bucket_size: 5

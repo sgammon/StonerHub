@@ -1,0 +1,56 @@
+{% extends "core/base_web.html" %}
+{% from "macros/form.html" import renderForm %}
+
+{% block body %}
+
+<div class="col full">
+
+	<div class="m-trbl">
+		
+		<div id="content_header" class="header">
+			{% block header %}{% endblock %}
+		</div>
+		
+	</div>
+
+</div>
+
+
+<div class="col threequarters clear">
+	
+	{% block landing_page_search_box %}{% endblock %}
+	
+	<div id='content_body' class="m-rbl">
+		
+		<div id='content_body_content' class="content">
+			{% block content_body_header %}
+			{% endblock %}
+			{% block content %}<p>Content</p>{% endblock %}
+		</div>
+		
+	</div>
+
+</div>
+
+<div id='sidebar' class="col quarter">
+	
+	<div class="m-rb">
+		
+		<div id='sidebar_header'>
+			{% block sidebar_header %}<p>Sidebar Header</p>{% endblock %}
+		</div>
+		
+		<div id='sidebar_content'>
+			{% block sidebar_content %}<p>Sidebar Content</p>{% endblock %}
+		</div>
+		
+		<div id='lower_sidebar'>
+			<a href='http://www.wire-stone.com/' alt-'[wire] stone' class='wsLogoAnchor'><img src='/assets/img/static/layout/wirestone/w-50-blue-on-gray.png' alt='[wire] stone logo' id='wsLogo' /></a>
+		</div>
+		
+	</div>
+	
+</div>
+
+
+{% endblock body %}

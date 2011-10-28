@@ -1,0 +1,145 @@
+{% macro new_plupload(upload_selector, parent_form_selector, upload_form_selector, runtimes='html5,gears,flash,silverlight,html4,browserplus', max_file_size='2gb', chunk_size='1mb', unique_names=True, nextbutton='#nextStepButton') %}
+
+<script type="text/javascript">
+
+total_uplaod_files = 0;
+var uploadSessionKey = null;
+
+function setUploadRPCEndpoint(key)
+{
+	uploadSessionKey = key;
+	$('{{ parent_form_selector }} div').append(generateHiddenInputControl('upload_session_key', uploadSessionKey));
+}
+
+function getUploadRPCEndpoint(uploader)
+{
+	base_rpc_url = "{{ link('ajax-upload-generate-url') }}";
+	if (uploadSessionKey == null)
+	{
+		rpc_url = base_rpc_url+"?createNewUploadSession=true";
+ 		rpc_url += "&uploadCount="+uploader.total.queued.toString();
+	}
+	else
+	{
+		rpc_url = base_rpc_url+"?uploadSession="+uploadSessionKey
+	}
+	return rpc_url
+}
+
+function bindUploaderEvents(uploader)
+{
+	
+	  // Retrieve blobstore upload URL for
+	  uploader.bind('UploadFile', function(up, file)
+	  {
+		
+		mime_type = getMIMEtype(file.name);
+		
+		$.ajax({
+			url: getUploadRPCEndpoint(up),
+			async: false,
+			success: function(api_response)
+					 {
+						// Quick sanity check...
+						if (api_response.operation == 'generate_ajax_upload_url')
+						{
+							if (api_response.result == 'success')
+							{
+								// Set upload URL to returned Blobstore URL
+								up.settings.url = api_response.response.upload_url;
+								up.settings.multipart_params = {'blob_content_type': mime_type};
+								setUploadRPCEndpoint(api_response.response.upload_session_key);
+							}
+							else
+							{
+								alert('Generate URL operation failed for file "'+file.name+'". Reason: '+api_response.reason);
+							}
+						}
+						else
+						{
+							alert('There was an error generating an AJAX upload URL: Invalid response operation.');
+						}
+					}
+				}
+			);
+	});
+
+  uploader.bind('FileUploaded', function(up, file, raw_api_response)
+  {
+		total_upload_files--;
+		api_response = JSON.parse(raw_api_response.response);
+		
+		// Quick sanity check...
+		if (api_response.operation == 'upload_callback')
+		{
+			
+			if (api_response.result == 'success')
+			{
+				$('{{ parent_form_selector }} div').append(generateHiddenInputControl('blob_object', JSON.stringify(api_response.response.blob), getMIMEtype(file.name)));
+			}
+			else
+			{
+				alert('There was an error storing the file "'+file.name+'". Failure reason: "'+api_response.response.failure_reason+'".');
+			}
+
+			if (total_upload_files == 0)
+			{
+				$("{{ nextbutton }}").click(function advanceForm() {$('{{ parent_form_selector }}').submit();});
+				$("{{ nextbutton }}").removeAttr("disabled").removeAttr('aria-disabled').removeClass('fancydisabled').focus();
+			}
+
+		}
+		else
+		{
+			alert('operation is wrong... it is: '+api_response.operation);
+		}
+  });
+
+  uploader.bind('QueueChanged', function(up, files) {
+	
+	total_upload_files = uploader.files.length;
+	
+});
+ 
+}
+
+	function createPluploadQueue()
+	{
+		return $('{{ upload_selector }}').plupload({
+			
+			runtimes: '{{ runtimes }}',
+			browse_button: 'spi_uploader_browse',
+			preinit: bindUploaderEvents,
+			url: '#',
+			use_query_string: false,
+			multipart: true,
+			
+			drop_element: '#content_body_content',
+			flash_swf_url: '/assets/ext/static/plupload/runtime.flash-0.2.swf',
+			silverlight_xap_url: '/assets/ext/static/plupload/runtime.silverlight-0.2.xap',
+			filters : [
+			
+				{title: "Image Files", extensions: "jpg,jpeg,gif,png,tiff,ico,svg"},
+				{title: "Document Files", extensions: "doc,docx,dot,pdf,rtf,txt"},
+				{title: "Spreadsheet Files", extensions: "xls,xlsx"},
+				{title: "Presentation Files", extensions: "ppt,pptx"},
+				{title: "Movie Files", extensions: "mpg,mov,avi,wmv"},
+				{title: "Drawing Files", extensions: "ai,eps,ps,dxf,ttf"},
+				{title: "Archive Files", extensions: "zip"}
+			
+			],
+			dragdrop: true
+			
+		});
+	}
+
+
+
+	$(function() {
+		up = createPluploadQueue();
+		up.trigger('Refresh');
+	});
+
+</script>
+
+{% endmacro %}

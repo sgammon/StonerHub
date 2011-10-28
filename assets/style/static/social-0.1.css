@@ -1,0 +1,90 @@
+#commentsBox
+{
+	margin-top:15px;
+	font-size:12px;
+	max-width:350px;
+}
+.commentBox
+{
+	width:350px;
+	background:#EDEFF4;
+	min-height:62px;
+	width:100%;
+	margin-bottom:9px;
+	border-bottom:1px solid #E5EAF1;
+}
+.profilePic
+{
+	width:48px;
+	margin:7px;
+	margin-right:0px;
+	height:48px;
+	text-align:center;
+}
+.profilePic img
+{
+	text-align:center;
+	width:48px;
+	height:48px;	
+}
+.commentBody
+{
+	height:48px;
+	margin:7px;
+	margin-left:none;
+	width:280px;
+	font-size:11px;
+	display:inline;
+}
+.commentText
+{
+	margin:0;
+	padding:0;
+	display:inline;
+	height:100%;
+}
+.commentTagline
+{
+	position:relative;
+	bottom:0;
+	color:#444;
+	line-height:15px;
+	margin-top:7px;
+	height:15px;
+}
+#commentBodyInput
+{
+	margin-left:5px;
+	margin-top:5px;
+	margin-right:5px;
+	width:340px;
+	height:50px;
+}
+#commentButton
+{
+	height:auto !important;
+	margin-top:7px;
+	margin-right:5px;
+	margin-bottom:15px;
+}
+#addCommentBox
+{
+	height:85px !important;
+}
+
+/* ===== Social button boxes ====== */
+.likeButtonBox { background: url('/assets/img/static/icons/heart_add.png') no-repeat 0 50%; }
+.unlikeButtonBox { background: url('/assets/img/static/icons/heart_delete.png') no-repeat 0 50%; }
+.shareButtonBox { background: url('/assets/img/static/icons/email_go.png') no-repeat 0 50%; }
+.infoButtonBox { background: url('/assets/img/static/icons/information.png') no-repeat 0 50%; }
+.commentButtonBox { background: url('/assets/img/static/icons/comment_add.png') no-repeat 0 50%; }
+.commentTextButtonBox { background: url('/assets/img/static/icons/comments.png') no-repeat 0 50%; }
+
+
+#socialComments
+{
+	float:right;
+	width:350px;
+	min-height:300px;
+	margin-top:10px;
+}

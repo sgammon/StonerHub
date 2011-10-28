@@ -1,0 +1,19 @@
+{% extends "core/__base.html" %}
+
+{% block _top %}
+<div id="wrapper">
+	{% block _wrapper %}
+
+	<div id='superbar'>
+		{% include "snippets/superbar.html" %}
+		<div class='clear'></div>
+	</div>
+	
+	<div id='content'>
+		{% block content %}
+		{% endblock %}
+	</div>
+	
+	{% endblock _wrapper %}
+</div> <!--! end of #container -->
+{% endblock %}

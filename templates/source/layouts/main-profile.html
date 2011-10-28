@@ -1,0 +1,56 @@
+{% extends "core/base_web.html" %}
+{% from "macros/form.html" import renderForm %}
+
+
+
+{% block body %}
+
+{#
+<div id="content_header" class="header">
+	<h2 class="grid-title">User Profile</h2>
+</div>
+#}
+
+<div class="col full">
+
+	<div class="m-trbl">
+		
+		<div id="content_header" class="header">
+			<h1>{% block profile_heading %}User Profile{% endblock %}</h1>
+		</div>
+		
+	</div>
+
+</div>
+
+<div id='document_pane' class='{# userProfilePane #} col threequarters clear'>
+
+	<div id='content_body' class="m-rbl">
+		
+		<div  id="content_header" class='header userProfileHeader'>
+			<div id='profileAvatar' class='userAvatar'><a href='#'><span></span><img src='{% block avatar_href %}/assets/img/static/layout/profile-default.png{% endblock %}' /></a>
+			</div>
+		</div>
+
+		<div id='content_body_content' class='content userProfileContent'>
+			{% block content %}<p>Content</p>{% endblock %}
+		</div>
+	</div>
+
+</div>
+
+<div id='sidebar' class="col quarter">
+	
+	<div id='sidebar_header'>
+		{% block sidebar_header %}<p>Sidebar Header</p>{% endblock %}
+	</div>
+	
+	<div id='sidebar_content'>
+		{% block sidebar_content %}<p>Sidebar Content</p>{% endblock %}
+	</div>
+	
+</div>
+	
+
+
+{% endblock body %}

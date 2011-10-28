@@ -1,0 +1,1194 @@
+#commentsBox
+{
+	margin-top:15px;
+	width:350px;
+	font-size:12px;
+}
+.commentBox
+{
+	width:350px;
+	background:#EDEFF4;
+	min-height:62px;
+	width:100%;
+	margin-bottom:9px;
+	border-bottom:1px solid #E5EAF1;
+}
+.profilePic
+{
+	width:48px;
+	margin:7px;
+	margin-right:0px;
+	height:48px;
+	text-align:center;
+}
+.profilePic img
+{
+	text-align:center;
+	width:48px;
+	height:48px;	
+}
+.commentBody
+{
+	margin:7px;
+	margin-left:none;
+	width:280px;
+	font-size:11px;
+	display:inline;
+	text-align:left !important;
+}
+.commentText
+{
+	margin:0;
+	padding:0;
+	display:inline;
+	height:100%;
+}
+.commentTagline
+{
+	position:relative;
+	bottom:0;
+	color:#444;
+	line-height:15px;
+	margin-top:2px;
+	height:15px;
+	text-align:left !important;
+}
+#commentBodyInput
+{
+	margin-left:5px;
+	margin-top:5px;
+	margin-right:5px;
+	width:340px;
+	height:50px;
+}
+#commentButton
+{
+	height:auto !important;
+	margin-top:7px;
+	margin-right:5px;
+	margin-bottom:15px;
+}
+#addCommentBox
+{
+	height:85px !important;
+}
+
+/* ===== Social button boxes ====== */
+.likeButtonBox { background: url('/assets/img/static/icons/heart_add.png') no-repeat 0 50%; }
+.contentItemCreatedButtonBox { background: url('/assets/img/static/icons/page_add.png') no-repeat 0 50%; }
+.unlikeButtonBox { background: url('/assets/img/static/icons/heart_delete.png') no-repeat 0 50%; }
+.shareButtonBox { background: url('/assets/img/static/icons/email_go.png') no-repeat 0 50%; }
+.infoButtonBox { background: url('/assets/img/static/icons/information.png') no-repeat 0 50%; }
+.commentButtonBox { background: url('/assets/img/static/icons/comment_add.png') no-repeat 0 50%; }
+.commentTextButtonBox { background: url('/assets/img/static/icons/comments.png') no-repeat 0 50%; }
+.rssButtonBox { background: url('/assets/img/static/icons/rss.png') no-repeat 0 50%; }
+.alertSubscribeButtonBox { background: url('/assets/img/static/icons/bell_add.png') no-repeat 0 50%; }
+
+#socialComments
+{
+	text-align:left !important;
+	width:350px;
+	margin-left:auto;
+	margin-right:auto;
+	min-height:300px;
+	margin-top:10px;
+}
+
+
+/* ====== Social Notification Stack Boxes ====== */
+.LikeNotification
+{
+	background:#FFABAA;
+	border:1px solid #F57876;
+}
+.CommentNotification
+{
+	background:#C6DFFE;
+	border:1px solid #717E8E;
+}
+.ShareNotification
+{
+	background:#98B3BC;
+	border:1px solid #41732C;
+}
+
+
+/* ====== Notifications Page ====== */
+.notificationsList
+{
+	font-size:small;
+	list-style:none;
+}
+.notificationsList li
+{
+	list-style:none;
+}
+.notificationEntry
+{
+	border:1px solid #C5E2E8;
+	height:35px;
+	padding-left:20px;
+	margin-bottom:10px;
+}
+.notificationEntry p
+{
+	display:inline;
+	line-height:35px;
+}
+.unreadNotification
+{
+	background: #C5E2E8;
+	-webkit-box-shadow: #BBB 2px 2px 2px;
+	-moz-box-shadow: #BBB 2px 2px 2px;
+	box-shadow: #BBB 2px 2px 2px;
+	opacity:0.9;
+}
+.readNotification
+{
+	background: #C5E2E8;
+	opacity: 0.5;
+}
+.LikeNotificationButtonBox { background: url('/assets/img/static/icons/heart.png') no-repeat 0 50%; }
+.ShareNotificationButtonBox { background: url('/assets/img/static/icons/email.png') no-repeat 0 50%; }
+.CommentNotificationButtonBox { background: url('/assets/img/static/icons/comment.png') no-repeat 0 50%; }
+
+
+/* === Userpage Styles === */
+.userProfilePane
+{
+	margin-left:6%;
+	margin-top:30px;
+	width:60% !important;
+}
+.userProfileContent
+{
+	padding:0 !important;
+}
+.userProfileHeader
+{
+	height:10px !important;
+}
+#profileHeader
+{
+	height:80px;
+}
+#profileId
+{
+	background:#C5E2E8;
+}
+#profileName
+{
+	height:80px;
+	padding-left:160px;
+}
+#profileName h1
+{
+	display:inline;
+}
+#profileContact
+{
+	font-size:12px;
+	margin-right:3%;
+	width:170px;
+	background: url('/assets/img/static/layout/bg/profile-contact.png');
+	-webkit-border-radius:3px;
+	-moz-border-radius:3px;
+	border-radius:3px;
+	height:65px;
+}
+#profileContact div
+{
+	margin-top:20px;
+}
+#contactPhoneAndEmail
+{
+	padding-left:8px;
+	padding-top:6px;
+}
+#contactQRCode
+{
+	text-align:center;
+	background:white;
+	width:45px;
+	height:45px;
+	border-bottom-right-radius:3px;
+	-moz-border-bottom-right-radius:3px;
+	-webkit-border-bottom-right-radius:3px;
+}
+#contactQRCode img
+{
+	margin-top:2px;
+}
+#profileTagline
+{
+	text-decoration:none !important;
+	display:inline;
+}
+.userAvatar
+{
+	z-index:1000;
+	margin-left:-40px;
+	margin-top:-20px;
+	width:185px;
+	position:relative;
+}
+.userAvatar img
+{
+    background: #fff;
+    border: solid 1px #ccc;
+    padding: 5px;
+	z-index:1000;
+}
+.userAvatar a
+{
+    text-decoration: none;
+}
+.userAvatar a:hover
+{
+	background:transparent !important;
+}
+.userAvatar span
+{
+    width: 30px;
+    height: 60px;
+    display: block;
+    position: absolute;
+    top: -3%;
+    left: 4%;
+    background: url(/assets/img/static/layout/paper-clip-mini.png) no-repeat;
+    z-index: 200;
+}
+
+
+/* === Userpage Scroller === */
+#profileSlider
+{
+    margin: 0 auto;
+    position: relative;
+	height:440px;
+	width:99%;
+}
+.scroll
+{
+    height: 99%;
+	width: 80%;
+	float:left;
+    overflow: hidden;
+    overflow-x: hidden;
+    position: relative;
+}
+div.scroll .scrollContainer div.panel
+{
+    height: 99%;
+    width: 99%;
+	padding-top:15px;
+}
+ul.navigation
+{
+    list-style: none;
+	width:125px;
+	height:90%;
+    margin: 0;
+	margin-left:20px;
+    padding: 0;
+	padding-top:7%;
+    padding-bottom: 9px;
+	float:left;
+}
+ul.navigation li
+{
+	width:95px;
+	padding-top:4px;
+	padding-bottom:4px;
+	margin-top:20px;
+	margin-bottom:20px;
+    margin-right: 10px;
+}
+ul.navigation a
+{
+    padding: 7px;
+	width:95px;
+    color: #000;
+	background:white;
+    text-decoration: none;
+}
+ul.navigation a:hover
+{
+    background-color: #C5E2E8 !important;
+}
+ul.navigation a.selected
+{
+    background-color: #C5E2E8;
+}
+ ul.navigation a:focus
+{
+    outline: none;
+}
+.hide
+{ 
+    display: none;
+}
+
+/* === Userpage Icons === */
+.newsFeedButtonBox { background: url('/assets/img/static/icons/newspaper.png') no-repeat 0 50%; }
+.statsButtonBox { background: url('/assets/img/static/icons/chart_line.png') no-repeat 0 50%; }
+.contentButtonBox { background: url('/assets/img/static/icons/page.png') no-repeat 0 50%; }
+.tagsButtonBox { background: url('/assets/img/static/icons/tag_purple.png') no-repeat 0 50%; }
+.addUserButtonBox { background: url('/assets/img/static/icons/user_add.png') no-repeat 0 50%; }
+
+/* === Userpage Forms === 
+.inlineEditable {background:yellow;}*/
+
+
+/* === User Registration Overlay === */
+.innerRegistrationPanel
+{
+	height:99%;
+	width:100%;
+}
+.registrationHeader
+{
+	padding-left:10px;
+	line-height:40px;
+	height:40px !important;
+	background:#C5E2E9;
+}
+.registrationHeader h2
+{
+	display:inline;
+	
+}
+.registrationHeader h2 span
+{
+	margin-left:15px;
+	margin-right:15px;
+}
+.registrationContent
+{
+	margin-left:10px;
+	margin-right:10px;
+	height: 227px;
+	overflow:hidden;
+}
+.registrationFooter
+{
+	border-top:1px solid #C5E2E9;	
+	height:30px;
+	line-height:30px;
+	width:100%;
+	position:absolute;
+}
+a.panelNext
+{
+	margin-right:20px;
+}
+.currentStep
+{
+	margin-right:30px;
+	margin-left:30px;
+	background: url('/assets/img/static/icons/arrow_right.png') no-repeat 0 50%;
+}
+
+/* === Registration Forms === */
+.registrationContent .spi-form
+{
+	width: 90%;
+	margin-left:auto;
+	margin-right:auto;
+	padding-top:20px;
+}
+.registrationContent .spi-form #firstname-box
+{
+	float:left;
+	clear:left;
+	width:45%;	
+}
+.registrationContent .spi-form #lastname-box
+{
+	float:right;
+	clear:right;
+	width:45%;	
+}
+.registrationContent .spi-form #title-box
+{
+	float:left;
+	clear:left;
+	width:45%;	
+}
+.registrationContent .spi-form #office-box
+{
+	float:right;
+	clear:right;
+	width:45%;	
+}
+.registrationContent #profileFormContainer
+{
+	width:49%;
+	height:90%;
+	margin-top:10px;
+	border-right: 1px solid #545454;
+}
+.registrationContent #avatarFormContainer
+{
+	width:49%;
+	text-align:center;
+	height:90%;
+	margin-top:10px;
+}
+.registrationContent #avatarFormContainer #avatarUploadForm
+{
+	padding-top:0;
+}
+.registrationContent #avatarFormContainer #avatarUploader
+{
+	height:90%;
+	margin-top:15px;
+}
+.registrationContent #avatarFormContainer #avatarContent
+{
+	margin-top:auto;
+	margin-bottom:auto;
+	height:50px;
+	text-align:center;
+	font-size:14px;
+}
+.registrationContent #avatarContent #pickfiles
+{
+	line-height:140px;
+}
+.registrationContent #avatarImage
+{
+	float:left;
+	margin:0;
+	position:relative;
+	height:180px;
+	width:99%;
+	overflow:hidden;
+}
+.registrationContent #avatarImage a
+{
+	text-decoration:none;
+	width:100%;
+	height:100%;
+}
+.registrationContent #avatarImage a:hover
+{
+	cursor:pointer;
+}
+.registrationContent #avatarImage a img
+{
+}
+.registrationContent #avatarImage a #avatarOverlay
+{
+	display:none;
+	height:35px;
+	font-size:12px;
+	text-align:right;
+	position:absolute;
+	bottom:0;
+}
+.registrationContent #avatarImage a #avatarOverlay a
+{
+	color:white !important;
+	background:transparent !important;
+}
+.registrationContent #avatarImage a:hover #avatarOverlay
+{
+	display:inline !important;
+}
+
+/* === Profile Badges === */
+#profileBadges
+{
+	height:30px;
+	display:inline;
+	padding-left:5px;
+	position:absolute;
+}
+.profileBadge
+{
+	font-size:12px;
+	padding:4px;
+	margin-left:5px;
+	margin-right:5px;
+}
+#devBadge
+{
+	background:#FDFD81;
+}
+#adminBadge
+{
+	background:#D8FFCF;
+}
+
+/* edits by Jude */
+
+#profileId {
+	background:transparent none;
+}
+#profileAvatar {
+	margin-left: -35px;
+    margin-top: 0;
+}
+#profileName {
+	position:relative;
+}
+#profileName h1 {
+	float:left;
+	margin-top:20px;
+}
+#profilesBadges {
+	top: 23px;
+	left: 400px;
+}
+#profileContact {
+	margin-top:6px;
+}
+#profileSlider {
+    background-color: white;
+}
+#profileSlider .scroll {
+	background-color:white;
+	width:75%;
+}
+
+ul.navigation a {
+	-moz-border-radius:30px;
+	-webkit-border-radius:30px;
+	border-radius:30px;
+	padding:7px 20px;
+}
+
+ul.navigation a:hover,
+ul.navigation a.selected {
+	background-color:#CB7C22 !important;
+}
+
+/* === Profile Panes === */
+.profilePanelHeader
+{
+	padding-left:5px;
+	padding-right:5px;
+	padding-bottom:5px;
+	border-bottom:2px solid #888;
+}
+
+
+ul.userActivity
+{
+	list-style-type:none;
+	text-indent:5px;
+	padding-left:10px;
+	padding-right:10px;
+}
+.activityTimestamp
+{
+	color:#0E774A;
+	padding-left:4px;
+	font-size:8pt;
+}
+
+
+/* === Superbar Special Styles === */
+li.navUnreadNotifications
+{
+	background: url('/assets/img/static/layout/superbar/button-green-up.png');
+	font-weight:bold !important;
+	width:105px;
+	overflow:hidden;
+}
+li.navUnreadNotifications:hover
+{
+	background: url('/assets/img/static/layout/superbar/button-green.png') !important;
+}
+#superbar #right ul li.navUnreadNotifications a span
+{
+	color:black !important;
+}
+#superbar #right ul li.navUnreadNotifications:hover a span
+{
+	color:black !important;
+}
+li.wirestoneNavButton
+{
+	background: url('/assets/img/static/layout/superbar/button-yellow.png');
+	color: black !important;
+}
+#superbar #right ul li.wirestoneNavButton a span
+{
+	font-weight:bold !important;	
+	color: black !important;
+}
+#superbar #right li.wirestoneNavButton:hover
+{
+	font-weight:bold !important;
+	background: url('/assets/img/static/layout/superbar/button-yellow-up.png');
+}
+#formControls
+{
+	padding-right:2%;
+	padding-top:2%;
+}
+
+
+/* --- jude's add-ons --- */
+
+#commentsBox
+{
+	margin-top:15px;
+	font-size:12px;
+	max-width:350px;
+}
+.commentBox
+{
+	width:350px;
+	background:#EDEFF4;
+	min-height:62px;
+	width:100%;
+	margin-bottom:9px;
+	border-bottom:1px solid #E5EAF1;
+}
+.profilePic
+{
+	width:48px;
+	margin:7px;
+	margin-right:0px;
+	height:48px;
+	text-align:center;
+}
+.profilePic img
+{
+	text-align:center;
+	width:48px;
+	height:48px;	
+}
+.commentBody
+{
+	margin:7px;
+	margin-left:none;
+	width:280px;
+	font-size:11px;
+	display:inline;
+}
+.commentText
+{
+	margin:0;
+	padding:0;
+	display:inline;
+	height:100%;
+}
+.commentTagline
+{
+	position:relative;
+	bottom:0;
+	color:#444;
+	line-height:15px;
+	margin-top:7px;
+	height:15px;
+}
+#commentBodyInput
+{
+	margin-left:5px;
+	margin-top:5px;
+	margin-right:5px;
+	width:340px;
+	height:50px;
+}
+#commentButton
+{
+	height:auto !important;
+	margin-top:7px;
+	margin-right:5px;
+	margin-bottom:15px;
+}
+#addCommentBox
+{
+	height:85px !important;
+}
+
+/* ===== Social button boxes ====== */
+.likeButtonBox { background: url('/assets/img/static/icons/heart_add.png') no-repeat 0 50%; }
+.unlikeButtonBox { background: url('/assets/img/static/icons/heart_delete.png') no-repeat 0 50%; }
+.shareButtonBox { background: url('/assets/img/static/icons/email_go.png') no-repeat 0 50%; }
+.infoButtonBox { background: url('/assets/img/static/icons/information.png') no-repeat 0 50%; }
+.commentButtonBox { background: url('/assets/img/static/icons/comment_add.png') no-repeat 0 50%; }
+.commentTextButtonBox { background: url('/assets/img/static/icons/comments.png') no-repeat 0 50%; }
+
+
+#socialComments
+{
+	float:right;
+	width:350px;
+	min-height:300px;
+	margin-top:10px;
+}
+
+
+/* ====== Social Notification Stack Boxes ====== */
+.LikeNotification
+{
+	background:#FFABAA;
+	border:1px solid #F57876;
+}
+.CommentNotification
+{
+	background:#C6DFFE;
+	border:1px solid #717E8E;
+}
+.ShareNotification
+{
+	background:#98B3BC;
+	border:1px solid #41732C;
+}
+
+
+/* ====== Notifications Page ====== */
+.notificationsList
+{
+	font-size:small;
+	list-style:none;
+}
+.notificationsList li
+{
+	list-style:none;
+}
+.notificationEntry
+{
+	border:1px solid #C5E2E8;
+	height:35px;
+	padding-left:20px;
+	margin-bottom:10px;
+}
+.notificationEntry p
+{
+	display:inline;
+	line-height:35px;
+}
+.unreadNotification
+{
+	background: #C5E2E8;
+	-webkit-box-shadow: #BBB 2px 2px 2px;
+	-moz-box-shadow: #BBB 2px 2px 2px;
+	box-shadow: #BBB 2px 2px 2px;
+	opacity:0.9;
+}
+.readNotification
+{
+	background: #C5E2E8;
+	opacity: 0.5;
+}
+.LikeNotificationButtonBox { background: url('/assets/img/static/icons/heart.png') no-repeat 0 50%; }
+.ShareNotificationButtonBox { background: url('/assets/img/static/icons/email.png') no-repeat 0 50%; }
+.CommentNotificationButtonBox { background: url('/assets/img/static/icons/comment.png') no-repeat 0 50%; }
+
+
+/* === Userpage Styles === */
+.userProfilePane
+{
+	margin-left:6%;
+	margin-top:30px;
+	width:60% !important;
+}
+.userProfileContent
+{
+	padding:0 !important;
+}
+.userProfileHeader
+{
+	height:10px !important;
+}
+#profileHeader
+{
+	height:80px;
+}
+#profileId
+{
+	background:#C5E2E8;
+}
+#profileName
+{
+	height:80px;
+	padding-left:160px;
+}
+#profileName h1
+{
+	display:inline;
+}
+#profileContact
+{
+	font-size:12px;
+	margin-right:3%;
+	width:170px;
+	background: url('/assets/img/static/layout/bg/profile-contact.png');
+	-webkit-border-radius:3px;
+	-moz-border-radius:3px;
+	border-radius:3px;
+	height:65px;
+}
+#profileContact div
+{
+	margin-top:20px;
+}
+#contactPhoneAndEmail
+{
+	padding-left:8px;
+	padding-top:6px;
+}
+#contactQRCode
+{
+	text-align:center;
+	background:white;
+	width:45px;
+	height:45px;
+	border-bottom-right-radius:3px;
+	-moz-border-bottom-right-radius:3px;
+	-webkit-border-bottom-right-radius:3px;
+}
+#contactQRCode img
+{
+	margin-top:2px;
+}
+#profileTagline
+{
+	text-decoration:none !important;
+	display:inline;
+}
+.userAvatar
+{
+	z-index:1000;
+	margin-left:-40px;
+	margin-top:-20px;
+	width:185px;
+	position:relative;
+}
+.userAvatar img
+{
+    background: #fff;
+    border: solid 1px #ccc;
+    padding: 5px;
+	z-index:1000;
+}
+.userAvatar a
+{
+    text-decoration: none;
+}
+.userAvatar a:hover
+{
+	background:transparent !important;
+}
+.userAvatar span
+{
+    width: 30px;
+    height: 60px;
+    display: block;
+    position: absolute;
+    top: -3%;
+    left: 4%;
+    background: url(/assets/img/static/layout/paper-clip-mini.png) no-repeat;
+    z-index: 200;
+}
+
+
+/* === Userpage Scroller === */
+#profileSlider
+{
+    margin: 0 auto;
+    position: relative;
+	height:440px;
+	width:99%;
+}
+.scroll
+{
+    height: 99%;
+    width: 82%;
+	float:left;
+    overflow: auto;
+    overflow-x: hidden;
+    position: relative;
+}
+div.scroll .scrollContainer div.panel
+{
+    height: 99%;
+    width: 84%;
+	padding:20px;
+}
+ul.navigation
+{
+    list-style: none;
+	width:125px;
+	height:90%;
+    margin: 0;
+	margin-left:20px;
+    padding: 0;
+	padding-top:7%;
+    padding-bottom: 9px;
+	float:left;
+}
+ul.navigation li
+{
+	width:95px;
+	padding-top:4px;
+	padding-bottom:4px;
+	margin-top:20px;
+	margin-bottom:20px;
+    margin-right: 10px;
+}
+ul.navigation a
+{
+    padding: 7px;
+	width:95px;
+    color: #000;
+	background:white;
+    text-decoration: none;
+}
+ul.navigation a:hover
+{
+    background-color: #C5E2E8 !important;
+}
+ul.navigation a.selected
+{
+    background-color: #C5E2E8;
+}
+ ul.navigation a:focus
+{
+    outline: none;
+}
+.hide
+{ 
+    display: none;
+}
+
+/* === Userpage Icons === */
+.newsFeedButtonBox { background: url('/assets/img/static/icons/newspaper.png') no-repeat 0 50%; }
+.statsButtonBox { background: url('/assets/img/static/icons/chart_line.png') no-repeat 0 50%; }
+.contentButtonBox { background: url('/assets/img/static/icons/page.png') no-repeat 0 50%; }
+.tagsButtonBox { background: url('/assets/img/static/icons/tag_purple.png') no-repeat 0 50%; }
+.addUserButtonBox { background: url('/assets/img/static/icons/user_add.png') no-repeat 0 50%; }
+
+/* === Userpage Forms === 
+.inlineEditable {background:yellow;}*/
+
+
+/* === User Registration Overlay === */
+.innerRegistrationPanel
+{
+	height:99%;
+	width:100%;
+}
+.registrationHeader
+{
+	padding-left:10px;
+	line-height:40px;
+	height:40px !important;
+	background:#C5E2E9;
+}
+.registrationHeader h2
+{
+	display:inline;
+	
+}
+.registrationHeader h2 span
+{
+	margin-left:15px;
+	margin-right:15px;
+}
+.registrationContent
+{
+	margin-left:10px;
+	margin-right:10px;
+	height: 227px;
+	overflow:hidden;
+}
+.registrationFooter
+{
+	border-top:1px solid #C5E2E9;	
+	height:30px;
+	line-height:30px;
+	width:100%;
+	position:absolute;
+}
+a.panelNext
+{
+	margin-right:20px;
+}
+.currentStep
+{
+	margin-right:30px;
+	margin-left:30px;
+	background: url('/assets/img/static/icons/arrow_right.png') no-repeat 0 50%;
+}
+
+/* === Registration Forms === */
+.registrationContent .spi-form
+{
+	width: 90%;
+	margin-left:auto;
+	margin-right:auto;
+	padding-top:20px;
+}
+.registrationContent .spi-form #firstname-box
+{
+	float:left;
+	clear:left;
+	width:45%;	
+}
+.registrationContent .spi-form #lastname-box
+{
+	float:right;
+	clear:right;
+	width:45%;	
+}
+.registrationContent .spi-form #title-box
+{
+	float:left;
+	clear:left;
+	width:45%;	
+}
+.registrationContent .spi-form #office-box
+{
+	float:right;
+	clear:right;
+	width:45%;	
+}
+.registrationContent #profileFormContainer
+{
+	width:49%;
+	height:90%;
+	margin-top:10px;
+	border-right: 1px solid #545454;
+}
+.registrationContent #avatarFormContainer
+{
+	width:49%;
+	text-align:center;
+	height:90%;
+	margin-top:10px;
+}
+.registrationContent #avatarFormContainer #avatarUploadForm
+{
+	padding-top:0;
+}
+.registrationContent #avatarFormContainer #avatarUploader
+{
+	height:90%;
+	margin-top:15px;
+}
+.registrationContent #avatarFormContainer #avatarContent
+{
+	margin-top:auto;
+	margin-bottom:auto;
+	height:50px;
+	text-align:center;
+	font-size:14px;
+}
+.registrationContent #avatarContent #pickfiles
+{
+	line-height:150px;
+}
+.registrationContent #avatarImage
+{
+	float:left;
+	margin:0;
+	position:relative;
+	height:180px;
+	width:99%;
+	overflow:hidden;
+}
+.registrationContent #avatarImage a
+{
+	text-decoration:none;
+	width:100%;
+	height:100%;
+}
+.registrationContent #avatarImage a:hover
+{
+	cursor:pointer;
+}
+.registrationContent #avatarImage a img
+{
+}
+.registrationContent #avatarImage a #avatarOverlay
+{
+	display:none;
+	height:35px;
+	font-size:12px;
+	text-align:right;
+	position:absolute;
+	bottom:0;
+}
+.registrationContent #avatarImage a #avatarOverlay a
+{
+	color:white !important;
+	background:transparent !important;
+}
+.registrationContent #avatarImage a:hover #avatarOverlay
+{
+	display:inline !important;
+}
+
+/* === Profile Badges === */
+#profileBadges
+{
+	height:30px;
+	display:inline;
+	padding-left:5px;
+	position:absolute;
+}
+.profileBadge
+{
+	font-size:12px;
+	padding:4px;
+	margin-left:5px;
+	margin-right:5px;
+}
+#devBadge
+{
+	background:#FDFD81;
+}
+#adminBadge
+{
+	background:#D8FFCF;
+}
+
+/* edits by Jude */
+
+#profileId {
+	background:transparent none;
+}
+#profileAvatar {
+	margin-left: -35px;
+    margin-top: 0;
+}
+#profileName {
+	position:relative;
+}
+#profileName h1 {
+	float:left;
+	margin-top:20px;
+}
+#profilesBadges {
+	top: 23px;
+	left: 400px;
+}
+#profileContact {
+	margin-top:6px;
+}
+#profileSlider {
+    background-color: white;
+}
+#profileSlider .scroll {
+	background-color:white;
+	width:75%;
+}
+
+ul.navigation a {
+	-moz-border-radius:30px;
+	-webkit-border-radius:30px;
+	border-radius:30px;
+	padding:7px 20px;
+}
+
+ul.navigation a:hover,
+ul.navigation a.selected {
+	background-color:#CB7C22 !important;
+}

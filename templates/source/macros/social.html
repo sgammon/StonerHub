@@ -1,0 +1,65 @@
+{%- macro social_feed_entry(user, item, you=false, firstname_only=false, link_name=false, link_content=true, timesince=true) -%}
+<div class='activityItem'>
+
+	{%- if item.kind() == 'SocialAction' -%}
+		{%- if item.class_name() == 'Comment' -%}
+			<span class='iconButtonBox commentTextButtonBox'>
+		{%- endif -%}
+		{%- if item.class_name() == 'Like' -%}
+			<span class='iconButtonBox likeButtonBox'>
+		{%- endif -%}
+		{%- if item.class_name() == 'Share' -%}
+			<span class='iconButtonBox shareButtonBox'>
+		{%- endif -%}
+	{%- endif -%}
+	
+	{%- if item.kind() == 'ContentItem' -%}
+		<span class='iconButtonBox contentItemCreatedButtonBox'>
+	{%- endif -%}
+	
+	{% if item.kind() == 'QueuedBlob' -%}
+		<span class='iconButtonBox uploadedItemButtonBox'>
+	{% endif %}
+	
+	{% if you == true %}{% if link_name %}<a href="{{ link('user-profile') }}">You</a>{% else %}You{% endif %}
+		{% else %}
+			{% if link_name %}
+				{% if firstname_only %} 
+					<a href="{{ link('user-public-profile', username=user.username) }}">{{ user.firstname }}</a>
+				{% else %}
+					<a href="{{ link('user-public-profile', username=user.username) }}">{{ user.firstname }} {{ user.lastname }}</a>
+				{% endif %}
+			{% else %}
+				{% if firstname_only %}
+					{{ user.firstname }}
+				{% else %}
+					{{ user.firstname }} {{ user.lastname }}
+				{% endif %}
+			{% endif %}
+		{% endif %}
+
+	{% if item.kind() == 'SocialAction' %}
+		{% if item.class_name() == 'Like' %}liked{% endif %}
+		{% if item.class_name() == 'Comment' %}commented on{% endif %}
+		{% if item.class_name() == 'Share' %}shared{% endif %}
+		{% if link_content %}
+			<a href="{{ link('content-item-view', repo=item.parent().repository.key().name(), key=item.parent().key()) }}">
+				<span class='iconButtonBox formatButton_{{ item.parent().format.name }}'>{{ item.parent().title }}</span>
+			</a>
+		{% else %}
+			<span class='iconButtonBox formatButton_{{ item.parent().format.name }}'>{{ item.parent().title }}</span>
+		{% endif %}
+	{% endif %}
+	
+	{% if item.kind() == 'ContentItem' %}
+			created {% if link_content %}<a href="{{ link('content-item-view', repo=item.repository.key().name(), key=item.key()) }}"><span class='iconButtonBox formatButton_{{ item.format.name }}'>{{ item.title }}</span></a>{% else %}<span class='iconButtonBox formatButton_{{ item.format.name }}'>{{ item.title }}{% endif %}
+	{% endif %}
+	
+	{% if item.kind() == 'QueuedBlob' %}
+			uploaded {% if link_content %}<a href="{{ link('content-create', inject=1, queued=item.key()) }}">{% endif %}{{ item.blob.filename|truncate(50) }}{% if link_content %}</a>{% endif %}
+	({{ util.converters.byteconvert(item.blob.size) }}){% endif %}
+		<span class='activityTimestamp'>{% if timesince %}{{ util.converters.timesince(item.modifiedAt) }}{% else %}{{ util.types.str(item.modifiedAt) }}{% endif %}</span>
+
+	</span>
+</div>
+{%- endmacro -%}

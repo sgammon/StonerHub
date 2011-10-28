@@ -1,0 +1,38 @@
+{% extends "core/base_web.html" %}
+
+{% block body %}
+
+<div  id="content_header" class="header col full">
+	<div id='left'>
+		{% block header %}{% endblock %}
+	</div>
+	
+	<div id='right'>
+		<div id='stackBoxes'>
+			<div class='stackBox' id='devZone'><p>Developer Mode</p></div>
+		</div>
+		{% block header_right %}
+			<b>Module:</b> {% block module %}{% endblock %}
+		{% endblock %}
+	</div>	
+</div>
+
+<div id='content_body_wrapper' class="col full">
+
+	<div id='content_body' class="m-trbl">
+		
+		<div id='content_body_header'>
+			{% block content_body_header %}
+				<h2><a href="{{ link('dev-index') }}">&lt; Back to Development Console</a></h2>
+			{% endblock %}
+		</div>
+		
+		<div id='content_body_content' class="content">
+			{% block content %}<p>Content</p>{% endblock %}
+		</div>
+	</div>
+
+</div>
+
+
+{% endblock body %}

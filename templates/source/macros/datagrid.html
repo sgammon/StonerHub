@@ -1,0 +1,72 @@
+{% macro new_datagrid(selector, grid) %}
+{% set method, method_args = grid.get_method() %}
+{% set grid_args, grid_args_count = grid.get_extra_args(), util.len(grid.get_extra_args()) %}
+
+{% if grid.get_script_snippet('north') is string %}
+<script type='text/javascript'>
+	{% include grid.get_script_snippet('north') %}
+</script>
+{% endif %}
+
+<script type='text/javascript'>
+
+var rpcTracker = {Requests:{}, lastRequest:null};
+
+function makeGridRPC(sSource, aoData, fnCallback)
+{
+	/* Set RPC method & params */
+	sMethod = "{{ method }}";	
+	oParams = {%- if util.len(method_args) > 0 -%}{{ util.converters.json.encode(util.types.dict(method_args)) }}{%- else -%}{}{%- endif -%};
+
+	/* Add to RPC tracker and fire */
+	rpcTracker.Requests[aoData['sEcho']] = {source: sSource, grid: aoData, callback: fnCallback, method: sMethod, params:oParams};
+	loadSpiDatagrid(sSource, sMethod, oParams, aoData, fnCallback);
+}
+
+function createDatagrid()
+{
+	/* Manufacture a table */
+	$('{{ selector }}').html('<table cellpadding="0" cellspacing="0" border="0" class="display" id="datagrid"></table>');
+
+	/* Set up grid options */
+	dataGridOptions = {
+		"bProcessing": true,
+		"bFilter": false,
+		"bServerSide": true,
+		"bPaginate": true,
+		"bLengthChange": true,
+		"bJQueryUI": true,
+		"bStateSave": true,
+		"sPaginationType": "full_numbers",
+		{% if 'aoColumns' not in grid_args %}
+			{% if util.len(grid.get_columns()) > 0 %}
+				"aoColumns": {{ util.converters.json.dumps(grid.getColumnsForMacro()) }},
+			{% endif %}
+		{% endif %}
+		
+		{% if grid_args_count > 0 %}
+			{%- for key, value in grid_args.items() -%}
+				'{{ key }}': {{ value }},
+			{%- endfor -%}
+		{% endif %}
+		
+		"sAjaxSource": "{{ grid.get_endpoint() }}",
+		"fnServerData": makeGridRPC,
+	};
+	
+	/* Initialize datagrid */
+	$('{{ selector }} #datagrid').dataTable(dataGridOptions);
+}
+
+/* Build datagrid on page ready */
+$(document).ready(createDatagrid());
+
+</script>
+
+{% if grid.get_script_snippet('south') is string %}
+<script type='text/javascript'>
+	{% include grid.get_script_snippet('south') %}	
+</script>
+{% endif %}
+
+{% endmacro %}

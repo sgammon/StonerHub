@@ -1,0 +1,110 @@
+#wrapper {
+	background:#000000 url(img/download.jpg);
+}
+
+#content_body_wrapper, #content_body_wrapper_twocolumn {
+	background-color:transparent;
+}
+
+#superbar {
+	background-color:transparent;
+	padding:35px 40px;
+	width:auto;
+	font-size:16px;
+}
+#superbar #left ul li a {
+	font-family:'Cabin', 'Lucida Grande', arial, sans-serif !important;
+	color:#e28a26;
+}
+#superbar a:hover {
+	text-decoration:underline !important;
+	background:inherit !important;
+	color:#eab110;
+}
+
+.home-btn, .home-btn:hover {
+	background:url(img/wirestone.png) no-repeat !important;
+	text-indent:-99999px;
+	display:block !important;
+	float:left !important;
+	width:130px!important;
+	height:23px !important;
+}
+
+#content_body_wrapper #content_body, #content_body_wrapper_twocolumn #content_body {
+	background-color:transparent !important;
+	box-shadow: none;
+}
+#content_body_content {
+	background-color:#cb7c22;
+}
+#datagrid_wrapper .ui-widget-header {
+	background-color:#cb7c22;
+	color:white;
+}
+#gridTitle h2 {
+	color:white;
+}
+#hat, #shoes {
+	display:none;
+}
+#content_body_header {
+	background-color:transparent;
+	color:#eab110;
+}
+#datagrid {
+	width:100% !important;
+	border:0;
+}
+#datagrid th {
+	background-color:#e28a26 !important;
+	background-image:none !important;
+}
+#datagrid th div {
+	font-family:verdana !important;
+	font-weight:bold !important;
+	font-size:10px;
+	color:#fdc382 !important;
+	text-transform:uppercase;
+}
+#datagrid tr {
+	background-color:white;
+}
+#datagrid tr.odd {
+	background-color:#f2f2f2;
+}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+	border:0 !important;
+}
+.dataTables_wrapper {
+	min-height:inherit;
+}
+#datagrid tbody tr td a.ciTitleAnchor {
+    font-size: 14px;
+    font-weight:bold;
+    color:black;
+    text-decoration:none;
+}
+#datagrid tbody tr td a.ciTitleAnchor:hover {
+    text-decoration:underline;
+    color:#ae6a1d;
+    background-color:none !important;
+}
+#sidebar #sidebar_header {
+	background-color:#e28a26;
+	background-color:rgba(226,138,38,.25);
+	color:#e28a26;
+}
+#content_body_wrapper_twocolumn #sidebar {
+	background-color:#333132;
+	background-color:rgba(255,255,255,.1);
+	color:#929292;
+	font-size:13px;
+	min-height:inherit;
+}
+#content_body_wrapper_twocolumn #sidebar a {
+	color:white;
+}
+#lower_sidebar {
+	display:none;
+}
