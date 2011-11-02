@@ -3,8 +3,6 @@ from project.handlers import WebHandler
 import os
 import logging
 
-from tipfy import abort
-
 from project.core import security
 
 from project.forms.dev import FileBugForm
@@ -16,7 +14,7 @@ from project.models.content_item import ContentItem
 
 
 class SPIDevHandler(WebHandler):
-	
+	pass
 	
 
 
@@ -30,7 +28,7 @@ class Index(SPIDevHandler):
 		if u is not None and u.perm_dev_admin == True:
 			return self.render('dev/index.html')
 		else:
-			abort(403)
+			self.abort(403)
 			
 			
 class Environment(SPIDevHandler):

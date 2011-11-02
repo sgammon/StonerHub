@@ -1,0 +1,10 @@
+{% extends "layouts/frame.html" %}
+{% from "macros/form.html" import renderForm %}
+
+
+{% block frame_class %}innerRegistrationPanel{% endblock %}
+{% block header_class %}registrationHeader{% endblock %}
+{% block content_class %}registrationContent{% endblock %}
+{% block footer_class %}registrationFooter{% endblock %}
+
+{% block panel_footer %}<div class='floatright'><a class='panelNext' href='javascript:nextAction();'>Next</a></div><div class='clearboth'></div>{% endblock %}

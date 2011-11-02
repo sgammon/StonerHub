@@ -1,0 +1,180 @@
+{% extends "security/signup/frame/panel.html" %}
+{% from "macros/upload.html" import new_plupload_simple %}
+
+{% block panel_header %}<h2><span class='iconButtonBox okButtonBox'>Introduction</span><span class='iconButtonBox okButtonBox'>Basic Info</span><span class='iconButtonBox currentStep'>Profile</span><span>Settings</span></h2>{% endblock %}
+
+{% block panel_content %}
+
+	<div class='floatleft clearleft' id='profileFormContainer'>
+		<form method='post' action='{{ form.get_action() }}' method='{{ form.get_method() }}' id='profileCreateForm' class='spi-form'>
+			{{ renderForm(form, omitFormTag=true, omitSubmitButton=true) }}
+			<script>
+				$('#phone').attr('autofocus', 'autofocus').focus();
+			</script>
+			
+			<div id='uploadControls'>
+				<p>
+					<a id="pickfiles" href="#">Upload a Profile Image</a>
+					<span id='progress' class='hidden'>starting...</span>
+				</p>
+			</div>
+			
+			
+			<div>
+			</div>
+		</form>
+	</div>
+	
+	<div class='floatright clearright' id='avatarFormContainer'>
+		<form id='avatarUploadForm' action='#' class='spi-form spi-upload-form'>
+			<div id='avatarUploader'>
+				<div id='avatarContent'>					
+
+
+					<div id='avatarImage'>
+						<h2 style='display:inline'>Your profile picture:</h2>
+						<img src='/assets/img/static/layout/profile-default.png' alt='default profile picture' />
+					</div>
+					
+				</div>
+			</div>
+			<br class='clearboth' />
+		</form>	
+	</div>
+
+	<script>
+		loadPanel('basic');
+		registerForm('#profileCreateForm', "{{ form.get_action() }}", "{{ form.get_method() }}");
+		
+		rpcResponse = null;
+		rawRpcResponse = null;
+		
+		function loadFrameProfilePicture(blob_key, filename)
+		{
+			base_serve_url = '/_media/blob/serve/';
+			serve_url = base_serve_url+blob_key+'/'+filename+'=s150-c';
+			$('#avatarImage img').attr('src', serve_url).attr('alt', 'Your new profile picture!');
+			$('#uploadControls').addClass('hidden');
+		}
+
+		function getUploadRPCEndpoint(uploader)
+		{
+			base_rpc_url = "{{ link('ajax-upload-generate-url') }}";
+			rpc_url = base_rpc_url+"?createNewUploadSession=false";
+	 		rpc_url += "&uploadCount="+uploader.total.queued.toString();
+			return rpc_url
+		}		
+		
+		function createProfileImageUploader()
+		{
+			var uploader = new plupload.Uploader({
+				
+				runtimes: 'gears,html5,flash,html4',
+				browse_button: 'pickfiles',
+				container: 'avatarContent',
+				url: '#',
+				use_query_string: false,
+				multipart: true,
+				flash_swf_url: '/assets/ext/static/plupload/runtime.flash-0.1.swf',
+				silverlight_xap_url: '/assets/ext/static/plupload/runtime.silverlight-0.1.xap',
+				filters : [
+					{title: "Image File", extensions: "jpg,jpeg,gif,png"},
+				],
+			});
+			
+			
+			uploader.init();
+
+			uploader.bind('FilesAdded', function(up, files){
+
+				file = files[0]; // only take first file
+				//$('#filename').html('['+file.name.substring(0, 10)+'...]: ').removeClass('hidden');
+
+
+				$('#pickfiles').addClass('hidden');
+				$('#progress').removeClass('hidden');
+				up.refresh();					
+		        up.start();
+		        e.preventDefault();
+			});
+			
+			  // Retrieve blobstore upload URL for 
+			  uploader.bind('UploadFile', function(up, file)
+			  {
+
+				mime_type = getMIMEtype(file.name);
+
+				$.ajax({
+					url: getUploadRPCEndpoint(up),
+					async: false,
+					success: function(api_response)
+							 {
+								// Quick sanity check...
+								if (api_response.operation == 'generate_ajax_upload_url')
+								{
+									if (api_response.result == 'success')
+									{
+										// Set upload URL to returned Blobstore URL
+										up.settings.url = api_response.response.upload_url;
+										up.settings.multipart_params = {'blob_content_type': mime_type};
+									}
+									else
+									{
+										alert('Generate URL operation failed for file "'+file.name+'". Reason: '+api_response.reason);
+									}
+								}
+								else
+								{
+									alert('There was an error generating an AJAX upload URL: Invalid response operation.');
+								}
+							}
+						}
+					);
+			});
+			
+		uploader.bind('UploadProgress', function(up, file) {
+			
+	        $("#progress").html(file.percent + "%");
+			if(file.percent.toString() == '100')
+			{
+				$("#progress").html('attaching to your profile...');
+			}
+			
+		});
+			
+			
+		  uploader.bind('FileUploaded', function(up, file, raw_api_response)
+		  {
+				api_response = JSON.parse(raw_api_response.response);
+				rawRpcResponse = raw_api_response;
+				rpcResponse = api_response;
+
+				// Quick sanity check...
+				if (api_response.operation == 'upload_callback')
+				{
+
+					if (api_response.result == 'success')
+					{
+						$('#profileCreateForm div').append(generateHiddenInputControl('blob_object', api_response.response.blob.key, getMIMEtype(file.name)));
+					}
+					else
+					{
+						alert('There was an error storing the file "'+file.name+'". Failure reason: "'+api_response.response.failure_reason+'".');
+					}
+
+				}
+				else
+				{
+					alert('operation is wrong... it is: '+api_response.operation);
+				}
+				$("#pickfiles b").html('loading...');
+				loadFrameProfilePicture(api_response.response.blob.key, api_response.response.blob.filename);
+		  });
+		}
+		
+		createProfileImageUploader();
+		
+	</script>
+
+
+{% endblock %}

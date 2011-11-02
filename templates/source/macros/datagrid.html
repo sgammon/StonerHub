@@ -1,6 +1,6 @@
 {% macro new_datagrid(selector, grid) %}
 {% set method, method_args = grid.get_method() %}
-{% set grid_args, grid_args_count = grid.get_extra_args(), util.len(grid.get_extra_args()) %}
+{% set grid_args, grid_args_count = grid.get_extra_args(), len(grid.get_extra_args()) %}
 
 {% if grid.get_script_snippet('north') is string %}
 <script type='text/javascript'>
@@ -16,7 +16,7 @@ function makeGridRPC(sSource, aoData, fnCallback)
 {
 	/* Set RPC method & params */
 	sMethod = "{{ method }}";	
-	oParams = {%- if util.len(method_args) > 0 -%}{{ util.converters.json.encode(util.types.dict(method_args)) }}{%- else -%}{}{%- endif -%};
+	oParams = {%- if len(method_args) > 0 -%}{{ util.converters.json.encode(util.types.dict(method_args)) }}{%- else -%}{}{%- endif -%};
 
 	/* Add to RPC tracker and fire */
 	rpcTracker.Requests[aoData['sEcho']] = {source: sSource, grid: aoData, callback: fnCallback, method: sMethod, params:oParams};
@@ -39,7 +39,7 @@ function createDatagrid()
 		"bStateSave": true,
 		"sPaginationType": "full_numbers",
 		{% if 'aoColumns' not in grid_args %}
-			{% if util.len(grid.get_columns()) > 0 %}
+			{% if len(grid.get_columns()) > 0 %}
 				"aoColumns": {{ util.converters.json.dumps(grid.getColumnsForMacro()) }},
 			{% endif %}
 		{% endif %}

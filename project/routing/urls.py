@@ -25,8 +25,8 @@ rules = [
 			Route('/logout', name='auth/logout', handler='Logout'),
 			
 			## Registration
-			Route('/register', name='auth/signup', handler='Register'),
-			Route('/_frame/register/step<int:step>/ticket/<string:ticket>', name='auth/signup/frame', handler='RegisterBetaFrame')
+			Route('/register', name='auth/signup', handler='RegisterBeta'),
+			Route('/_frame/register/step<step>/ticket/<ticket>', name='auth/signup/frame', handler='RegisterBetaFrame')
 		
 		]),
 
@@ -35,7 +35,7 @@ rules = [
 		HandlerPrefixRoute('incoming.', [
 
 			# Incoming Services
-			Route('/_ah/mail/<string:alias>', name='incoming-mail', handler='IncomingMail'),
+			Route('/_ah/mail/<alias>', name='incoming-mail', handler='IncomingMail'),
 			Route('/_ah/xmpp/message/chat/', name='incoming-xmpp', handler='IncomingChat')
 			
 		]),
@@ -63,10 +63,10 @@ rules = [
 			Route('/dev/default_data', name='dev-default-data', handler='DefaultData'),
 			Route('/dev/security', name='dev-security', handler='Security'),
 			Route('/dev/security/claims', name='dev-security-claims', handler='ManageAccountClaims'),
-			Route('/dev/security/claims/<string:action>', name='dev-security-claims-action', handler='ManageAccountClaims'),
+			Route('/dev/security/claims/<action>', name='dev-security-claims-action', handler='ManageAccountClaims'),
 			Route('/dev/indexer', name='dev-indexer', handler='IndexerRoot'),
 			Route('/dev/indexer/insertTask', name='dev-indexer-enqueue-task', handler='IndexerMakeTask'),
-			Route('/dev/security/claims/<string:key>/<string:action>', name='dev-security-claims-key-action', handler='ManageAccountClaims'),
+			Route('/dev/security/claims/<key>/<action>', name='dev-security-claims-key-action', handler='ManageAccountClaims'),
 			Route('/dev/shell', name='dev-shell', handler='Shell')
 			
 		]),
@@ -76,10 +76,10 @@ rules = [
 		
 			## == User Pages == #
 			Route('/me', name='user-profile', handler='Profile'),
-	        Route('/people/<string:username>', name='user-public-profile', handler='Profile'),
-			Route('/people/<string:username>/tags', name='user-public-tags', handler='Tags'),
-			Route('/people/<string:username>/content', name='user-public-content', handler='Content'),
-			Route('/people/<string:username>/comments', name='user-public-comments', handler='Comments'),
+	        Route('/people/<username>', name='user-public-profile', handler='Profile'),
+			Route('/people/<username>/tags', name='user-public-tags', handler='Tags'),
+			Route('/people/<username>/content', name='user-public-content', handler='Content'),
+			Route('/people/<username>/comments', name='user-public-comments', handler='Comments'),
 			
 			# == Utility Frames == #
 			Route('/_frame/user/profileEdit', name='user-profile-edit-frame', handler='ProfileFrame'),
@@ -94,8 +94,8 @@ rules = [
 			
 			# == User Settings == #			
 	        Route('/me/settings', name='user-settings', handler='Settings'),
-			Route('/me/settings/<string:group>', name='user-settings-group', handler='SettingsGroup'),
-			Route('/me/settings/<string:group>/save', name='user-settings-save', handler='SettingsGroup'),
+			Route('/me/settings/<group>', name='user-settings-group', handler='SettingsGroup'),
+			Route('/me/settings/<group>/save', name='user-settings-save', handler='SettingsGroup'),
 
 			# == Social Notifications == #
 	        Route('/me/notifications', name='user-notifications', handler='Notifications')
@@ -106,8 +106,8 @@ rules = [
 		HandlerPrefixRoute('search.', [
 		
 	        Route('/search', name='search-global', handler='Main'),
-	        Route('/search/<string:query>', name='search-query', handler='Main'),
-			Route('/search/<path:filters>', name='search-query-with-filters', handler='Main')
+	        Route('/search/<query>', name='search-query', handler='Main'),
+			Route('/search/<filters>', name='search-query-with-filters', handler='Main')
 		
 		]),
 		
@@ -117,19 +117,19 @@ rules = [
 			# == CRUD == #
 	        Route('/repositories', name='repository-list', handler='List'),
 	        Route('/repositories/create', name='repository-create', handler='Create'),
-	        Route('/repositories/<string:repo>', name='repository-view', handler='View'),
-	        Route('/repositories/<string:repo>/edit', name='repository-edit', handler='Edit'),
-	        Route('/repositories/<string:repo>/edit/permissions', name='repository-edit-permissions', handler='Permissions'),
-	        Route('/repositories/<string:repo>/delete', name='repository-delete', handler='Delete'),
+	        Route('/repositories/<repo>', name='repository-view', handler='View'),
+	        Route('/repositories/<repo>/edit', name='repository-edit', handler='Edit'),
+	        Route('/repositories/<repo>/edit/permissions', name='repository-edit-permissions', handler='Permissions'),
+	        Route('/repositories/<repo>/delete', name='repository-delete', handler='Delete'),
 
 			# == Content/Tags == #
-	        Route('/repositories/<string:repo>/tags', name='repository-tags', handler='Tags'),
-			Route('/repositories/<string:repo>/categories', name='repository-categories', handler='Categories'),
-			Route('/repositories/<string:repo>/category/create', name='repository-category-create', handler='CreateCategory'),
-	        Route('/repositories/<string:repo>/content', name='repository-content', handler='Content'),
-			Route('/repositories/<string:repo>/content/recent', name='repository-recent-content', handler='RecentContent'),
-			Route('/repositories/<string:repo>/content/popular', name='repository-popular-content', handler='PopularContent'),
-			Route('/repositories/<string:repo>/content/<path:filters>', name='repository-filter-content', handler='FilteredContent')
+	        Route('/repositories/<repo>/tags', name='repository-tags', handler='Tags'),
+			Route('/repositories/<repo>/categories', name='repository-categories', handler='Categories'),
+			Route('/repositories/<repo>/category/create', name='repository-category-create', handler='CreateCategory'),
+	        Route('/repositories/<repo>/content', name='repository-content', handler='Content'),
+			Route('/repositories/<repo>/content/recent', name='repository-recent-content', handler='RecentContent'),
+			Route('/repositories/<repo>/content/popular', name='repository-popular-content', handler='PopularContent'),
+			Route('/repositories/<repo>/content/<path:filters>', name='repository-filter-content', handler='FilteredContent')
 		
 		]),
 		
@@ -144,22 +144,22 @@ rules = [
 			
 			# == Content Uploader == #
 			Route('/content/create', name='content-create', handler='Create'),
-			Route('/content/create/step<int:progress>', name='content-create-step', handler='Create'),
+			Route('/content/create/step<progress:\d{1}>', name='content-create-step', handler='Create'),
 			Route('/content/create/success', name='content-create-success', handler='CreateSuccess'),
-			Route('/content/create/step<int:progress>/<string:blobkey>', name='content-create-step-blobkey', handler='Create'),
-			Route('/content/create/step<int:progress>/<string:sessionkey>/<string:blobkey>', name='content-create-step-blobkey-with-session', handler='Create'),
-			Route('/content/create/step<int:progress>/<string:sessionkey>/<string:blobkey>/<string:action>', name='content-create-step-blobkey-with-session-with-action', handler='Create'),
+			Route('/content/create/step<progress:\d{1}>/<blobkey>', name='content-create-step-blobkey', handler='Create'),
+			Route('/content/create/step<int:\d{1}>/<sessionkey>/<blobkey>', name='content-create-step-blobkey-with-session', handler='Create'),
+			Route('/content/create/step<int:\d{1}>/<sessionkey>/<blobkey>/<action>', name='content-create-step-blobkey-with-session-with-action', handler='Create'),
 
 	        # == Content Handlers (Repository-Oriented) == #
-	        Route('/repositories/<string:repo>/content/create', name='content-item-create', handler='Create'),
-	        Route('/repositories/<string:repo>/content/create/step<int:progress>', name='content-item-create-step', handler='Create'),
-	        Route('/repositories/<string:repo>/content/create/step<int:progress>/<string:blobkey>', name='content-item-create-step-blobkey', handler='Create'),
-	        Route('/repositories/<string:repo>/content/create/step<int:progress>/<string:blobkey>/<string:sessionkey>', name='content-item-create-step-blobkey-with-session', handler='Create'),	
-	        Route('/repositories/<string:repo>/content/create/success', name='content-item-create-success', handler='CreateSuccess'),
-	        Route('/repositories/<string:repo>/content/<string:key>', name='content-item-view', handler='View'),
-	        Route('/repositories/<string:repo>/content/<string:key>/edit', name='content-item-edit', handler='Edit'),
-	        Route('/repositories/<string:repo>/content/<string:key>/edit/permissions', name='content-item-edit-permissions', handler='Permissions'),
-	        Route('/repositories/<string:repo>/content/<string:key>/delete', name='content-item-delete', handler='Delete'),
+	        Route('/repositories/<repo>/content/create', name='content-item-create', handler='Create'),
+	        Route('/repositories/<repo>/content/create/step<progress:\d{1}>', name='content-item-create-step', handler='Create'),
+	        Route('/repositories/<repo>/content/create/step<int:\d{1}>/<blobkey>', name='content-item-create-step-blobkey', handler='Create'),
+	        Route('/repositories/<repo>/content/create/step<int:\d{1}>/<blobkey>/<sessionkey>', name='content-item-create-step-blobkey-with-session', handler='Create'),	
+	        Route('/repositories/<repo>/content/create/success', name='content-item-create-success', handler='CreateSuccess'),
+	        Route('/repositories/<repo>/content/<key>', name='content-item-view', handler='View'),
+	        Route('/repositories/<repo>/content/<key>/edit', name='content-item-edit', handler='Edit'),
+	        Route('/repositories/<repo>/content/<key>/edit/permissions', name='content-item-edit-permissions', handler='Permissions'),
+	        Route('/repositories/<repo>/content/<key>/delete', name='content-item-delete', handler='Delete'),
 		
 		]),
 		
@@ -171,9 +171,9 @@ rules = [
 	        Route('/tags/all', name='tags-all', handler='tags.GlobalTags'),
 	        Route('/tags/mine', name='tags-mine', handler='tags.Mine'),		
 	        Route('/tags/popular', name='tags-popular', handler='tags.Popular'),
-	        Route('/tags/<string:tag>', name='tag-view', handler='tags.View'),
-	        Route('/tags/<string:tag>/edit', name='tag-edit', handler='tags.Edit'),
-	        Route('/tags/<string:tag>/delete', name='tag-delete', handler='tags.Delete')
+	        Route('/tags/<tag>', name='tag-view', handler='tags.View'),
+	        Route('/tags/<tag>/edit', name='tag-edit', handler='tags.Edit'),
+	        Route('/tags/<tag>/delete', name='tag-delete', handler='tags.Delete')
 		
 		]),
 		
@@ -181,15 +181,37 @@ rules = [
 		HandlerPrefixRoute('media.', [
 		
 			# == Blob Service == #
-			Route('/_media/blob/serve/<string:blobkey>', name='media-serve-blob', handler='SPIServeHandler'),
-			Route('/_media/blob/serve/<string:blobkey>/<string:filename>', name='media-serve-blob-filename', handler='SPIServeHandler'),
+			Route('/_media/blob/serve/<blobkey>', name='media-serve-blob', handler='SPIServeHandler'),
+			Route('/_media/blob/serve/<blobkey>/<filename>', name='media-serve-blob-filename', handler='SPIServeHandler'),
 		
 			# == Blob Download Service == #
-			Route('/_media/blob/download/<string:blobkey>', name='media-download-blob', handler='SPIDownloadHandler'),
-			Route('/_media/blob/download/<string:blobkey>/<string:filename>', name='media-download-blob-filename', handler='SPIDownloadHandler'),
+			Route('/_media/blob/download/<blobkey>', name='media-download-blob', handler='SPIDownloadHandler'),
+			Route('/_media/blob/download/<blobkey>/<filename>', name='media-download-blob-filename', handler='SPIDownloadHandler'),
 
 			# == Profile Images Service == #
-			Route('/_media/img/profile/serve/<string:username>-profile.<string:format>', name='media-serve-profile-pic', handler='media.ProfilePic')
+			Route('/_media/img/profile/serve/<username>-profile.<format>', name='media-serve-profile-pic', handler='media.ProfilePic')
+		
+		]),
+		
+		## AJAX Handlers
+		HandlerPrefixRoute('ajax.', [
+		
+			# == AJAX Upload URL Service == #
+			Route('/_ajax/upload/generateURL', name='ajax-upload-generate-url', handler='upload.GenerateUploadURL'),
+			Route('/_ajax/upload/callback/uploadSuccess', name='ajax-upload-success', handler='upload.UploadCallback'),			
+			Route('/_ajax/upload/callback/uploadSuccess/<string:sessionkey>', name='ajax-upload-success-with-session', handler='upload.UploadCallback'),
+			Route('/_ajax/upload/callback/passThrough/<string:blobkey>', name='ajax-upload-success-passthrough', handler='upload.UploadCallback'),
+			Route('/_ajax/upload/callback/passThrough/<string:sessionkey>/<string:blobkey>', name='ajax-upload-success-passthrough-with-session', handler='upload.UploadCallback'),			
+		
+			# == Social Actions/Notifications Service == #
+			Route('/_ajax/social/<string:action>/<string:document>', name='ajax-social', handler='social.SocialAction'),
+			Route('/_ajax/social/notification/<string:key>/<string:action>', name='ajax-social-notification', handler='social.SocialNotification'),
+			Route('/_ajax/social/notifications', name='ajax-social-notifications', handler='social.Notifications'),
+			Route('/_ajax/social/likes/<string:key>', name='ajax-social-likes', handler='social.Likes'),
+			Route('/_ajax/social/comments/<string:key>', name='ajax-social-comments', handler='social.Comments'),
+			Route('/_ajax/social/sharebox', name='ajax-social-sharebox', handler='social.ShareBox'),
+			Route('/_ajax/social/subscribe', name='ajax-social-subscribebox', handler='social.SubscribeBox'),
+			Route('/_ajax/social/feeds', name='ajax-social-feedsbox', handler='social.FeedsBox'),
 		
 		])
 	

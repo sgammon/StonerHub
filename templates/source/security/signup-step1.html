@@ -1,0 +1,52 @@
+{% extends "layouts/main-twocolumn.html" %}
+{% from "macros/form.html" import renderForm %}
+
+{# ===== SET HEADER ===== #}
+
+{% block header %}
+	<h1>Create an Account</h1> <span>Step 1: Account information</span>
+{% endblock %}
+
+
+{#  ===== SET CONTENT BLOCK ===== #}
+
+{% block content %}
+	{% if registration_form %}
+	<div class='twoColumnRegistrationForm' id='leftColumn'>
+		{{ renderForm(registration_form) }}
+	</div>
+	{% endif %}
+	{% if notification_settings %}
+	<div class='twoColumnRegistrationForm' id='rightColumn'>
+		{{ renderForm(notification_settings) }}
+	</div>
+	{% endif %}
+{% endblock %}
+
+{# ===== SET SIDEBAR HEADER ===== #}
+{% block sidebar_header %}Creating an Account{% endblock %}
+
+
+{# ===== SET SIDEBAR CONTENT ===== #}
+{% block sidebar_content %}
+<ul id='wizard_steps'>
+	<li class='current'>
+			<span><b>1. Account Information</b></span>
+			<br /><p>Tell us a bit about who you are, and set up basic settings.</p>
+	</li>
+	<li>
+			<span><b>2. Profile Picture</b></span>
+			<br /><p>Upload a picture for your account.</p>
+	</li>
+	<li>
+			<span><b>3. Crop Profile Picture</b></span>
+			<br /><p>Crop your profile picture to your liking.</p>
+	</li>
+</ul>
+
+{% endblock %}
+
+{# ===== SET CONTENT BODY HEADER ===== #}
+{% block content_body_header %}
+	<h2>Please fill in all fields.</h2>
+{% endblock %}

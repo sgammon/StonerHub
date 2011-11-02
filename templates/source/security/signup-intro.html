@@ -1,0 +1,42 @@
+{% extends "layouts/main-twocolumn.html" %}
+
+{# ===== SET HEADER ===== #}
+
+{% block header %}
+	<h1>Create an Account</h1> <span>Introduction</span>
+{% endblock %}
+
+
+{#  ===== SET CONTENT BLOCK ===== #}
+
+{% block content %}
+	<p>This wizard will help you create a new Wirestone Universal Content Repository account.<br />
+		<a href="{{ link('auth/signup-step-ticket', step=1, ticket=ticket) }}">Let's begin &gt;</a></p>
+{% endblock %}
+
+{# ===== SET SIDEBAR HEADER ===== #}
+{% block sidebar_header %}Creating an Account{% endblock %}
+
+
+{# ===== SET SIDEBAR CONTENT ===== #}
+{% block sidebar_content %}
+<ul id='wizard_steps'>
+	<li>
+			<span><b>1. Account Information</b></span>
+			<br /><p>Tell us a bit about who you are.</p>
+	</li>
+	<li>
+			<span><b>2. Profile Picture</b></span>
+			<br /><p>Upload a picture for all to see.</p>
+	</li>		
+	<li>
+			<span><b>3. Crop Profile Picture</b></span>
+			<br /><p>Crop your profile picture to your liking.</p>
+	</li>	
+</ul>
+{% endblock %}
+
+{# ===== SET CONTENT BODY HEADER ===== #}
+{% block content_body_header %}
+	<h2>Please fill in all fields.</h2>
+{% endblock %}

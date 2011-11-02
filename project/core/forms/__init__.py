@@ -8,7 +8,7 @@ from wtforms import validators
 from wtforms.ext.appengine.fields import GeoPtPropertyField
 
 from project.core.forms.fields import SPIReferencePropertyField
-from project.spi.core.forms.fields import SPIStringListPropertyField
+from project.core.forms.fields import SPIStringListPropertyField
 
 def get_TextField(kwargs):
 	"""

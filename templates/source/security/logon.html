@@ -1,0 +1,59 @@
+{% extends "core/__base_web.html" %}
+{% from "macros/form.html" import renderForm %}
+
+{% block title %}Login{% endblock %}
+
+{% block prenorth %}
+<meta name="google-site-verification" content="GNpWBXBMCFjW7thMuE06UvfgI4mktA9EcsevLda9VPU" />
+{% endblock %}
+
+{% block body %}
+
+	<div id='splash'>
+		
+		<div id='unsupportedBrowserWarning' class='hidden'>
+
+			<p>
+				Unfortunately, the browser you are using to visit this site is not compatible with one or more required features.<br />
+				Please visit this site using either <a href='http://chrome.google.com'>Google Chrome</a>, <a href='http://www.apple.com/safari/'>Apple Safari</a>, or <a href='http://getfirefox.com'>Mozilla Firefox</a>.
+			</p>
+			
+		</div>
+		
+		<div id='content_box'>
+		
+			<div id='left'>
+				<form action="{{ link('auth/login', action='spi-phase2') }}" method="post" class='spi-form'>
+					{{ renderForm(logon_form, True, True) }}
+					<input type='submit' value='Log In' id='logon-button' />
+				</form>
+			</div>
+			
+			<div id='spacer'></div>
+			
+			<div id='right'>
+				<div id='ws_logo'>
+					<div>
+						{%- if notice -%}<div id='notice'><div><span>{{ notice }}</span></div></div>{%- endif -%}						
+						<img src='/assets/img/static/layout/ws-ucr-beta.png' alt='[wire] stone - Universal Content Repository, Beta' />
+					</div>
+				</div>
+			</div>
+			
+		
+		</div>
+		
+	</div>
+	
+	<script type='text/javascript'>
+		
+		/*
+		if (!$.browser.webkit) {
+			$('#splash').addClass('unsupportedBrowser');
+			$('#unsupportedBrowserWarning').removeClass('hidden');
+		}
+		*/
+	
+	</script>
+	
+{% endblock body %}

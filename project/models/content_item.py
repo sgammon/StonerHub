@@ -22,6 +22,9 @@ from project.models.content import ContentItemType
 from project.models.content import ContentItemFormat
 from project.models.content import ContentItemCategory
 
+from project.mixins import FormGeneratorMixin
+from project.mixins import GridGeneratorMixin
+
 from project.models.security import User as WirestoneUser
 from project.models.security import PermissionsDescriptor
 

@@ -1,0 +1,14 @@
+{% extends "security/signup/frame/panel.html" %}
+
+{% block panel_header %}<h2><span class='iconButtonBox okButtonBox'>Introduction</span><span class='iconButtonBox okButtonBox'>Basic Info</span><span class='iconButtonBox okButtonBox'>Profile</span><span class='iconButtonBox currentStep'>Settings</span></h2>{% endblock %}
+
+{% block panel_content %}
+	<p>This panel will eventually contain basic settings for a new user account.</p>
+{% endblock %}
+
+{% block panel_footer %}
+<div class='floatright'>
+	<a class='panelNext' href='javascript:$.fancybox.close();loadNavigation();'>Finish</a>
+</div>
+<div class='clearboth'></div>
+{% endblock %}

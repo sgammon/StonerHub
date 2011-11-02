@@ -26,7 +26,7 @@ class AssetType(SPIModel):
 	parent_type = db.SelfReferenceProperty(collection_name='children')
 
 
-class StoredAsset(SPIPolyModel, CreatedModifiedMixin, UserAuditMixin):
+class StoredAsset(SPIModel, CreatedModifiedMixin, UserAuditMixin):
 	
 	''' An asset to be served/stored dynamically. Not content - these are images/scripts/styles that are used in site structure. '''
 

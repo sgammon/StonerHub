@@ -1,0 +1,12 @@
+{% extends "security/signup/frame/panel.html" %}
+
+{% block panel_header %}<h2><span class='iconButtonBox okButtonBox'>Introduction</span><span class='iconButtonBox currentStep'>Basic Info</span><span>Profile</span><span>Settings</h2>{% endblock %}
+	
+{% block panel_content %}
+	{{ renderForm(form, omitSubmitButton=true) }}
+	<script>
+		loadPanel('basic');
+		registerForm('.spi-form', "{{ form.get_action() }}", "{{ form.get_method() }}");
+		$('#firstname').attr('autofocus', 'autofocus');
+	</script>
+{% endblock %}

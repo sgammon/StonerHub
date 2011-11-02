@@ -1,0 +1,137 @@
+<div id='left'>
+
+	<div class="navbar">
+
+		<ul id='unregisteredNav' class='{% if sys.security.user != none %}hidden{% endif %}'>
+			<li class='nolink'>Account Registration</li>			
+		</ul>
+
+
+		<ul id='registeredNav' class='{% if sys.security.user == none %}hidden{% endif %}'>
+		{% set nav_count = len(sys.elements.superbar.navigation) %}
+
+		{% for label, title, href, subnav in sys.elements.superbar.navigation %}
+
+			{% if sys.request.path == href %}
+				<li><a href='{{ href }}'>{{ label }}</a></li>
+			{% else %}
+				{% if subnav != False %}
+				<li><a href="{{ href }}">{{ label }}</a>
+					<ul class='subnav leftsub'>
+						{% set subnav_count = len(subnav) %}
+						{%- for label, title, href in subnav -%}
+							<li{% if loop.index == subnav_count %} class='last'{% endif %}>{% if href != False %}<a href="{{ href }}">{% endif %}{{ label }}{% if href != False %}</a>{% endif %}</li> 
+						{%- endfor -%}
+					</ul>
+
+				{% else %}
+					<li>{% if href != False %}<a href="{{ href }}" title="{{ title }}">{% endif %}{{ label }}{% if href != False %}</a>{% endif %}
+				</li>
+				{% endif %}
+			{% endif %}
+
+		{% endfor %}
+		</ul>
+	</div>
+</div>
+
+<div id='right'>
+	<div class='navbar floatright' id='utilbar'>
+		
+		<ul id='userUnregisteredNav' class="{% if sys.security.user != none %}hidden{% endif %}">
+			<li class='navButton'><a href="{{ link('auth/signup') }}">Unregistered User</a></li>
+		</ul>
+	
+		<ul id='userUtilNav' class="{% if sys.security.user == none %}hidden{% endif %}">
+				<li class='navButton'><a class='navUsername' href="{{ link('user-profile') }}">{{ sys.security.user.firstname }} {{ sys.security.user.lastname }}</a>
+					{% if sys.security.user != none %}
+						<ul class='subnav rightsub'>
+							<li>
+								<div class='miniProfileBadge'>
+									<div class='floatleft navProfilePic'>
+										<a href="{{ link('user-profile') }}" class='avatarHref'><img src="{% if sys.security.user.profilePicHref('=s56-c') != False %}{{ sys.security.user.profilePicHref('=s56-c') }}{% else %}/assets/img/static/layout/avatar.jpg{% endif %}" /></a>
+									</div>
+									<div class='floatleft navProfileLinks'>
+										<p><a href="{{ link('user-profile') }}">Profile</a> (<a href='#'>Edit</a>)</p>
+										<p><a href="{{ link('user-notifications') }}">Notifications</a></p>
+									</div>
+									<div class='clearboth'></div>
+								</div>
+							</li>
+							{%-	if sys.security.user.perm_sys_admin == true -%}
+								<li><a href="{{ link('admin-index') }}">Management Console</a></li>
+							{%- endif -%}
+							{%- if sys.security.user.perm_dev_admin == true -%}
+								<li><a href="{{ link('dev-index') }}">Development Console</a></li>
+							{%- endif -%}
+							<li><a href="{{ link('user-settings') }}">Settings</a></li>
+							<li class='last'><a href="{{ link('auth/logout') }}">Log Out</a></li>				
+						</ul>
+					{% endif %}
+				</li>
+				
+				<li class='navButton navUnreadNotifications'><a href="{{ link('user-notifications') }}"><span class='navUserNotificationsCount'>{% if social.notifications == false %}0{% else %}{{ social.notifications.count }}{% endif %}</span></a>
+					<div id="notifications-pane">
+						
+						{% if social.notifications != false %}
+						
+							{% if len(social.notifications.uploads) > 0 %}
+							<div class="group uploads-group">
+								<div class="group-title">Uploads</div>
+
+								{% for upload in social.notifications.uploads %}
+								<div class="listing">
+									<div class="listing-title"><a href="{{ link('content-create', inject=1, queued=upload.queued_blob.key()) }}">{{ upload.queued_blob.title|truncate(40) }}</a></div>
+									<div class="listing-sub-text">{{ upload.queued_blob.blob.filename|truncate(30) }}</div>
+									<div class="listing-right-text">{{  util.converters.byteconvert(upload.queued_blob.blob.size, 2) }}</div>
+								</div>
+								{% endfor %}
+								
+								<!--<div class="listing">
+									<div class="listing-title">National Marketing Report is uploaded</div>
+									<div class="listing-sub-text">nat.marketing.rep.2011.pdf</div>
+									<div class="listing-right-text">232K</div>
+								</div>-->
+								
+							</div>
+							{% endif %}
+						
+							{% if len(social.notifications.actions) > 0 %}
+							<div class="group notifications-group">
+								<div class="group-title">Notifications</div>
+								
+								{% for notification in social.notifications.actions %}
+								<div class="listing comment-listing">
+									
+									<div class="listing-title"><a href="{{ link('user-public-profile', username=notification.action.user.key().name()) }}">{{ notification.action.user.firstname }}</a> {{ notification.action_verb }}...</div>
+									<div class="listing-sub-text"><a title="{{ notification.action.content_item.title }}" href="{{ link('content-item-view', repo=notification.action.content_item.repository.key().name(), key=notification.action.content_item.key()) }}">{{ notification.action.content_item.title|truncate(20) }}</a></div>
+									<div class="listing-right-text">{{ util.converters.timesince(notification.action.createdAt) }}</div>
+								</div>
+								{% endfor %}
+								
+								<!--<div class="listing like-listing">
+									<div class="listing-title"><a href"">Paul</a> likes... </div>
+									<div class="listing-sub-text">Internal Finacial Report 2010</div>
+									<div class="listing-right-text">8/11</div>
+								</div>-->
+								
+							</div>
+							{% endif %}
+						{% endif %}
+						
+						<div class="close-link">Close</div>
+						
+					</div>
+				</li>
+
+				<li class='navButton wirestoneNavButton'>
+					<a href='#'><span>[wire] stone</span></a>
+					<ul class='subnav rightsub'>
+						<li><a href="http://intranet.wirestone.internal/Pages/Welcome.aspx">Intranet (Internal Only)</a></li>
+						<li><a href="https://mail.wirestone.com/">Webmail</a></li>
+						<li class='last'><a href="http://www.wire-stone.com">Public Site</a></li>
+					</ul>
+				</li>	
+		</ul>
+	</div>
+</div>

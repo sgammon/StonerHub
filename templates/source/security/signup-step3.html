@@ -1,0 +1,113 @@
+{% extends "layouts/main-twocolumn.html" %}
+{% from "macros/form.html" import renderForm %}
+
+{# ===== SET HEADER ===== #}
+
+{% block header %}
+	<h1>Create an Account</h1> <span>Account setup complete!</span>
+{% endblock %}
+
+
+{#  ===== SET CONTENT BLOCK ===== #}
+
+{% block content %}
+	<form action="{{ action_url }}" method='post'>
+		<div id='cropAction'>
+
+			<div class='floatleft' id='cropOriginalBox'>
+				<h2>Original:</h2>
+				<div>
+					<img src='{{ asset_url }}' alt='Original' id='cropOriginal' />
+				</div>
+			</div>
+			
+			<div class='floatleft' id='cropPreviewBox'>
+				<h2>Crop Preview:</h2>
+				<div id='cropPreview100'>
+					<img src='{{ asset_url }}' alt='Preview' id='cropPreview' />
+				</div>
+				<br />
+				<input type='submit' value='Use Picture' />
+			</div>
+			<div class='clearboth'></div>
+		</div>
+		<div class='clearboth'></div>
+		
+		<input type='hidden' name='x1' id='crop-x1' value='0' />
+		<input type='hidden' name='y1' id='crop-y1' value='0' />
+		<input type='hidden' name='x2' id='crop-x2' value='100' />
+		<input type='hidden' name='y2' id='crop-y2' value='100' />
+		<input type='hidden' name='h' id='crop-h' value="{{ img_height }}" />
+		<input type='hidden' name='w' id='crop-w' value="{{ img_width }}" />
+		<input type='hidden' name='asset' value='{{ asset_key }}' />		
+		
+	</form>
+{% endblock %}
+
+
+{# ===== SET SIDEBAR HEADER ===== #}
+{% block sidebar_header %}Creating an Account{% endblock %}
+
+
+{# ===== SET SIDEBAR CONTENT ===== #}
+{% block sidebar_content %}
+<ul id='wizard_steps'>
+	<li>
+			<span><b>1. Account Information</b></span>
+			<br /><p>Tell us a bit about who you are.</p>
+	</li>
+	<li>
+			<span><b>2. Profile Picture</b></span>
+			<br /><p>Upload a picture for all to see.</p>
+	</li>
+	<li class='current'>
+			<span><b>3. Crop Profile Picture</b></span>
+			<br /><p>Crop your profile picture to your liking.</p>
+	</li>
+</ul>
+
+{% endblock %}
+
+
+{# ===== SET CONTENT BODY HEADER ===== #}
+{% block content_body_header %}
+	<h2>Select an area of the original image to choose your profile picture.</h2>
+{% endblock %}
+
+
+{# ===== SET POSTSOUTH ===== #}
+{% block postsouth %}
+	<script type='text/javascript'>
+		function updateCoords(coords)
+		{
+			var rx = 100 / coords.w;
+			var ry = 100 / coords.h;
+
+			$('#cropPreview').css({
+				width: Math.round(rx * {{ img_width }}) + 'px',
+				height: Math.round(ry * {{ img_height }}) + 'px',
+				marginLeft: '-' + Math.round(rx * coords.x) + 'px',
+				marginTop: '-' + Math.round(ry * coords.y) + 'px'
+			});
+			
+			$('#crop-x1').val(coords.x);
+			$('#crop-y1').val(coords.y);
+			$('#crop-x2').val(coords.x2);
+			$('#crop-y2').val(coords.y2);
+			$('#crop-w').val(coords.w);
+			$('#crop-h').val(coords.h);			
+		};
+		$(document).ready(function() {
+		
+			$('#cropOriginal').Jcrop({
+				
+				onChange:updateCoords,
+				onSelect:updateCoords,
+				aspectRatio:1,
+				allowMove:true
+				
+			});
+		
+		});
+	</script>
+{% endblock %}

@@ -86,37 +86,21 @@ handlers:
 - url: /assets/img/static
   static_dir: assets/img/static
 
-# Images (Dynamic)
-- url: /assets/img/.*
-  script: assets.dynamic.DynamicAsset
-
 # Style (Static)
 - url: /assets/style/static
   static_dir: assets/style/static
   mime_type: text/css
   expiration: "365d"
 
-# Style (Dynamic)
-- url: /assets/style/.*
-  script: assets.dynamic.DynamicAsset
-
 # Scripts (Static)
 - url: /assets/js/static
   static_dir: assets/js/static
   mime_type: text/javascript
   expiration: "365d"  
-  
-# Scripts (Dynamic)
-- url: /assets/js/.*
-  script: assets.dynamic.DynamicAsset
 
 # Generic (Static)
 - url: /assets/ext/static
   static_dir: assets/ext/static
-
-# Generic (Dynamic)
-- url: /assets/ext/.*
-  script: assets.dynamic.DynamicAsset
   
 # Library/system mappings
 - url: /_ah/apptrace.*

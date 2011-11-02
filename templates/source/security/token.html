@@ -1,0 +1,35 @@
+{% extends "core/__security.html" %}
+{% from "macros/form.html" import renderForm %}
+
+{% block title %}Auth/Login{% endblock %}
+
+{% block body %}
+
+	<div id='splash'>
+		
+		<div id='content_box'>
+		
+			<div id='left'>
+				<form action="{{ link('auth/claim-token', token=token.key()) }}" method="post" class='spi-form'>
+					{{ renderForm(claim_form, True, True) }}
+					<input type='submit' value='Use my invite!' id='logon-button' />
+				</form>
+			</div>
+			
+			<div id='spacer'></div>
+			
+			<div id='right'>
+				<div id='ws_logo'>
+					<div>
+						{%- if notice -%}<div id='notice'><div><span>{{ notice }}</span></div></div>{%- endif -%}						
+						<img src='/assets/img/static/layout/ws-ucr-alpha.png' alt='[wire] stone - Universal Content Repository, Beta' />
+					</div>
+				</div>
+			</div>
+			
+		
+		</div>
+		
+	</div>
+	
+{% endblock body %}

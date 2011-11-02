@@ -1,0 +1,41 @@
+from __future__ import division
+from jinja2.runtime import LoopContext, TemplateReference, Macro, Markup, TemplateRuntimeError, missing, concat, escape, markup_join, unicode_join, to_string, identity, TemplateNotFound
+def run(environment):
+    name = 'source/security/signup/frame/step2-profile.html'
+
+    def root(context, environment=environment):
+        parent_template = None
+        if 0: yield None
+        parent_template = environment.get_template('security/signup/frame/panel.html', 'source/security/signup/frame/step2-profile.html')
+        for name, parent_block in parent_template.blocks.iteritems():
+            context.blocks.setdefault(name, []).append(parent_block)
+        included_template = environment.get_template('macros/upload.html', 'source/security/signup/frame/step2-profile.html').module
+        l_new_plupload_simple = getattr(included_template, 'new_plupload_simple', missing)
+        if l_new_plupload_simple is missing:
+            l_new_plupload_simple = environment.undefined("the template %r (imported on line 2 in 'source/security/signup/frame/step2-profile.html') does not export the requested name 'new_plupload_simple'" % included_template.__name__, name='new_plupload_simple')
+        context.vars['new_plupload_simple'] = l_new_plupload_simple
+        context.exported_vars.discard('new_plupload_simple')
+        for event in parent_template.root_render_func(context):
+            yield event
+
+    def block_panel_content(context, environment=environment):
+        l_renderForm = context.resolve('renderForm')
+        l_link = context.resolve('link')
+        l_form = context.resolve('form')
+        if 0: yield None
+        yield u'\n\n\t<div class=\'floatleft clearleft\' id=\'profileFormContainer\'>\n\t\t<form method=\'post\' action=\'%s\' method=\'%s\' id=\'profileCreateForm\' class=\'spi-form\'>\n\t\t\t%s\n\t\t\t<script>\n\t\t\t\t$(\'#phone\').attr(\'autofocus\', \'autofocus\').focus();\n\t\t\t</script>\n\t\t\t\n\t\t\t<div id=\'uploadControls\'>\n\t\t\t\t<p>\n\t\t\t\t\t<a id="pickfiles" href="#">Upload a Profile Image</a>\n\t\t\t\t\t<span id=\'progress\' class=\'hidden\'>starting...</span>\n\t\t\t\t</p>\n\t\t\t</div>\n\t\t\t\n\t\t\t\n\t\t\t<div>\n\t\t\t</div>\n\t\t</form>\n\t</div>\n\t\n\t<div class=\'floatright clearright\' id=\'avatarFormContainer\'>\n\t\t<form id=\'avatarUploadForm\' action=\'#\' class=\'spi-form spi-upload-form\'>\n\t\t\t<div id=\'avatarUploader\'>\n\t\t\t\t<div id=\'avatarContent\'>\t\t\t\t\t\n\n\n\t\t\t\t\t<div id=\'avatarImage\'>\n\t\t\t\t\t\t<h2 style=\'display:inline\'>Your profile picture:</h2>\n\t\t\t\t\t\t<img src=\'/assets/img/static/layout/profile-default.png\' alt=\'default profile picture\' />\n\t\t\t\t\t</div>\n\t\t\t\t\t\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<br class=\'clearboth\' />\n\t\t</form>\t\n\t</div>\n\n\t<script>\n\t\tloadPanel(\'basic\');\n\t\tregisterForm(\'#profileCreateForm\', "%s", "%s");\n\t\t\n\t\trpcResponse = null;\n\t\trawRpcResponse = null;\n\t\t\n\t\tfunction loadFrameProfilePicture(blob_key, filename)\n\t\t{\n\t\t\tbase_serve_url = \'/_media/blob/serve/\';\n\t\t\tserve_url = base_serve_url+blob_key+\'/\'+filename+\'=s150-c\';\n\t\t\t$(\'#avatarImage img\').attr(\'src\', serve_url).attr(\'alt\', \'Your new profile picture!\');\n\t\t\t$(\'#uploadControls\').addClass(\'hidden\');\n\t\t}\n\n\t\tfunction getUploadRPCEndpoint(uploader)\n\t\t{\n\t\t\tbase_rpc_url = "%s";\n\t\t\trpc_url = base_rpc_url+"?createNewUploadSession=false";\n\t \t\trpc_url += "&uploadCount="+uploader.total.queued.toString();\n\t\t\treturn rpc_url\n\t\t}\t\t\n\t\t\n\t\tfunction createProfileImageUploader()\n\t\t{\n\t\t\tvar uploader = new plupload.Uploader({\n\t\t\t\t\n\t\t\t\truntimes: \'gears,html5,flash,html4\',\n\t\t\t\tbrowse_button: \'pickfiles\',\n\t\t\t\tcontainer: \'avatarContent\',\n\t\t\t\turl: \'#\',\n\t\t\t\tuse_query_string: false,\n\t\t\t\tmultipart: true,\n\t\t\t\tflash_swf_url: \'/assets/ext/static/plupload/runtime.flash-0.1.swf\',\n\t\t\t\tsilverlight_xap_url: \'/assets/ext/static/plupload/runtime.silverlight-0.1.xap\',\n\t\t\t\tfilters : [\n\t\t\t\t\t{title: "Image File", extensions: "jpg,jpeg,gif,png"},\n\t\t\t\t],\n\t\t\t});\n\t\t\t\n\t\t\t\n\t\t\tuploader.init();\n\n\t\t\tuploader.bind(\'FilesAdded\', function(up, files){\n\n\t\t\t\tfile = files[0]; // only take first file\n\t\t\t\t//$(\'#filename\').html(\'[\'+file.name.substring(0, 10)+\'...]: \').removeClass(\'hidden\');\n\n\n\t\t\t\t$(\'#pickfiles\').addClass(\'hidden\');\n\t\t\t\t$(\'#progress\').removeClass(\'hidden\');\n\t\t\t\tup.refresh();\t\t\t\t\t\n\t\t        up.start();\n\t\t        e.preventDefault();\n\t\t\t});\n\t\t\t\n\t\t\t  // Retrieve blobstore upload URL for \n\t\t\t  uploader.bind(\'UploadFile\', function(up, file)\n\t\t\t  {\n\n\t\t\t\tmime_type = getMIMEtype(file.name);\n\n\t\t\t\t$.ajax({\n\t\t\t\t\turl: getUploadRPCEndpoint(up),\n\t\t\t\t\tasync: false,\n\t\t\t\t\tsuccess: function(api_response)\n\t\t\t\t\t\t\t {\n\t\t\t\t\t\t\t\t// Quick sanity check...\n\t\t\t\t\t\t\t\tif (api_response.operation == \'generate_ajax_upload_url\')\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\tif (api_response.result == \'success\')\n\t\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\t\t// Set upload URL to returned Blobstore URL\n\t\t\t\t\t\t\t\t\t\tup.settings.url = api_response.response.upload_url;\n\t\t\t\t\t\t\t\t\t\tup.settings.multipart_params = {\'blob_content_type\': mime_type};\n\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t\telse\n\t\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\t\talert(\'Generate URL operation failed for file "\'+file.name+\'". Reason: \'+api_response.reason);\n\t\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\telse\n\t\t\t\t\t\t\t\t{\n\t\t\t\t\t\t\t\t\talert(\'There was an error generating an AJAX upload URL: Invalid response operation.\');\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t);\n\t\t\t});\n\t\t\t\n\t\tuploader.bind(\'UploadProgress\', function(up, file) {\n\t\t\t\n\t        $("#progress").html(file.percent + "%%");\n\t\t\tif(file.percent.toString() == \'100\')\n\t\t\t{\n\t\t\t\t$("#progress").html(\'attaching to your profile...\');\n\t\t\t}\n\t\t\t\n\t\t});\n\t\t\t\n\t\t\t\n\t\t  uploader.bind(\'FileUploaded\', function(up, file, raw_api_response)\n\t\t  {\n\t\t\t\tapi_response = JSON.parse(raw_api_response.response);\n\t\t\t\trawRpcResponse = raw_api_response;\n\t\t\t\trpcResponse = api_response;\n\n\t\t\t\t// Quick sanity check...\n\t\t\t\tif (api_response.operation == \'upload_callback\')\n\t\t\t\t{\n\n\t\t\t\t\tif (api_response.result == \'success\')\n\t\t\t\t\t{\n\t\t\t\t\t\t$(\'#profileCreateForm div\').append(generateHiddenInputControl(\'blob_object\', api_response.response.blob.key, getMIMEtype(file.name)));\n\t\t\t\t\t}\n\t\t\t\t\telse\n\t\t\t\t\t{\n\t\t\t\t\t\talert(\'There was an error storing the file "\'+file.name+\'". Failure reason: "\'+api_response.response.failure_reason+\'".\');\n\t\t\t\t\t}\n\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t{\n\t\t\t\t\talert(\'operation is wrong... it is: \'+api_response.operation);\n\t\t\t\t}\n\t\t\t\t$("#pickfiles b").html(\'loading...\');\n\t\t\t\tloadFrameProfilePicture(api_response.response.blob.key, api_response.response.blob.filename);\n\t\t  });\n\t\t}\n\t\t\n\t\tcreateProfileImageUploader();\n\t\t\n\t</script>\n\n\n' % (
+            context.call(environment.getattr(l_form, 'get_action')), 
+            context.call(environment.getattr(l_form, 'get_method')), 
+            context.call(l_renderForm, l_form, omitFormTag=True, omitSubmitButton=True), 
+            context.call(environment.getattr(l_form, 'get_action')), 
+            context.call(environment.getattr(l_form, 'get_method')), 
+            context.call(l_link, 'ajax-upload-generate-url'), 
+        )
+
+    def block_panel_header(context, environment=environment):
+        if 0: yield None
+        yield u"<h2><span class='iconButtonBox okButtonBox'>Introduction</span><span class='iconButtonBox okButtonBox'>Basic Info</span><span class='iconButtonBox currentStep'>Profile</span><span>Settings</span></h2>"
+
+    blocks = {'panel_content': block_panel_content, 'panel_header': block_panel_header}
+    debug_info = '1=9&2=12&6=21&9=27&10=29&47=30&62=32&4=35'
+    return locals()

@@ -1,0 +1,52 @@
+{% extends "layouts/main-twocolumn.html" %}
+{% from "macros/form.html" import renderForm %}
+
+{# ===== SET HEADER ===== #}
+
+{% block header %}
+	<h1>Create an Account</h1> <span>Step 2: Profile Picture</span>
+{% endblock %}
+
+
+{#  ===== SET CONTENT BLOCK ===== #}
+
+{% block content %}
+	
+	{% if message %}
+		<p class='notice'>{{ message }}</p><br />
+	{% endif %}
+
+	<form action="{{ upload_url }}" method='post' enctype="multipart/form-data">
+		<input type='file' name='profile_picture_raw' id='fileUploadInput' />
+		<br />
+		<input type='submit' value='upload' />
+	</form>
+{% endblock %}
+
+{# ===== SET SIDEBAR HEADER ===== #}
+{% block sidebar_header %}Creating an Account{% endblock %}
+
+
+{# ===== SET SIDEBAR CONTENT ===== #}
+{% block sidebar_content %}
+<ul id='wizard_steps'>
+	<li>
+			<span><b>1. Account Information</b></span>
+			<br /><p>Tell us a bit about who you are.</p>
+	</li>
+	<li class='current'>
+			<span><b>2. Profile Picture</b></span>
+			<br /><p>Upload a picture for all to see.</p>
+	</li>
+	<li>
+			<span><b>3. Crop Profile Picture</b></span>
+			<br /><p>Crop your profile picture to your liking.</p>
+	</li>
+</ul>
+
+{% endblock %}
+
+{# ===== SET CONTENT BODY HEADER ===== #}
+{% block content_body_header %}
+	<h2>Upload a profile picture</h2>
+{% endblock %}

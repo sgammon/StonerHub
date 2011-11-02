@@ -4,7 +4,17 @@ import base64
 import config
 import logging
 import datetime
-import simplejson as json
+
+try:
+	import json
+except ImportError:
+	try:
+		import simplejson as json
+	except ImportError:
+		try:
+			from django.utils import simplejson as json
+		except ImportError:
+			logging.critical('Valid JSON adapter could not be found.')
 
 from webapp2 import abort
 from webapp2 import redirect

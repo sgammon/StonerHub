@@ -1,7 +1,7 @@
 from wtforms import fields as f
 from wtforms import widgets as w
 
-from wirestone.spi.core.forms.widgets import BoxWidget
+from project.core.forms.widgets import BoxWidget
 
 
 _unset_value = None

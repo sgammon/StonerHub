@@ -4,14 +4,15 @@
 <!-- Base Scripts -->
 <script src="{{ asset.script('base', 'apptools') }}"></script>
 <script src="{{ asset.script('modernizr', 'core') }}"></script>
-<script src="{{ asset.script('storage', 'apptools') }}"></script>
 <script src="{{ asset.script('rpc', 'apptools') }}"></script>
 
 <!-- Project Scripts -->
 <script src="{{ asset.script('base', 'apptools') }}"></script>
 
 {% if tpl.dependencies %}
+{% autoescape off %}
 	{{ tpl.dependencies.south }}
+{% endautoescape %}
 {% endif %}
 
 {% if page.analytics %}

@@ -1,13 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-    urls
-    ~~~~
-
-    URL definitions.
-
-    :copyright: 2009 by tipfy.org.
-    :license: BSD, see LICENSE.txt for more details.
-"""
 from config import config
 from webapp2 import import_string
 
@@ -19,7 +10,7 @@ def get_rules():
     :param app:
         The WSGI application instance.
     :return:
-        A list of class:`tipfy.Rule` instances.
+        A list of class:`webapp2.Route` instances.
     """
     #  Here we show an example of joining all rules from the
     # ``apps_installed`` definition set in config.py.

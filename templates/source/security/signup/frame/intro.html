@@ -1,0 +1,18 @@
+{% extends "security/signup/frame/panel.html" %}
+
+{% block panel_header %}<h2><span class='iconButtonBox currentStep'>Introduction</span><span>Basic Info</span><span>Profile</span><span>Settings</span></h2>{% endblock %}
+
+
+{% block panel_content %}
+	<p>This wizard will help you set up your Wirestone Universal Content Repository account.</p>
+	<script>
+		loadPanel('intro');
+		
+		function loadNavigation()
+		{
+			$('#unregisteredNav').addClass('hidden');
+			$('#registeredNav').removeClass('hidden');
+		}
+		
+	</script>
+{% endblock %}

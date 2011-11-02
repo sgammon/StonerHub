@@ -1,5 +1,7 @@
+from urls import get_rules
+
 from webapp2 import Router
-url_for = Router.build
+from webapp2 import Request
 
 
 class SPIDataGrid(object):
@@ -42,7 +44,8 @@ class SPIDataGrid(object):
 	def set_endpoint(self, endpoint, **kwargs):
 		if 'mode' not in kwargs:
 			kwargs['mode'] = 'datagrid'
-		self._endpoint = url_for(endpoint, **kwargs)
+		#self._endpoint = url_for(endpoint, kwargs) ## TODO: FIX THIS
+		self._endpoint = 'cool'
 		
 	def set_method(self, method, *args, **kwargs):
 		self._method = method
