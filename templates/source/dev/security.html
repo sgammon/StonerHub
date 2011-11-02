@@ -1,0 +1,47 @@
+{% extends "layouts/dev.html" %}
+
+{% block header %}<h1>Security Console</h1>{% endblock %}
+
+{% block module %}Security{% endblock %}
+
+{% block content %}
+
+<div class='box'>
+
+	<h2>Options:</h2>
+	<ul>
+		<li><a href="{{ link('dev-security-claims') }}">Manage Account Tokens</a></li>
+	</ul>
+	
+	<br />
+	<hr />
+	<br />
+
+	<h2>Current user:</h2>
+	<ul>
+		<li><b>Nickname:</b> {{ user.nickname() }}</li>
+		<li><b>Is Sys Admin:</b> {{ user.perm_sys_admin }}</li>			
+		<li><b>Is Dev Admin:</b> {{ user.perm_dev_admin }}</li>
+		<li><b>Key:</b> {{ user.key() }}</li>
+		<br />
+		<li><b>Role Memberships:</b>
+			
+			<ul>
+				<li>None.</li>
+			</ul>
+			
+		</li>
+		<br />
+		<li><b>Group Memberships:</b>
+			
+			<ul>
+				<li>None.</li>
+			</ul>
+			
+		</li>
+	</ul>
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "layouts/dev.html" %}
+
+{% block header %}<h1>Development Console</h1>{% endblock %}
+
+{% block module %}Default Data{% endblock %}
+
+{% block content %}
+
+<h2>Default Data</h2>
+
+<div class='box'>
+	
+	{% if success == False %}
+	<form action="{{ link('dev-default-data') }}" method="post">
+		
+		<p><b>Are you sure you want to run the default data insert tool?</b>
+			<br /><br />
+			This will execute the following utility functions:
+			<ul>
+				{% for func in functions %}
+				<li>{{ func }}</li>
+				{% endfor %}
+			</ul>
+		</p>
+		
+		<input type='submit' value='Execute' />
+		<small><a href="{{ link('dev-index') }}">Cancel</a></small>
+		
+	</form>
+	{% else %}
+	<p><b>Execution Results:</b>
+		<br /><br />
+		Created a total of {{ total_keys }} keys.
+		<ul>
+			{% for func, key_count in exec_results %}
+			<li>Function "{{ func }}" generated {{ key_count }} keys.</li>
+			{% endfor %}
+		</ul>
+		
+		<a href="{{ link('dev-index') }}">Back to Development Console</a>
+	{% endif %}
+</div>
+
+
+{% endblock %}

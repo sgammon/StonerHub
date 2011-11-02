@@ -1,0 +1,21 @@
+{% extends "layouts/main.html" %}
+
+{% block header %}<h1>Development Console</h1>{% endblock %}
+
+{% block content_body_header %}<h2 class="grid-title">Modules</h2>{% endblock %}
+
+{% block content %}
+
+<div class='content_box'>
+	<ul>
+		<li><b><a href="{{ link('dev-cache') }}">Cache Management</a></b></li>
+		<li><b><a href="{{ link('dev-environ') }}">Serving Environment</a></b></li>		
+		<li><b><a href="{{ link('dev-default-data') }}">Default Data</a></b></li>		
+		<li><b><a href="{{ link('dev-security') }}">Security Console</a></b></li>
+		<li><b><a href="{{ link('dev-indexer') }}">Indexer Console</a></b></li>		
+		<li><b><a href="{{ link('dev-shell') }}">Command Shell</a></b></li>		
+	</ul>
+</div>
+
+
+{% endblock %}

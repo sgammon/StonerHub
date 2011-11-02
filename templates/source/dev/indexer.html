@@ -1,0 +1,19 @@
+{% extends "layouts/dev.html" %}
+
+{% block header %}<h1>Indexer Console</h1>{% endblock %}
+
+{% block module %}Indexer{% endblock %}
+
+{% block content %}
+
+<div class='box'>
+
+	<h2>Options:</h2>
+	<ul>
+		<li><a href="{{ link('dev-indexer-enqueue-task') }}">Enqueue Test Task</a></li>
+	</ul>
+	
+</div>
+
+
+{% endblock %}

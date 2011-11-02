@@ -1,0 +1,36 @@
+{% extends "layouts/dev.html" %}
+{% from "macros/form.html" import renderForm %}
+
+{% block title %}File a Bug Report{% endblock %}
+
+{% block header %}<h1>File a Bug Report</h1>{% endblock %}
+
+{% block module %}Quality Assurance{% endblock %}
+
+{% block content_body_header %}<h2>Please be specific, and include steps to reproduce the bug (if possible).</h2>{% endblock %}
+
+{% block content %}
+
+{% if success == true %}
+<div class='notice'>Bug report submitted successfully. Thanks! :)</div>
+{% endif %}
+
+<div class='box'>
+	{{ renderForm(form, submit_value='Submit Report') }}
+</div>
+
+{% endblock %}
+
+{% block postsouth %}
+<script type='text/javascript'>
+
+$(document).ready(function (){
+	
+	$('#title-box input').focus(function () {
+		$('#title-box input').val('');
+	});
+	
+});
+
+</script>
+{% endblock %}

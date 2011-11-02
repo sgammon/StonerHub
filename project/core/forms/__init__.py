@@ -282,6 +282,9 @@ class SPIForm(Form):
 	_action = None
 	_method = 'post'
 	_script_snippets = {'north':False, 'south':False}
+	
+	def __init__(self, request, *args, **kwargs):
+		super(SPIForm, self).__init__(request.params, *args, **kwargs)
 
 	def set_action(self, action):
 		self._action = action

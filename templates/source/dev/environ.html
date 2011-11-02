@@ -1,0 +1,22 @@
+{% extends "layouts/dev.html" %}
+
+{% block header %}<h1>Serving Environment</h1>{% endblock %}
+
+{% block module %}System State{% endblock %}
+
+{% block content %}
+<div id='content_padding'>
+	<div class='box'>
+
+		<p><b>Current Namespace:</b> {{ namespace }}</p>
+
+		<h2>Variables:</h2>
+		<ul>
+			{% for key, value in state.items() %}
+				<li><b>{{ key }}:</b> {{ value }}</li>
+			{% endfor %}
+		</ul>
+
+	</div>
+</div>
+{% endblock %}

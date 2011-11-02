@@ -18,7 +18,11 @@ class WebHandler(BaseHandler):
 	
 	logging = logging
 	session = {}
+
 	ws_auth_user = None
+	ws_auth_username = 'sgammon'
+	ws_auth_session = {}
+
 	universal_dependencies = ['jQuery', 'main', 'social']
 
 	## Cached Properties

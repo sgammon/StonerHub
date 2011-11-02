@@ -1,0 +1,36 @@
+{% extends "layouts/dev.html" %}
+
+{% block header %}<h1>Memcache Console</h1>{% endblock %}
+
+{% block module %}Cache Management{% endblock %}
+
+{% block content %}
+
+<div class='box'>
+
+	<h2>Global Cache Stats:</h2>
+	<ul>
+		<li><b>Hits:</b> {{ stats.hits }}</li>
+		<li><b>Misses:</b> {{ stats.misses }}</li>		
+		<li><b>Byte Hits:</b> {{ stats.byte_hits }}</li>
+		<li><b>Total Items:</b> {{ stats.items }}</li>	
+		<li><b>Total Bytes:</b> {{ stats.bytes }}</li>			
+		<li><b>Oldest Item:</b> {{ stats.oldest_item_age }} seconds old</li>		
+	</ul>
+	
+	<br />
+	<h2>Global Flush:</h2>
+	
+	{% if flush == true %}
+		<br /><p class='notice'>Memcache flushed successfully.</p>
+	{% endif %}
+	
+	<form action="{{ link('dev-cache') }}" method='post'>
+		<input type='hidden' name='action' value='flush_all' />
+		<input type='submit' value='Flush Memcache'>
+	</form>
+
+</div>
+
+
+{% endblock %}

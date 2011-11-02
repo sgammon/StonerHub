@@ -20,7 +20,7 @@ def run(environment):
 
     def block_title(context, environment=environment):
         if 0: yield None
-        yield u'Dashboard'
+        yield u'dashboard'
 
     def block_content_body_header(context, environment=environment):
         if 0: yield None

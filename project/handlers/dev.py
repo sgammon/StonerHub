@@ -46,7 +46,7 @@ class Cache(SPIDevHandler):
 	
 	def get(self):
 		
-		if self.request.args.get('flush', False) == 'success':
+		if self.request.get('flush', False) == 'success':
 			flush_success = True
 		else:
 			flush_success = False
@@ -82,7 +82,7 @@ class ManageAccountClaims(SPIDevHandler):
 
 		from wirestone.spi.models.security import AccountClaim
 
-		success = self.request.args.get('success', False)
+		success = self.request.get('success', False)
 
 		if key is not None:
 			c = AccountClaim.get(self.api.db.Key(key))
@@ -195,7 +195,7 @@ class FileBug(SPIDevHandler):
 		f.set_method('post')
 		f.set_action(self.url_for('file-bug'))
 		
-		if self.request.args.get('fileSuccess', False) != False:
+		if self.request.get('fileSuccess', False) != False:
 			success = True
 		else:
 			success = False
