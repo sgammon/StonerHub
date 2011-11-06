@@ -1,0 +1,37 @@
+{% extends "layouts/main-twocolumn.html" %}
+
+{% block title %}Repositories{% endblock title %}
+
+{% block header %}<h1>Repositories</h1> <a href="{{ link('repository-create') }}">Create Repository</a>{% endblock %}
+
+{% block content %}
+<div id='content_body_padding'>
+	<h2 class="grid-title">Showing: All repositories</h2>
+	{% if repositories %}
+	<dl>
+		{% for repo in repositories %}
+		<dt class="repo-links">
+			<b>{{ repo.name }}:</b> 
+			<a href="{{ link('repository-content', repo=repo.key().name()) }}">Browse</a> 
+			<a href="{{ link('content-item-create', repo=repo.key().name()) }}">Add Content</a> 
+			<a href="{{ link('repository-view', repo=repo.key().name()) }}">View Repo</a> 
+			<a href="{{ link('repository-edit', repo=repo.key().name()) }}">Edit</a> 
+			<a href="{{ link('repository-delete', repo=repo.key().name()) }}">Delete</a>
+		</dt>
+		<dd>
+			{{ repo.description }}
+		</dd>
+		{% endfor %}
+	</dl>
+	{% else %}
+	<b>No repositories :(</b>
+	{% endif %}
+</div>
+{% endblock content %}
+
+
+{% block sidebar_header %}<span class='iconButtonBox infoButtonBox'>What is a Repository?</span>{% endblock %}
+
+{% block sidebar_content %}
+Every piece of content is created in a <b>Repository</b>, which groups relevant information together.<br /><br />For example, an organization might have a separate Repository for each department (e.g. "Sales" and "Creative").
+{% endblock %}

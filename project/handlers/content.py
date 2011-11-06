@@ -7,7 +7,7 @@ from wtforms import fields
 
 from project.core.forms import get_model_form
 from project.core.forms.tagging import TagListField
-from project.core.forms.tagging import CategoriyListField
+from project.core.forms.tagging import CategoryListField
 
 from project.models.assets import StoredAsset
 
@@ -34,17 +34,17 @@ class Main(WebHandler):
 	''' Shows a summary of content in the system. '''
 	
 	def get(self):
-		self.response('<b>Global Content</b>')
+		self.response.write('<b>Global Content</b>')
 		
 
 class Create(WebHandler):
 	
 	''' Universal page to upload/create content items. '''
 	
-	def get(self, progress=0, repo=None, sessionkey=None, blobkey=None, action=None, **kwargs):
+	def get(self, progress=1, repo=None, sessionkey=None, blobkey=None, action=None, **kwargs):
 		
 		
-		if 'inject' in self.request.args:
+		if 'inject' in self.request.params:
 			queued_blobs = self.request.get('queued')
 			blobkeys = []
 			

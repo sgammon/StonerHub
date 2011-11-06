@@ -1,0 +1,262 @@
+{% extends "layouts/main-twocolumn.html" %}
+{% from "macros/upload.html" import new_plupload %}
+{% from "macros/editor.html" import new_markitup %}
+
+{%- block title -%}
+
+	{%- if progress == '1' -%}
+		Upload Files (Step 1)
+	{%- endif -%}
+	
+	{%- if progress == '2' -%}
+		Basic Details (Step 2)
+	{%- endif -%}
+	
+	{%- if progress == '3' -%}
+		Tagging & Related Content (Step 3)
+	{%- endif -%}
+	
+	 - Add Content Wizard
+	
+{%- endblock -%}
+
+{# ===== SET POSTNORTH ===== #}
+
+{% block postnorth %}
+	{%- if progress == '1' -%}
+		{{ new_plupload('#spi_uploader', '#create_content_step_1', '#file_upload_form') }}
+	{%- endif -%}
+	
+	<style>
+		#category-box
+		{
+			margin-left:10px;
+			width:275px;
+		}
+		#category-box #category
+		{
+			width:275px;
+		}
+		.facelist-selections
+		{
+			width:275px !important;
+		}
+	</style>
+	
+{% endblock %}
+
+{# ===== SET HEADER ===== #}
+
+{% block header %}
+
+	{%- if progress == '1' -%}
+		<h1>Add Content Wizard</h1> <span>Step 1: File Upload</span>
+	{%- endif -%}
+		
+	{%- if progress == '2' -%}
+		<h1>Add Content Wizard</h1> <span>Step 2: Basic File Details</span>
+	{%- endif -%}
+	
+	{%- if progress == '3' -%}
+		<h1>Add Content Wizard</h1> <span>Step 3: Tagging &amp; Search</span>
+	{%- endif -%}
+		
+	{%- if progress == 'success' -%}
+		<h1>Add Content Wizard</h1>
+		<span>Success<span>
+	{%- endif -%}
+		
+{% endblock %}
+
+
+{#  ===== SET CONTENT BLOCK ===== #}
+
+{% block content %}
+<div id='content_body_padding'>
+	{% if progress == '1' %}
+
+		<form id='file_upload_form' action='#'>
+			<div id='spi_uploader'>
+				<p>Your browser doesn't support Flash, Silverlight, Gears, BrowserPlus or HTML5. Get a new browser.</p><!-- @TODO: Replace this is single-file-upload interface -->
+			</div>
+			<br class='clearboth' />
+		</form>
+
+		<form method='post' action='{{ next_action_url }}' method='post' id='create_content_step_1' class='spi-form spi-upload-form'>
+	
+			<div>
+			</div>
+	
+			<input type='hidden' name='action' value='split_blobs' />
+	
+			<a href="#" id='nextStepButton' class='fancybutton mainbutton fancydisabled' role='button' disabled='true' aria-disabled='true'>
+				<span class='iconButtonBox checkboxButtonBox'></span>
+				<p>Next Step</p>
+			</a>
+		</form>
+
+	{% endif %}
+
+
+	{% if progress == '2' %}
+		<div class='gridTitle'>
+			<span>File {{ current_upload_index }} of {{ total_upload_count }} ({{ blob_obj.filename|truncate(50,true) }}) - <a href="{{ link('media-serve-blob', blobkey=blob_obj.key()) }}" target="_blank">Download</a> | <a href="http://docs.google.com/viewer?embedded=true&url={{ abs_link('media-serve-blob-filename', blobkey=blob_obj.key(), filename=blob_obj.filename) }}" target="_blank">Preview</a></span>
+		</div>
+		<div id='stepOneUploadForm'>
+			<form id='stepOneForm' action="{{ form.get_action() }}" method="{{ form.get_method() }}" class="spi-form">
+				{{ renderForm(form, omitSubmitButton=true, omitFormTag=true) }}
+				<div class='clearboth'></div>
+				<div class='floatright' id='controls'>
+
+					<a href="{{ cancel_link }}" id='discardButton' class='fancybutton mainbutton' role='button'>
+						<span class='iconButtonBox discardButtonBox'></span>
+						<p>Discard</p>
+					</a>
+
+					<a href="#" id='nextStepButton' class='fancybutton mainbutton' role='button' onclick="javascript:$('#stepOneForm').submit();">
+						<span class='iconButtonBox checkboxButtonBox'></span>
+						<p>Create</p>
+					</a>
+
+				</div>
+				<div class='clearboth'></div>
+			</form>
+		</div>
+		<div class='clearboth'></div>
+	{% endif %}
+
+	{% if progress == '3' %}
+		<div class='gridTitle'>
+			<span>File {{ current_upload_index }} of {{ total_upload_count }} ({{ blob_obj.filename|truncate(50, true) }}) - <a href="{{ link('media-serve-blob', blobkey=blob_obj.key()) }}" target="_blank">Preview</a></span>
+		</div>
+		<form action="{{ form.get_action() }}" method="{{ form.get_method() }}" id='tagsForm' class='spi-form'>
+			{{ renderForm(form, omitSubmitButton=true, omitFormTag=true) }}
+			
+			
+			<br /><br />
+			
+			<div id='tagsFooter'>
+				<div class='floatleft textleft base100' style='margin-left: 10px; margin-top:-5px;'><b>Tip:</b> Include the <b>client name</b> as a tag.<br />Tags are comma-separated and support spaces (i.e. "tag, tag two").</p></div>
+				<div class='floatright base100'>
+					<a href="#" id='tagsSubmitButton' class='fancybutton mainbutton' role='button' onclick="javascript:$('#tagsForm').submit();">
+						<span class='iconButtonBox checkboxButtonBox'></span>
+						<p>Save</p>
+					</a>
+				</div>
+			</div>
+		</form>
+	{% endif %}
+
+	{% if progress == 'success' %}
+		<div class='gridTitle'>
+			<h2>Success!</h2> <span>Uploaded {{ total_upload_count }} file{%- if total_upload_count != 1 -%}s{%- endif -%}.</span>
+		</div>
+		<br />
+		<p>You created the following content items:
+	
+			<ul>
+				{% for item in new_content_items %}
+				<li><b><a href="{{ link('content-item-view', repo=item.repository.key().name(), key=item.key()) }}">{{ item.title }}</a></b> in repository {{ item.repository.name }}:<br />
+					 {{ item.description|truncate(200) }}</li>
+				{% endfor %}
+			</ul>
+			<br /><a href="{{ link('content-create') }}">Upload More Content</a>
+		</p>
+	{% endif %}
+</div>
+{% endblock %}
+
+{# ===== SET SIDEBAR HEADER ===== #}
+{% block sidebar_header %}
+	Uploading Files
+{% endblock %}
+
+
+
+{# ===== SET SIDEBAR CONTENT ===== #}
+{% block sidebar_content %}
+<ul id='wizard_steps'>
+	<li{% if progress == '1' %} class='current'{% endif %}>
+		{%- if progress == '1' -%}
+			<span><b>Step 1: File Upload</b></span>
+			<br /><p>Start by uploading a list of files you'd like to add. <a href='#'>Tips about Uploading</a></p>
+		{%- else -%}
+			<span>Step 1: File Upload</span>
+		{%- endif -%}
+	</li>
+	
+	<li{% if progress == '2' %} class='current'{% endif %}>
+		{%- if progress == '2' -%}
+			<span><b>Step 2: Basic Information</b></span>
+			<br /><p>Add basic information to each content item - name, description, category and type.<br /><a href='#'>Tips about Basic Info</a></p>
+		{%- else -%}
+			<span>Step 2: Basic Information</span>
+		{%- endif -%}
+	</li>
+	
+	<li{% if progress == '3' %} class='current'{% endif %}>
+		{%- if progress == '3' -%}
+			<span><b>Step 3: Tagging &amp; Search</b></span>
+			<br /><p>Add meta information like tags, keywords, and clients to make each item findable in search. <a href='#'>Tips about Searchability</a></p>
+		{%- else -%}
+			<span>Step 3: Tagging &amp; Search</span>
+		{%- endif -%}
+	</li>
+	
+	<li{% if progress == 'success' %} class='current'{% endif %}>
+		{%- if progress == 'success' -%}
+			<span><b>Finish</b></span>
+			<br /><p>Your newly uploaded content may take a few minutes to appear in search.</p>
+		{%- else -%}
+			<span>Step 4: Finish</span>
+		{%- endif -%}
+	</li>	
+</ul>
+{% endblock %}
+
+{% block postsouth %}
+	{%- if progress == '2' -%}
+		{# {{ new_markitup('#description') }} #}
+	{%- endif -%}
+	
+	<script type='text/javascript'>
+		{% if categories_list != '' and categories_list != false %}
+			ci_categories = {{ categories_list }};
+		{% endif %}
+		$('#repository-box #repository').change(function setAutocomplete() {
+			/*$('#category-box #category').faceList(ci_categories[$('#repository-box #repository').val()], {selectedItem: "value", searchObj: "value", selectionLimit:1, resultClick: function makeSelection(data){
+				
+				$('.facelist-selections').hide();
+				$('#category-box #category').hide().val(data['attributes']['name']);
+				$('#category-box').append('<div class="category_selection">'+data['attributes']['value']+'</div>');
+				$('#.facelist-selections .facelist-original .as-input').val(data['attributes']['name']);
+			}});*/
+			
+		  if (typeof(ci_categories[$('#repository-box #repository').val()]) == 'undefined')
+		  {
+				options = '<option value="__NULL__" selected="selected">(No Category)</option>';
+				$("select#category").html(options);
+				$('select#category').attr('disabled', 'disabled');
+		  }
+		  else
+		  {
+				$('select#category').attr('disabled', '');
+			  var options = '';
+				options += '<option value="__NULL__">(No Category)</option>';		
+			  for (var i=0; i<ci_categories[$('#repository-box #repository').val()].length; i++)
+			  {
+				if(i==0)
+				{
+					options += '<option selected="selected" value="' + ci_categories[$('#repository-box #repository').val()][i].name + '">' + ci_categories[$('#repository-box #repository').val()][i].value + '</option>';
+				}
+		        else
+				{
+					options += '<option value="' + ci_categories[$('#repository-box #repository').val()][i].name + '">' + ci_categories[$('#repository-box #repository').val()][i].value + '</option>';
+				}
+		      }
+				$("select#category").html(options);
+		  }
+	
+		});
+	</script>
+{% endblock %}

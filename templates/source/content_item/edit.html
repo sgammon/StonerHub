@@ -1,0 +1,114 @@
+{% extends "layouts/main-twocolumn-social.html" %}
+
+{# ===== SET TITLE ===== #}
+{% block title %}{{ content_item.title }} - Edit{% endblock %}
+
+
+{# ===== SET PRENORTH ===== #}
+{% block prenorth %}
+<script type="text/javascript">
+
+	var PageObj = {
+	
+		'ci_key':"{{ content_item.key() }}",
+		'like_action_url': "{{ link('ajax-social', action='like', document=content_item.key()) }}",
+		'unlike_action_url': "{{ link('ajax-social', action='unlike', document=content_item.key()) }}",
+		'comment_action_url': "{{ link('ajax-social', action='comment', document=content_item.key()) }}",
+		'uncomment_action_url': "{{ link('ajax-social', action='uncomment', document=content_item.key()) }}",	
+		'wusr_key': "{{ sys.security.user.key() }}",
+		'user': {'firstname': '{{ sys.security.user.firstname }}',
+				 'lastname': '{{ sys.security.user.lastname }}',
+				 'profile_href': "{{ link('user-profile') }}",
+				 'profile_pic_href': "{{ sys.security.user.profilePicHref() }}"},
+		'content_item': {'comment_count': {{ content_item.comment_count }}}
+		
+	};
+
+</script>
+{% endblock %}
+
+
+
+{# ===== SET HEADER ===== #}
+
+{% block header %}
+		<h1>{{ content_item.title }}</h1> <span>{{ content_item.type.name }} - {{ content_item.format.name }}</span>
+		<div id='likeBox' class='inline'>
+
+			{% if content_item.currentUserLike() == true %}
+
+				{% if content_item.like_count-1 == 0 %}
+					<span id='youLike'><a href="{{ link('user-profile') }}">You</a> like this.</span>
+				{% endif %}
+
+				{% if content_item.like_count-1 == 1 %}
+					<span id='youLike'><a href="{{ link('user-profile') }}">You</a> and </span><a href='#'>1 person</a> like this.
+				{% endif %}
+
+				{% if content_item.like_count-1 > 1 %}
+					<span id='youLike'><a href="{{ link('user-profile') }}">You</a> and </span> <a href='#'>{{ content_item.like_count-1 }}people</a> like this.
+				{% endif %}
+
+				<span class='iconButtonBox unlikeButtonBox'><a href='#' id='likeUnlikeAction' class='unlikeButton'>Unlike</a></span>
+			{% else %}
+				{% if content_item.like_count == 1 %}
+					<span id='youLike' class='hidden'><a href="{{ link('user-profile') }}">You</a> and </span><a href='#'>{{ content_item.like_count }} person</a> likes this.
+				{% endif %}
+
+				{% if content_item.like_count > 1 %}
+					<span id='youLike' class='hidden'><a href="{{ link('user-profile') }}">You</a> and </span><a href='#'>{{ content_item.like_count }} people</a> likes this.
+				{% else %}
+					<span id='youLike' class='hidden'><a href="{{ link('user-profile') }}">You</a> like this.</span>
+				{% endif %}
+					<span class='iconButtonBox likeButtonBox'><a href='#' onclick='likeUnlike();' id='likeUnlikeAction' class='likeButton'>Like</a></span>
+			{% endif %}
+
+		</div> | 
+		<div id='sharebox' class='inline'><span class='iconButtonBox shareButtonBox'><a href='#'>Share</a></span></div>
+		<div class='clearboth'></div>
+{% endblock %}
+
+
+{#  ===== SET CONTENT BLOCK ===== #}
+
+{% block content %}
+<div id='content_body_padding'>
+		{{ renderForm(form, submit_value='Save') }}	<span class='iconButtonBox cancelButtonBox'><a href="{{ link('content-item-view', key=content_item.key(), repo=content_item.repository.key()) }}" id='contentItemEdit'>Cancel Edits</a></span>								
+</div>
+{% endblock %}
+
+
+{# ===== SET SIDEBAR HEADER ===== #}
+
+{% block sidebar_header %}<span class='iconButtonBox infoButtonBox'>File Information</span>{% endblock %}
+
+
+{# ===== SET SIDEBAR CONTENT ===== #}
+
+{% block sidebar_content %}
+<div>
+	<b>Meta:</b>
+	<ul id='fileInfo' class='nakedList'>
+		
+		{% set asset = content_item.getAsset() %}
+		
+		<li><b>File Name:</b> {{ asset.filename }}</li>
+		<li><b>File Type:</b> {{ content_item.type.name }} - {{ content_item.format.name }}</li>
+		<li><b>File Size:</b> {{ util.converters.byteconvert(asset.size, 2) }} bytes</li>
+		<li><b>Created:</b> {{ util.converters.timesince(content_item.createdAt) }}</li>
+		<li><b>Created By:</b> <a href="#">{{ content_item.createdBy.name() }}</a></li>
+		<li><b>Last Modified:</b> {{ util.converters.timesince(content_item.modifiedAt) }}</li>
+		<li><b>Last Modified By:</b> <a href="#"> {{ content_item.modifiedBy.name() }}</a></li>		
+	</ul>
+	<b>Social:</b>
+	<ul id='socialInfo' class='nakedList'>
+		<li><b>Likes:</b> {{ content_item.like_count }}</li>
+		<li><b>Comments:</b> <span class='commentCount'>{{ content_item.comment_count }}</span></li>
+		<li><b>Views:</b> {{ content_item.view_count }}</li>
+	</ul>
+	<b>Tags:</b>
+	<ul id='taggingInfo' class='nakedList'>
+		<li><b>Tags</b></li>
+	</ul>
+</div>
+{% endblock %}

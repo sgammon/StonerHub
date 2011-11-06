@@ -1,0 +1,27 @@
+{% extends "layouts/main.html" %}
+
+{% block title %}{{ repository.name }} - Categories{% endblock %}
+
+{% block header %}<h1>{{ repository.name }}</h1><span><a href="{{ link('repository-category-create', repo=repository.key().name()) }}">Create a Category</a></span>{% endblock %}
+
+{% block content %}
+
+<div id='content_body_padding'>
+	<h2 class="grid-title">Showing: all categories for repository "{{ repository.name }}".</h2>
+	<div id='categories_list'>
+
+		{% if len(categories) > 0 %}
+			<ul>
+			{% for category, values in categories.items() %}
+				<li><span class='iconButtonBox'><b><a href="{{ link('repository-content', repo=repository.key().name()) }}/{{ values.filter_path }}">{{ category }}</a>&nbsp; </b></span> {{ values.count }} document{% if values.count > 1 or values.count == 0 %}s{% endif %}.</li>
+			{% endfor %}
+			</ul>
+		{% else %}
+			<b>There are currently no categories for this repository.</b>
+		{% endif %}
+	
+	</div>
+</div>
+
+
+{% endblock content %}

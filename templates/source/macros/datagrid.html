@@ -16,7 +16,7 @@ function makeGridRPC(sSource, aoData, fnCallback)
 {
 	/* Set RPC method & params */
 	sMethod = "{% autoescape off %}{{ method }}{% endautoescape %}";
-	oParams = {%- if len(method_args) > 0 -%}{{ util.converters.json.encode(util.types.dict(method_args)) }}{%- else -%}{}{%- endif -%};
+	oParams = {%- if len(method_args) > 0 -%}{% autoescape off %}{{ util.converters.json.dumps(dict(method_args)) }}{% endautoescape %}{%- else -%}{}{%- endif -%};
 
 	/* Add to RPC tracker and fire */
 	rpcTracker.Requests[aoData['sEcho']] = {source: sSource, grid: aoData, callback: fnCallback, method: sMethod, params:oParams};

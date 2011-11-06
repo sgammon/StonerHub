@@ -1,0 +1,30 @@
+{% extends "layouts/main.html" %}
+
+{# ===== SET TITLE ===== #}
+{% block title %}{{ content_item.title }} - Delete{% endblock %}
+
+
+{# ===== SET HEADER ===== #}
+
+{% block header %}
+		<h1>{{ content_item.title }}</h1> <span>{{ content_item.type.name }} - {{ content_item.format.name }}</span>
+{% endblock %}
+
+
+{#  ===== SET CONTENT BLOCK ===== #}
+
+{% block content %}
+<div id='content_body_padding'>
+	
+	<h2><a href="{{ link('content-item-view', repo=repo.key().name(), key=content_item.key()) }}">&lt; Cancel and return to viewer</a></h2>
+	<br />
+	<br />
+	
+	<form action="{{ link('content-item-delete', repo=repo.key().name(), key=content_item.key()) }}" method='post'>
+	<h2>Are you sure you wish to delete the content item "{{ content_item.title }}"?</h2><br /><br />
+		<input type='hidden' name='delete_confirm' value='true' />
+		<br />
+		<div><a href="{{ link('content-item-view', repo=repo.key().name(), key=content_item.key()) }}">Cancel</a> | <input type='submit' value='Delete' /></div>
+	</form>
+</div>
+{% endblock %}

@@ -7,7 +7,7 @@ from webapp2 import Request
 class SPIDataGrid(object):
 
 	_endpoint = None
-	_service = None
+	_service = 'ContentItem'
 	_method = None
 	_method_args = []
 	_method_kwargs = {}

@@ -1,0 +1,15 @@
+{% extends "layouts/main.html" %}
+
+{% block title %}Create Repository{% endblock %}
+
+{% block header %}<h1>Create Repository</h1>{% endblock %}
+
+{% block content_body_header %}
+	<h2 class="grid-title">A repository is a database of related content. "Engineering" or "Marketing", for example.</h2>
+{% endblock %}
+
+{% block content %}
+
+{{ renderForm(create_repo_form) }}
+
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "layouts/main.html" %}
+{% from "macros/datagrid.html" import new_datagrid %}
+
+{% block title %}{{ repository.name }} - Browse Repository Content{% endblock %}
+
+{% block header %}
+	<h1>{% if grid_header %}{{ grid_header }}{% else %}{{ repository.name }}{% endif %}</h1>
+
+		{% if grid_subline %}
+			{{ grid_subline }}
+		{% else %}
+			Repository:
+		{% endif %} 
+		<a href="{{ link('repository-categories', repo=repository.key().name()) }}">Categories</a> 
+		<a href="{{ link('repository-recent-content', repo=repository.key().name()) }}">Recent Content</a> 
+		<a href="{{ link('repository-popular-content', repo=repository.key().name()) }}">Popular Content</a>
+
+{% endblock %}
+
+{% block content %}
+
+<div id='gridTitle'><h2>{% if grid_caption %}{{ grid_caption }}{% else %}Showing all content from the repository: {{ repository.name }} ("{{ repository.description|truncate(30) }}"){% endif %}</h2></div>
+<div id='content_list'>
+	Waiting for results...
+</div>
+
+
+{% endblock content %}
+
+{% block postsouth %}
+	{{ new_datagrid('#content_list', grid) }}
+{% endblock %}

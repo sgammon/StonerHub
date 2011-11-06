@@ -1,0 +1,35 @@
+{% extends "layouts/main.html" %}
+
+{% block title %}"{{ repository.name }}" Repository{% endblock %}
+
+{% block header %}
+	<h1>{{ repository.name }}</h1>
+	
+		{% if repository %} 
+		<span>
+			<a href="{{ link('repository-edit', repo=repository.key().name()) }}">Edit</a> 
+			<a href="{{ link('repository-content', repo=repository.key().name()) }}">Content</a>  
+			<a href="{{ link('repository-edit-permissions', repo=repository.key().name()) }}">Permissions</a> 
+			<a href="{{ link('repository-delete', repo=repository.key().name()) }}">Delete</a>
+		</span>
+		{% endif %}
+	
+{% endblock %}
+
+{% block content %}
+<div id='content_body_padding'>
+	{% if repository %}
+	<h2 class="grid-title">Details about the "{{ repository.name }}" repository</h2>
+
+	<ul>
+		<li><b>Description:</b> {{ repository.description }}</li>
+		<li><b>Number of Content Items:</b> {{ ci_count }}</li>
+		<li><b>Number of Categories:</b> {{ category_count }}</li>
+	</ul>
+	{% else %}
+
+	<p>No repository key given.</p>
+
+	{% endif %}
+</div>
+{% endblock content %}

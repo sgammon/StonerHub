@@ -77,6 +77,8 @@ def main(environ=None, start_response=None):
 		logging.info('Running in WSGI mode... :)')
 		action = run_wsgi
 	else:
+		logging.warning('Got an empty environ or start_response... :(')
+		logging.info('Running in CGI mode...')
 		action = run
 	
 	if config.debug:

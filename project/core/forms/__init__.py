@@ -1,4 +1,5 @@
 import logging
+import webapp2
 
 from wtforms import Form
 from wtforms import fields as f
@@ -283,8 +284,14 @@ class SPIForm(Form):
 	_method = 'post'
 	_script_snippets = {'north':False, 'south':False}
 	
-	def __init__(self, request, *args, **kwargs):
-		super(SPIForm, self).__init__(request.params, *args, **kwargs)
+	def __init__(self, request=None, *args, **kwargs):
+		if request is not None:
+			if isinstance(request, webapp2.Request):
+				super(SPIForm, self).__init__(request.params, *args, **kwargs)
+			else:
+				super(SPIForm, self).__init__(request, *args, **kwargs)
+		else:
+			super(SPIForm, self).__init__(None, *args, **kwargs)
 
 	def set_action(self, action):
 		self._action = action

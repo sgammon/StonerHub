@@ -107,7 +107,7 @@ def _ws_enforce_security(handler, level, config):
 			except (AssertionError, db.Error):
 				# If there's nothing in the datastore, there's no session... redirect to login
 				if do_log: logging.info('--Could not find DB session. Redirecting to logon.')
-				return handler.redirect_to('auth/login')
+				return (False, handler.url_for('auth/login'))
 		else:
 			cache_record = False
 
@@ -117,7 +117,7 @@ def _ws_enforce_security(handler, level, config):
 		# Make sure user completed the authentication flow
 		if session_record.auth_phase != 2:
 			if do_log: logging.info('--Auth phase is less than 2 (received "'+str(session_record.auth_phase)+'"). Redirecting to logon.')
-			return handler.redirect_to('auth/login')
+			return (False, handler.url_for('auth/login'))
 			
 		if do_log: logging.info('--Auth phase valid.')
 		

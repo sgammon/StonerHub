@@ -1,0 +1,25 @@
+{% extends "layouts/main-twocolumn.html" %}
+{% from "macros/datagrid.html" import new_datagrid %}
+
+{% block title %}All content across all repositories{% endblock %}
+
+{% block header %}<h1>All content</h1> <span><a href="{{ link('repository-list') }}">List of Repositories</a> <a href="{{ link('tags-global') }}">List of Tags</a></span>{% endblock %}
+
+{% block content %}
+
+<div>
+	<div id='gridTitle'><h2>Showing: All content across all repositories</h2></div>
+	<div id='results'>
+		Waiting for results...
+	</div>	
+</div>
+
+{% endblock %}
+
+{% block postsouth %}
+	{{ new_datagrid('#results', grid) }}
+{% endblock %}
+
+{% block sidebar_header %}What am I looking at?{% endblock %}
+
+{% block sidebar_content %}Every piece of content is placed in a <b>Repository</b>.<br /><br />This view lists all content in the system, regardless of where it is stored.{% endblock %}

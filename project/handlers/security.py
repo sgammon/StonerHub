@@ -251,17 +251,17 @@ class Login(WebHandler):
 		
 		if result == True:
 			
-			if do_log: logging.info('finishAuthenticationFlow(): Processing successful logon.')
+			if do_log: logging.info('finishAuthenticationFlow(): Processing successful logon for user "%s".' % username)
 		
 			try:
 				try:
 				
 					if do_log: logging.info('Attempting to pull user.')
-					u = memcache.get('SPISecurity//User::'+username)
+					u = self.api.memcache.get('SPISecurity//User::'+username)
 					if u is None:
 						u = WirestoneUser.get_by_key_name(username)
 						if u is not None:
-							memcache.set('SPISecurity//User::'+username, u)
+							self.api.memcache.set('SPISecurity//User::'+username, u)
 					assert u
 					
 					if do_log: logging.info('User object: '+str(u))
@@ -315,16 +315,7 @@ class Login(WebHandler):
 				if do_log:
 					logging.info('Wrote session key "'+str(self.session['auth_ticket'])+'" to auth cookie.')
 			
-				# Get continue URL and redirect
-				if not self.session.get('continue'):
-					
-					if do_log: logging.debug('Redirecting to manufactured continue URL...')
-					return self.redirect(self.makeContinueURL())
-					
-				else:
-
-					if do_log: logging.debug('Redirecting to explicit continue URL...')
-					return self.redirect(self.session['auth_continue_url'])
+				return self.redirect('/') ## @TODO: Make this redirect to wherever you were trying to go
 					
 			
 			## Session is expired at OP, and we must re-initiate login		
@@ -398,7 +389,7 @@ class Login(WebHandler):
 				if do_log: logging.info('Form validation passed.')
 				
 				try:
-					u = WirestoneUser.get_by_key_name(f.username.data)
+					u = self.ws_auth_user
 					m = hashlib.sha256()
 					
 					if do_log: logging.info('User object "'+str(u)+'" results from key_name=username "'+str(f.username.data)+'".')
@@ -500,8 +491,6 @@ class Login(WebHandler):
 	def makeContinueURL(self):
 		if 'continue' in self.session:
 			continue_url = self.session['continue']
-		elif self.request.get('continueTo', False):
-			continue_url = self.request.get('continueTo')
 		elif self.request.get('next', False):
 			continue_url = self.request.get('next')
 		else:
@@ -618,35 +607,20 @@ class Logout(WebHandler):
 		return config.config.get('wirestone.spi.auth.openid')
 
 	def get(self):
-		session_cookie = self.get_secure_cookie('wirestone_spi_session')
-
-		key = session_cookie.get('key', None)
-		if key is not None and key != '':
-			try:
-				WirestoneSession.get(db.Key(key)).evict_from_cache()
-			except:
-				pass
-				
-		#db.delete(db.Key(key) if isinstance(key, basestring) else key)
-
-		session_cookie['key'] = ''
 		if 'key' in self.session:
 			del self.session['key']
 			
-		auth_ticket = session_cookie.get('auth_ticket')
+		auth_ticket = self.session['auth_ticket']
 		if auth_ticket is not None and auth_ticket != '':
-			WirestoneSession.get(db.Key(auth_ticket)).evict_from_cache()
-			try:
-				db.delete(db.Key(auth_ticket) if isinstance(auth_ticket, basestring) else auth_ticket)
-			except:
-				pass
+			session = WirestoneSession.get_by_key_name(auth_ticket)
+			session.evict_from_cache()
+			db.delete(session)
 			
-		session_cookie['auth_ticket'] = ''			
 		if 'auth_ticket' in self.session:
 			del self.session['auth_ticket']
-			
-		self.delete_cookie('wirestone_spi_session')
-		
+					
+		self.session = {}
+					
 		if self.SecurityConfig['enable_federated_logon']:
 			redirect = self.OpenIDConfig['logout_url']
 			

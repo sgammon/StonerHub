@@ -1,0 +1,25 @@
+{% extends "layouts/main-twocolumn.html" %}
+{% from "macros/datagrid.html" import new_datagrid %}
+
+{% block title %}My content{% endblock %}
+
+{% block header %}<h1>My content</h1> <a href="{{ link('repository-list') }}">List of Repositories</a> | <a href="{{ link('tags-global') }}">List of Tags</a>{% endblock %}
+
+{% block content %}
+
+<div>
+	<div id='gridTitle'><h2>Showing: All content you've created, across all repositories</h2></div>
+	<div id='results'>
+		Waiting for results...
+	</div>	
+</div>
+
+{% endblock %}
+
+{% block postsouth %}
+	{{ new_datagrid('#results', grid) }}
+{% endblock %}
+
+{% block sidebar_header %}What am I looking at?{% endblock %}
+
+{% block sidebar_content %}This view lists content <b>you</b> have created.{% endblock %}

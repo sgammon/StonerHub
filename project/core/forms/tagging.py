@@ -1,4 +1,5 @@
 import logging
+
 from wtforms import fields
 from project.models.search import *
 from project.models.content import ContentItemCategory

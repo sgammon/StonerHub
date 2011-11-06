@@ -1,0 +1,170 @@
+{% extends "layouts/main-twocolumn-social.html" %}
+
+{# ===== SET TITLE ===== #}
+{% block title %}{{ content_item.title }} - {{ content_item.repository.name }} Repository{% endblock %}
+
+
+{# ===== SET PRENORTH ===== #}
+{% block prenorth %}
+<script type="text/javascript">
+
+	var PageObj = {
+	
+		'ci_key':"{{ content_item.key() }}",
+		'like_action_url': "{{ link('ajax-social', action='like', document=content_item.key()) }}",
+		'unlike_action_url': "{{ link('ajax-social', action='unlike', document=content_item.key()) }}",
+		'comment_action_url': "{{ link('ajax-social', action='comment', document=content_item.key()) }}",
+		'uncomment_action_url': "{{ link('ajax-social', action='uncomment', document=content_item.key()) }}",	
+		'wusr_key': "{{ sys.security.user.key() }}",
+		'user': {'firstname': '{{ sys.security.user.firstname }}',
+				 'lastname': '{{ sys.security.user.lastname }}',
+				 'profile_href': "{{ link('user-profile') }}",
+				 'profile_pic_href': "{{ sys.security.user.profilePicHref() }}",
+				 'username': "{{ sys.security.user.key().name() }}"},
+		'content_item': {'comment_count': {{ content_item.comment_count }}}
+		
+	};
+
+</script>
+{% endblock %}
+
+
+
+{# ===== SET HEADER ===== #}
+
+{% block header %}
+		<h1>{{ content_item.title }}</h1> 
+				<a href="{{ link('content-item-edit', key=content_item.key(), repo=content_item.repository.key().name()) }}" id='contentItemEdit'>
+					<span class='iconButtonBox editButtonBox'> Edit Info</span></a>
+				 
+				<a href="{{ link('media-download-blob-filename', blobkey=content_item.asset.getAsset().key, filename=content_item.getAsset().filename) }}" id='contentItemDownload'><span class='iconButtonBox downloadButtonBox'> Download</a></span> 
+				
+				<a href="{{ link('content-item-delete', key=content_item.key(), repo=content_item.repository.key().name()) }}" id='contentItemDelete'>
+					<span class='iconButtonBox deleteButtonBox'> Delete</span></a>
+				
+{% endblock %}
+
+{#  ===== SET CONTENT BLOCK ===== #}
+
+{% block content %}
+
+	<div id='shareBox' class='inline floatright'><a href="{{ link('ajax-social-sharebox', ci=content_item.key(), user=sys.security.user.key().name()) }}" class='ciPopin'><span class='iconButtonBox shareButtonBox'>Share</span></a></div>
+
+
+	<div id='likeBox' class='inline floatright'>
+	
+		{% if content_item.currentUserLike() == true %}
+	
+			{% if content_item.like_count-1 == 0 %}
+				<span id='youLike'><a href="{{ link('user-profile') }}">You</a> like this.</span>
+			{% endif %}
+	
+			{% if content_item.like_count-1 == 1 %}
+				<span id='youLike'><a href="{{ link('user-profile') }}">You</a> + <a href='#' class='ciPopin'>1 other person</a> like this.</span>
+			{% endif %}
+
+			{% if content_item.like_count-1 > 1 %}
+				<span id='youLike'><a href="{{ link('user-profile') }}">You</a> + <a href='#' class='ciPopin'>{{ content_item.like_count-1 }} people</a> like this.</span>
+			{% endif %}
+
+			<a href='#' id='likeUnlikeAction' class='unlikeButton'><span class='iconButtonBox unlikeButtonBox'>Unlike</span></a>
+		{% else %}
+			{% if content_item.like_count == 1 %}
+				<span id='youLike' class='hidden'><a href="{{ link('user-profile') }}">You</a> + <a href='#' class='ciPopin'>1 other person</a> like this.</span>
+			{% endif %}
+	
+			{% if content_item.like_count > 1 %}
+				<span id='youLike' class='hidden'><a href="{{ link('user-profile') }}">You</a> + <a href='#' class='ciPopin'>{{ content_item.like_count }} people</a> like this.</span>
+			{% else %}
+				<span id='youLike' class='hidden'><a href="{{ link('user-profile') }}">You</a> like this.</span>
+			{% endif %}
+				<a href='#' onclick='likeUnlike();' id='likeUnlikeAction' class='likeButton'><span class='iconButtonBox likeButtonBox'>Like</span></a>
+		{% endif %}
+	
+	</div>
+	
+	{% include spi.resolve_ci_viewer_extension(content_item.type, content_item.format) %}
+
+	<div id='ci_ext_Tags'>
+		<ul id='taggingInfo' class='nakedList'>
+			{% if util.len(tags) > 0 %}
+				{% for tag in tags %}
+					<li><span class='iconButtonBox tag-{{ tag.class_name() }}'><a href="{{ link('tag-view', tag=tag.key()) }}" title=''>{{ tag.value }}</a></li>
+				{% endfor %}
+			{% endif %}
+			<li><span class='iconButtonBox addTagButtonBox'><a href="#" class='ciPopin'>add tag...</a></span></li>
+		</ul>
+	</div>
+	
+	<div id='ci_ext_Description'>
+		
+		<h2 class="grid-title">Description</h2>
+		<p>{{ content_item.description }}</p>
+
+	</div>
+{% endblock %}
+
+
+{# ===== SET SIDEBAR HEADER ===== #}
+
+{% block sidebar_header %}
+<div class='floatleft'><span class='iconButtonBox infoButtonBox'>Meta</span></div>
+
+	<div class='floatright'>
+
+
+		<div id='alertsBox' class='inline'>
+			<a href='#' id='alertsAction' class='alertsButton'><span class='iconButtonBox alertSubscribeButtonBox'>Alerts</span></a>
+		</div>
+
+		<div id='versionsBox' class='inline'>
+			<a href='#' id='versionsAction' class='versionsButton'><span class='iconButtonBox versionsButtonBox'>Versions</span></a>
+		</div>
+	</div>
+<div class='clearboth'></div>{% endblock %}
+
+
+{# ===== SET SIDEBAR CONTENT ===== #}
+
+{% block sidebar_content %}
+<div>
+	<b>File Info:</b>
+	<ul id='fileInfo' class='nakedList'>
+		<li><b>File Name:</b> {{ content_item.getAsset().filename }}</li>
+		<li><b>File Type:</b> {{ content_item.type.name }} - {{ content_item.format.name }}</li>
+		<li><b>File Size:</b> {{ util.converters.byteconvert(content_item.getAsset().size, 2) }} bytes</li>
+		<li><b>Created:</b> {{ util.converters.timesince(content_item.createdAt) }}</li>
+		<li><b>Created By:</b> <a href="{{ link('user-public-profile', username=content_item.createdBy.name()) }}">{{ content_item.createdBy.name() }}</a></li>
+		<li><b>Last Modified:</b> {{ util.converters.timesince(content_item.modifiedAt) }}</li>
+		<li><b>Last Modified By:</b> <a href="{{ link('user-public-profile', username=content_item.modifiedBy.name()) }}"> {{ content_item.modifiedBy.name() }}</a></li>		
+	</ul>
+	<b>Social:</b>
+	<ul id='socialInfo' class='nakedList'>
+		<li><b>Likes:</b> {{ content_item.like_count }}</li>
+		<li><b>Comments:</b> <span class='commentCount'>{{ content_item.comment_count }}</span></li>
+		<li><b>Views:</b> {{ hits }}</li>
+	</ul>
+</div>
+{% endblock %}
+
+
+{% block postsouth %}
+<script type="text/javascript">
+	dialogOptions = {
+
+		type: 'ajax',
+		autoDimensions: false,
+		width:600,
+		scrolling: 'no',
+		titleShow: false,
+		opacity: true,
+		height: 300,
+		padding: 0,
+		margin: 0,
+		showNavArrows: false,
+		modal: false
+	
+	};
+	popins = $(".ciPopin").fancybox(dialogOptions);
+</script>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "layouts/main.html" %}
+{% from "macros/datagrid.html" import new_datagrid %}
+
+{% block title %}Recent content{% endblock %}
+
+{% block header %}<h1>Recent content</h1> <a href="{{ link('repository-list') }}">List of Repositories</a> | <a href="{{ link('tags-global') }}">List of Tags</a>{% endblock %}
+
+{% block content %}
+
+<div>
+	<div id='gridTitle'><h2>Showing: All content across all repositories, sorted by date created in descending order.</h2></div>
+	<div id='results'>
+		Waiting for results...
+	</div>	
+</div>
+
+{% endblock %}
+
+{% block postsouth %}
+	{{ new_datagrid('#results', grid) }}
+{% endblock %}

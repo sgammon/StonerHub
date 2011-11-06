@@ -1,0 +1,13 @@
+{% extends "layouts/main.html" %}
+
+{% block title %}Edit the "{{ repository.name }}" repository{% endblock title %}
+
+{% block header %}<h1>Edit Repository</h1>{% endblock %}
+
+{% block content %}
+
+<h2 class="grid-title">{{ repository.name }}</h2>
+
+{{ renderForm(edit_repo_form) }}
+
+{% endblock %}

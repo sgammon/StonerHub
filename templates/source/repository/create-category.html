@@ -1,0 +1,30 @@
+{% extends "layouts/main.html" %}
+{% from "macros/form.html" import renderForm %}
+
+{% block title %}{{ repository.name }} - Create a Category{% endblock %}
+
+{% block header %}
+	<h1>{% if grid_header %}{{ grid_header }}{% else %}{{ repository.name }}{% endif %} - Create a Category</h1>
+
+		{% if grid_subline %}
+			{{ grid_subline }}
+		{% else %}
+			Repository:
+		{% endif %} 
+		<a href="{{ link('repository-categories', repo=repository.key().name()) }}">Categories</a> 
+		<a href="{{ link('repository-recent-content', repo=repository.key().name()) }}">Recent Content</a> 
+		<a href="{{ link('repository-popular-content', repo=repository.key().name()) }}">Popular Content</a>
+
+{% endblock %}
+
+{% block content %}
+
+{% if message %}
+<div id='notice'>{{ message }}</div>
+{% endif %}
+
+<div id='gridTitle'><h2>{% if grid_caption %}{{ grid_caption }}{% else %}Create a category in the repository: {{ repository.name }} ("{{ repository.description|truncate(30) }}"){% endif %}</h2></div>
+
+{{ renderForm(form) }}
+
+{% endblock content %}

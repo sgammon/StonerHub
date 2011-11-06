@@ -132,7 +132,7 @@ rules = [
 	        Route('/repositories/<repo>/content', name='repository-content', handler='Content'),
 			Route('/repositories/<repo>/content/recent', name='repository-recent-content', handler='RecentContent'),
 			Route('/repositories/<repo>/content/popular', name='repository-popular-content', handler='PopularContent'),
-			Route('/repositories/<repo>/content/<path:filters>', name='repository-filter-content', handler='FilteredContent')
+			Route('/repositories/<repo>/content/<filters:\s>', name='repository-filter-content', handler='FilteredContent')
 		
 		]),
 		

@@ -16,6 +16,8 @@ from project.models.content import Repository
 
 from project.models.social import SocialNotification
 
+from project.core.forms import get_model_form
+
 
 class WebHandler(BaseHandler, security.WirestoneOpenIDAuthMixin):
 	
@@ -39,8 +41,15 @@ class WebHandler(BaseHandler, security.WirestoneOpenIDAuthMixin):
 	@cached_property
 	def session(self):
 		return self.session_store.get_session()
+		
+	def get_model_form(self, *args, **kwargs):
+		return get_model_form(*args, **kwargs)
 	
 	def dispatch(self):
+		
+		logging.info('DISPATCH HAPPENING??')
+		logging.info('REQUEST: '+str(self.request))
+		
 		self.session_store = sessions.get_store(request=self.request)
 		
 		if self.adminOnly:

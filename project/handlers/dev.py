@@ -15,7 +15,6 @@ from project.models.content_item import ContentItem
 
 class SPIDevHandler(WebHandler):
 	pass
-	
 
 
 class Index(SPIDevHandler):
@@ -152,6 +151,8 @@ class Shell(SPIDevHandler):
 class DefaultData(SPIDevHandler):
 	
 	''' Dev page for adding a bunch of default data. '''
+	
+	skipAuth = True
 
 	def get(self):
 		

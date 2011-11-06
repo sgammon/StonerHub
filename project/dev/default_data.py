@@ -312,4 +312,4 @@ def add_default_office_locations():
 		
 
 ## Map all function to an array to easily iterate through...
-all_functions = [add_default_asset_types, add_default_content_types, add_default_content_formats, add_default_repositories, add_default_content_categories, add_dev_users, add_default_security_roles, add_default_security_groups, add_prototypes, add_default_office_locations]
+all_functions = [add_default_asset_types, add_default_content_types, add_default_content_formats, add_default_repositories, add_default_content_categories, add_dev_users, add_default_security_roles, add_default_security_groups, add_default_office_locations] # add_prototypes,

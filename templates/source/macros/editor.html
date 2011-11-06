@@ -1,0 +1,9 @@
+{%- macro new_markitup(selector) -%}
+
+<script language="javascript">
+$(document).ready(function()	{
+    $('{{ selector }}').markItUp(markdownEditorConfig);
+});
+</script>
+
+{%- endmacro -%}
