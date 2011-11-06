@@ -6,7 +6,7 @@ def run(environment):
     def root(context, environment=environment):
         parent_template = None
         if 0: yield None
-        parent_template = environment.get_template('core/__base_web.html', 'source/security/logon.html')
+        parent_template = environment.get_template('core/base_web.html', 'source/security/logon.html')
         for name, parent_block in parent_template.blocks.iteritems():
             context.blocks.setdefault(name, []).append(parent_block)
         included_template = environment.get_template('macros/form.html', 'source/security/logon.html').module
@@ -22,7 +22,7 @@ def run(environment):
         if 0: yield None
         yield u'\n<meta name="google-site-verification" content="GNpWBXBMCFjW7thMuE06UvfgI4mktA9EcsevLda9VPU" />\n'
 
-    def block_body(context, environment=environment):
+    def block__wrapper(context, environment=environment):
         l_notice = context.resolve('notice')
         l_renderForm = context.resolve('renderForm')
         l_logon_form = context.resolve('logon_form')
@@ -43,6 +43,6 @@ def run(environment):
         if 0: yield None
         yield u'Login'
 
-    blocks = {'prenorth': block_prenorth, 'body': block_body, 'title': block_title}
+    blocks = {'prenorth': block_prenorth, '_wrapper': block__wrapper, 'title': block_title}
     debug_info = '1=9&2=12&6=21&10=25&26=32&27=33&37=35&4=42'
     return locals()

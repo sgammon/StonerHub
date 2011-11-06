@@ -3,6 +3,9 @@
 <html lang="en"{% if page.appcache.enabled == true %} manifest="{{ page.appcache.location }}"{% endif %}>
 
 <head>
+	
+	<title>{% block title %}{% if title %}{{ title }}{% endif %}{% endblock title %} - stonerhub, by [wire] stone</title>
+		
 	{% block prenorth %}{% endblock %}	
 	{% include "core/__north.html" %}
 	{% block postnorth %}{% endblock %}

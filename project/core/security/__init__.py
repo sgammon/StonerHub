@@ -16,6 +16,7 @@ except ImportError:
 		except ImportError:
 			logging.critical('Valid JSON adapter could not be found.')
 
+import webapp2
 from webapp2 import abort
 from webapp2 import redirect
 from webapp2 import redirect_to
@@ -65,19 +66,7 @@ class WirestoneOpenIDAuthMixin(WirestoneSecurityMiddleware):
 		
 		OpenIDFetchers.setDefaultFetcher(UrlfetchFetcher())
 		return OpenIDConsumer.Consumer(self.session, DatastoreStore())
-
-
-class WirestoneUserRequiredMiddleware(WirestoneSecurityMiddleware):
-
-	def pre_dispatch(self, handler):
-		return _ws_enforce_security(handler, 'user', self.authConfig)
-	
-
-class WirestoneLoginRequiredMiddleware(WirestoneSecurityMiddleware):
-
-	def pre_dispatch(self, handler):
-		return _ws_enforce_security(handler, 'login', self.authConfig)
-	
+		
 
 def _ws_enforce_security(handler, level, config):
 	
@@ -88,24 +77,18 @@ def _ws_enforce_security(handler, level, config):
 		logging.info('--Beginning security enforcement.')
 	else:
 		do_log = False
-	
-	# Retrieve session cookie
-	session_cookie = handler.get_secure_cookie('wirestone.spi.session')
-	
+		
 	# If there's no cookie, there's no session. Redirect to login.
-	if not session_cookie.get('key') and 'auth_ticket' not in handler.session:
+	if not handler.session.get('key') and 'auth_ticket' not in handler.session:
 		if do_log: logging.info('--No session ID from cookie or session. Redirecting to login.')
 		handler.session['continue'] = '?'.join([handler.request.path, handler.request.query_string])
-		return handler.redirect_to('auth/login', continueTo='?'.join([handler.request.path, handler.request.query_string]))
+		return (False, handler.url_for('auth/login', continueTo='?'.join([handler.request.path, handler.request.query_string])))
 	
 	# If there is a cookie, validate session...
 	else:
 		
-		if 'auth_ticket' not in handler.session:
-			session_id = session_cookie.get('key')
-		else:
-			session_id = handler.session['auth_ticket']
-				
+		session_id = handler.session['auth_ticket']
+		
 		# Check memcache for the session record...
 		session_record = WirestoneSession.get_from_cache(session_id)
 
@@ -150,12 +133,12 @@ def _ws_enforce_security(handler, level, config):
 			except:
 				pass
 				
-			return handler.redirect_to('auth/login')
+			return (False, handler.url_for('auth/login'))
 			
 		else:
 			if do_log:
 				logging.info('--Session is not expired. Setting handler auth parameters.')
-				logging.info('------WS_AUTH_COOKIE: '+str(session_cookie))
+				logging.info('------WS_AUTH_COOKIE: '+str(handler.session['auth_ticket']))
 				logging.info('------WS_AUTH_SESSION: '+str(session_record))
 				logging.info('------WS_AUTH_USER: '+str(session_record.user))
 				logging.info('------WS_AUTH_USERNAME: '+str(session_record.username))
@@ -164,21 +147,22 @@ def _ws_enforce_security(handler, level, config):
 			if cache_record == True: session_record.add_to_cache()
 			
 			## Map to handler properties
-			handler.ws_auth_cookie = session_cookie
+			handler.ws_auth_cookie = handler.session['auth_ticket']
 			handler.ws_auth_session = session_record
 			handler.ws_auth_user = session_record.user
 			handler.ws_auth_username = session_record.username
+			handler.ws_auth_is_user_admin = session_record.user.perm_sys_admin
+			handler.ws_auth_is_user_developer = session_record.user.perm_dev_admin
 			
-			## Map to environ
-			os.environ['WS_AUTH_COOKIE'] = str(session_cookie)
-			os.environ['WS_AUTH_SESSION'] = str(session_record.key())
-			os.environ['WS_AUTH_USER'] = str(session_record)
-			os.environ['WS_AUTH_USERNAME'] = str(session_record.username)
+			handler.request.environ['WS_AUTH_COOKIE'] = handler.session['auth_ticket']
+			handler.request.environ['WS_AUTH_SESSION'] = session_record
+			handler.request.environ['WS_AUTH_USER'] = session_record.user
+			handler.request.environ['WS_AUTH_USERNAME'] = session_record.username
+			handler.request.environ['WS_AUTH_IS_ADMIN'] = session_record.user.perm_sys_admin
+			handler.request.environ['WS_AUTH_IS_DEVELOPER'] = session_record.user.perm_dev_admin
 			
-			## Add to instance memory
-			_auth_obj[os.environ['WS_AUTH_SESSION']] = {'cookie':str(session_cookie), 'session': session_record, 'user': session_record.user, 'username': session_record.username, 'expiration': session_record.expires}
-			
-			
+			return (True, (handler.ws_auth_cookie, handler.ws_auth_session, handler.ws_auth_user, handler.ws_auth_username, handler.ws_auth_is_user_admin, handler.ws_auth_is_user_developer))
+									
 		# Forward to signup if user is unregistered and user is required
 		if level == 'user':
 			
@@ -186,19 +170,21 @@ def _ws_enforce_security(handler, level, config):
 			
 			if session_record.user == None:
 				if do_log: logging.info('--User is unregistered. Redirecting to signup.')
-				return handler.redirect_to('auth/signup')
+				return (False, handler.url_for('auth/signup'))
 				
 				
 def get_current_user():
-	if 'WS_AUTH_SESSION' in os.environ:
-		return _auth_obj[os.environ['WS_AUTH_SESSION']]['session'].user
+	request = webapp2.get_request()
+	if 'WS_AUTH_SESSION' in request.environ:
+		return request.environ['WS_AUTH_USER']
 			
 			
 def is_sys_admin():
-	if 'WS_AUTH_SESSION' in os.environ:
-		return _auth_obj[os.environ['WS_AUTH_SESSION']]['session'].user.perm_sys_admin
-			
-			
-def is_sys_admin():
-	if 'WS_AUTH_SESSION' in os.environ:
-		return _auth_obj[os.environ['WS_AUTH_SESSION']]['session'].user.perm_dev_admin
+	request = webapp2.get_request()
+	if 'WS_AUTH_SESSION' in request.environ:
+		return request.environ['WS_AUTH_IS_ADMIN']
+				
+def is_dev_admin():
+	request = webapp2.get_request()	
+	if 'WS_AUTH_SESSION' in request.environ:
+		return request.environ['WS_AUTH_IS_DEVELOPER']

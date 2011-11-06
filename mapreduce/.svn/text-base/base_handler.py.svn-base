@@ -21,10 +21,7 @@
 
 
 import logging
-try:
-  import json as simplejson
-except ImportError:
-  from mapreduce.lib import simplejson
+from mapreduce.lib import simplejson
 
 try:
   from mapreduce.lib import pipeline
@@ -89,9 +86,9 @@ class JsonHandler(BaseHandler):
   name of the error_class and the error_message.
   """
 
-  def __init__(self, *args):
+  def __init__(self):
     """Initializer."""
-    super(BaseHandler, self).__init__(*args)
+    super(BaseHandler, self).__init__()
     self.json_response = {}
 
   def base_path(self):

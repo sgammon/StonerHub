@@ -1,8 +1,8 @@
 application: stonerhub
-version: dev-1
+version: dev-2
 runtime: python27
 api_version: 1
-threadsafe: yes
+threadsafe: no
 
 default_expiration: "365d"
 
@@ -23,7 +23,7 @@ skip_files:
 
 #### ===== Libraries
 libraries:
-- name: webapp2
+- name: lxml
   version: "latest"
 - name: jinja2
   version: "latest"
@@ -81,6 +81,10 @@ error_handlers:
 handlers:
 
 ###### Asset Handlers
+
+- url: /_backend/mapreduce(.*)
+  script: mapreduce/main.py
+  login: admin
 
 # Images (Static)
 - url: /assets/img/static
@@ -161,9 +165,8 @@ handlers:
   login: optional
   auth_fail_action: unauthorized
   
-###### Send to Tipfy
+###### Send to AppTools
 - url: /.*
-  login: admin
   secure: optional
   script: main.main
   auth_fail_action: redirect

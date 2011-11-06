@@ -1,0 +1,15 @@
+mapreduce:
+- name: Fix content items
+  params:
+  - name: done_callback
+    value: /done
+  mapper:
+    handler: mappers.fix_content_items
+    input_reader: mappers.input_readers.DatastoreKeyInputReader
+    params:
+    - name: entity_kind
+      default: mappers.ContentItem
+    - name: processing_rate
+      default: 100
+    - name: shard_count
+      default: 4

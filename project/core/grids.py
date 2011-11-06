@@ -7,6 +7,7 @@ from webapp2 import Request
 class SPIDataGrid(object):
 
 	_endpoint = None
+	_service = None
 	_method = None
 	_method_args = []
 	_method_kwargs = {}
@@ -47,6 +48,9 @@ class SPIDataGrid(object):
 		#self._endpoint = url_for(endpoint, kwargs) ## TODO: FIX THIS
 		self._endpoint = 'cool'
 		
+	def set_service(self, name, **kwargs):
+		self._service = name
+		
 	def set_method(self, method, *args, **kwargs):
 		self._method = method
 		self._method_args = args
@@ -75,6 +79,12 @@ class SPIDataGrid(object):
 		
 	def get_endpoint(self):
 		return self._endpoint
+		
+	def get_service(self):
+		return self._service
+		
+	def get_service_endpoint(self):
+		return '/_api/rpc/'+self._service+'.'+self._method
 		
 	def get_method(self):
 		

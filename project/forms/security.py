@@ -5,6 +5,7 @@ from google.appengine.api import memcache
 from project.core.forms import SPIForm
 from project.models.org import OfficeLocation
 
+
 def get_office_locations():
 	m = memcache.get('SPIRuntime//OfficeLocations')
 	if m is None:

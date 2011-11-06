@@ -3,9 +3,10 @@ from project.handlers.ext import OutputPackage
 
 class AutoComplete(OutputPackage):
 	
-	@classmethod
-	def north(cls):
-		html = ["<link rel='stylesheet' type='text/css' href='/assets/style/static/autocomplete/facelist-0.3.css' />"]
-		html.append("<script type='text/javascript' src='/assets/js/static/autocomplete/jquery.autocomplete.js'></script>")
-		html.append("<script type='text/javascript' src='/assets/js/static/autocomplete/jquery.facelist.js'></script>")		
-		return html
+	def north(self):
+		return [('style', self.get_style_asset('main', 'facelist'))]
+		
+	def south(self):
+		return [('script', self.get_script_asset('autocomplete', 'jquery-interaction'), self.get_script_asset('facelist', 'jquery-plugins'))]
+		
+	

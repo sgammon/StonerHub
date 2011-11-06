@@ -3,14 +3,15 @@ from project.handlers.ext import OutputPackage
 
 class Plupload(OutputPackage):
 	
-	@classmethod
-	def north(cls):
-		html = ["<link href='/assets/style/static/plupload/jquery.ui.plupload.css' rel='stylesheet' type='text/css' />"]
-		html.append("<script type='text/javascript' src='/assets/js/static/plupload/gears_init.js'></script>")
-		html.append("<script type='text/javascript' src='/assets/js/static/plupload/plupload.min.js'></script>")
-		html.append("<script type='text/javascript' src='/assets/js/static/plupload/plupload.html5.min.js'></script>")
-		html.append("<script type='text/javascript' src='/assets/js/static/plupload/plupload.browserplus.min.js'></script>")
-		html.append("<script type='text/javascript' src='/assets/js/static/plupload/jquery.ui.plupload.min.js'></script>")
-		html.append("<script type='text/javascript' src='/assets/js/static/plupload/util.upload.0.1.js'></script>")
+	def north(self):		
+		return [('style', self.get_style_asset('jqui-widget', 'plupload'))]
 		
-		return html
+	def south(self):
+		return [('script', self.get_script_asset('core', 'plupload'),
+						   self.get_script_asset('jqui_widget', 'plupload'),
+						   self.get_script_asset('runtime.html4', 'plupload'),
+						   self.get_script_asset('runtime.gears', 'plupload'),
+						   self.get_script_asset('runtime.flash', 'plupload'),
+						   self.get_script_asset('runtime.html5', 'plupload'),
+						   self.get_script_asset('runtime.silverlight', 'plupload'))]
+		

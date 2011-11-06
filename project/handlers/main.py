@@ -20,12 +20,12 @@ class Landing(WebHandler):
 		
 		grid = ContentItem.generateGrid()
 
-		grid.set_endpoint('api-call', module='data', service='ContentItem')
-		grid.set_method('recentlyCreated')
+		grid.set_service('ContentItem')
+		grid.set_method('list')
 		
 		context = {'grid': grid}
 		
-		self.render('main/landing.html', dependencies=['SPISearch', 'Plupload'], **context)
+		self.render('main/landing.html', dependencies=['Plupload'], **context)
 		
 
 class Newsfeed(WebHandler):
@@ -37,7 +37,7 @@ class Newsfeed(WebHandler):
 		context = {}
 		
 		## Display page with AJAX call for newsfeed pull
-		self.render('main/newsfeed.html', dependencies=['SPISearch', 'SPINewsfeed'], **context)
+		self.render('main/newsfeed.html', dependencies=['SPINewsfeed'], **context)
 		
 
 class Offline(WebHandler):

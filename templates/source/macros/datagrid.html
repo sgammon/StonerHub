@@ -15,14 +15,15 @@ var rpcTracker = {Requests:{}, lastRequest:null};
 function makeGridRPC(sSource, aoData, fnCallback)
 {
 	/* Set RPC method & params */
-	sMethod = "{{ method }}";	
+	sMethod = "{% autoescape off %}{{ method }}{% endautoescape %}";
 	oParams = {%- if len(method_args) > 0 -%}{{ util.converters.json.encode(util.types.dict(method_args)) }}{%- else -%}{}{%- endif -%};
 
 	/* Add to RPC tracker and fire */
 	rpcTracker.Requests[aoData['sEcho']] = {source: sSource, grid: aoData, callback: fnCallback, method: sMethod, params:oParams};
-	loadSpiDatagrid(sSource, sMethod, oParams, aoData, fnCallback);
+	loadSpiDatagrid("{{ grid.get_service() }}", sSource, sMethod, oParams, aoData, fnCallback);
 }
 
+dataGridOptions = {};
 function createDatagrid()
 {
 	/* Manufacture a table */
@@ -50,9 +51,11 @@ function createDatagrid()
 			{%- endfor -%}
 		{% endif %}
 		
-		"sAjaxSource": "{{ grid.get_endpoint() }}",
+		"sAjaxSource": "{{ grid.get_service_endpoint() }}",
 		"fnServerData": makeGridRPC,
 	};
+	
+	console.log('Datagrid Options: ', dataGridOptions);
 	
 	/* Initialize datagrid */
 	$('{{ selector }} #datagrid').dataTable(dataGridOptions);

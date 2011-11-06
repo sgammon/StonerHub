@@ -3,27 +3,21 @@ class AppTools
 	
 	constructor: (@config)  ->
 		
-		## Sys API
-		@sys = new CoreSysAPI(@)
-
+		## Dev Tools
+		@dev = new CoreDevAPI(@)
+		
 		## Agent API
 		@agent = new CoreAgentAPI(@)
 		@agent.discover()
 		
 		## Events API
-		@events = new CoreEventsAPI(@)		
+		@events = new CoreEventsAPI(@)
 		
-		## Model API
-		@model = new CoreModelAPI(@)
-
-		## Javascript API Methods
-		@api = new CoreAPIBridge(@)
-				
 		## Users API
 		@user = new CoreUserAPI(@)
 		
 		## RPC API
-		@rpc = new CoreRPCAPI(@)
+		@api = new CoreRPCAPI(@)
 		
 		## Live API
 		@push = new CorePushAPI(@)

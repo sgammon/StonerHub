@@ -5,25 +5,64 @@ import config
 import logging
 
 from webapp2 import cached_property
+from webapp2_extras import sessions
 
 ## AppTools Imports
 from apptools.core import BaseHandler
 
+from project.core import security
+from project.core.security import _ws_enforce_security
 from project.models.content import Repository
 
+from project.models.social import SocialNotification
 
-class WebHandler(BaseHandler):
+
+class WebHandler(BaseHandler, security.WirestoneOpenIDAuthMixin):
 	
 	''' Handler for desktop web requests. '''
 	
 	logging = logging
-	session = {}
 
+	## Authentication Config ##
+	skipAuth = False
+	adminOnly = False
+
+	## Authentication State ##
 	ws_auth_user = None
-	ws_auth_username = 'sgammon'
-	ws_auth_session = {}
+	ws_auth_session = {}	
+	ws_auth_username = None
+	ws_auth_is_user_admin = False
+	ws_auth_is_user_developer = False
 
-	universal_dependencies = ['jQuery', 'main', 'social']
+	universal_dependencies = ['jQuery', 'main']
+	
+	@cached_property
+	def session(self):
+		return self.session_store.get_session()
+	
+	def dispatch(self):
+		self.session_store = sessions.get_store(request=self.request)
+		
+		if self.adminOnly:
+			auth_result, redirect_or_session = _ws_enforce_security(self, 'admin', self.authConfig)
+		else:
+			auth_result, redirect_or_session = _ws_enforce_security(self, 'user', self.authConfig)
+
+		authComplete = False
+		if self.skipAuth != True:
+			if auth_result is False: ## user failed authentication tests somewhere
+				logging.info('Returning redirect, user is not logged in...')
+				return self.redirect(redirect_or_session, abort=True)
+			else:
+				authComplete = True
+		else:
+			authComplete = True
+
+		if authComplete == True: ## just a silly safeguard...
+			try:
+				return super(WebHandler, self).dispatch()
+			finally:
+				self.session_store.save_sessions(self.response)
 
 	## Cached Properties
 	@cached_property
@@ -37,24 +76,37 @@ class WebHandler(BaseHandler):
 	@cached_property
 	def DependenciesConfig(self):
 		return config.config.get('wirestone.spi.output.request_handler')['dependencies']
+
+	@cached_property
+	def ServicesConfig(self):
+		return config.config.get('apptools.project.services')
+		
+	@cached_property
+	def GlobalServicesConfig(self):
+		return config.config.get('apptools.services')
 	
 	def _bindRuntimeTemplateContext(self, context):
 		
 		context['page'] = {
 		
-			'ie': False,
-			'mobile': False,
+			'ie': False, ## are we serving to IE?
+			'mobile': False, ## are we serving to mobile?
 			'appcache': {
-				'enabled': False,
-				'location': None,
-			}
+				'enabled': False, ## enable/disable appcaching
+				'location': None, ## location for appcache manifest
+			},
+			'services': {
+				'services_manifest': self.make_services_manifest(),
+				'global_config': self.GlobalServicesConfig
+			}, ## enable API services
 		
 		}
 		
-		## Detect if we're handling a request from IE, and if we are, tell the template context
-		if self.uagent['browser']['name'] == 'MSIE':
-			context['page']['ie'] = True
-			
+		if self.uagent is not None and len(self.uagent) > 0:
+			## Detect if we're handling a request from IE, and if we are, tell the template context
+			if self.uagent['browser']['name'] == 'MSIE':
+				context['page']['ie'] = True
+		
 		return context
 	
 	def _resolve_and_run_dependency(self, name):
@@ -70,7 +122,8 @@ class WebHandler(BaseHandler):
 				package = getattr(_m, path[-1])
 			except:
 				return False
-			dependency = {'name':name,'module':cfg['packages'][name]['module'],'north':package.north(), 'south':package.south()}
+			north_dependencies, south_dependencies = package(self).get_sections()
+			dependency = {'name':name,'module':cfg['packages'][name]['module'],'north':north_dependencies, 'south':south_dependencies}
 			return dependency
 		else:
 			return False
@@ -116,6 +169,58 @@ class WebHandler(BaseHandler):
 		## Return compiled dependency HTML for north and south
 		return (cmp_html['north'], cmp_html['south'])
 
+	
+	def make_services_manifest(self):
+
+		## Generate list of services to expose to user
+		svcs = []
+		opts = {}
+
+		jsapi_cache = self.api.memcache.get('apptools//services_manifest')
+		if jsapi_cache is not None:
+			return jsapi_cache
+		else:
+			for name, config in self.ServicesConfig['services'].items():
+				if config['enabled'] is True:
+
+					security_profile = self.GlobalServicesConfig['middleware_config']['security']['profiles'].get(config['config']['security'], None)
+
+					caching_profile = self.GlobalServicesConfig['middleware_config']['caching']['profiles'].get(config['config']['caching'], None)
+
+					if security_profile is None:
+
+						## Pull default profile if none is specified
+						security_profile = self.GlobalServicesConfig['middleware_config']['security']['profiles'][self.GlobalServicesConfig['defaults']['service']['config']['security']]
+
+					if caching_profile is None:
+						caching_profile = self.GlobalServicesConfig['middleware_config']['caching']['profiles'][self.GlobalServicesConfig['defaults']['service']['config']['caching']]
+
+					## Add caching to local opts
+					opts['caching'] = caching_profile['activate'].get('local', False)
+
+					## Grab prefix
+					service_action = self.ServicesConfig['config']['url_prefix'].split('/')
+
+					## Add service name
+					service_action.append(name)
+
+					## Join into endpoint URL
+					service_action_url = '/'.join(service_action)
+
+					## Expose depending on security profile
+					if security_profile['expose'] == 'all':
+						svcs.append((name, service_action_url, config, opts))
+
+					elif security_profile['expose'] == 'admin':
+						if users.is_current_user_admin():
+							svcs.append((name, service_action_url, config, opts))
+
+					elif security_profile['expose'] == 'none':
+						continue
+
+			self.api.memcache.set('apptools//services_manifest', svcs)
+			return svcs
+
 		
 	def render(self, template, vars={}, dependencies=[], **kwargs):
 		
@@ -151,10 +256,10 @@ class WebHandler(BaseHandler):
 
 		# UserOps
 		if self.ws_auth_user is not None:
-			channel_id = memcache.get('channel-id-'+str(self.ws_auth_user.key()))
+			channel_id = self.api.memcache.get('channel-id-'+str(self.ws_auth_user.key()))
 			if channel_id is None:
 				try:
-					channel_id = channel.create_channel('channel-id-'+str(self.ws_auth_user.key()))
+					channel_id = self.api.channel.create_channel('channel-id-'+str(self.ws_auth_user.key()))
 					memcache.set('channel-id-'+str(self.ws_auth_user.key()), channel_id, time=3600)
 				except:
 					channel_id = None
@@ -258,8 +363,6 @@ class WebHandler(BaseHandler):
 
 		# Add sys context, return rendered Jinja2 template
 		return super(WebHandler, self).render(template, **context)
-
-		
 	
 	
 class MobileHandler(BaseHandler):

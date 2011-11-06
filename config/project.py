@@ -12,7 +12,7 @@ config = {}
 ## App settings
 config['apptools.project'] = {
 
-	'name': 'AppTools',
+	'name': 'StonerHub',
 
 	'version': {
 		'major': 4,
@@ -207,7 +207,7 @@ config['wirestone.spi.api.data'] = {
 
 	'query_caching':{
 		'enable':True,
-		'log_cache_rpcs':False,
+		'log_cache_rpcs':True,
 		'ttl':500
 	},
 
@@ -223,7 +223,7 @@ config['wirestone.spi.pipelines'] = {
 # Auth Configuration
 config['wirestone.spi.auth'] = {
 	
-	'debug': False,
+	'debug': True,
 	'ticket_lifetime': datetime.timedelta(hours=6),
 	'enable_federated_logon': False
 	
@@ -385,23 +385,19 @@ config['wirestone.spi.output.request_handler'] = {
 		'packages':{
 		
 			'main': {'enabled':True,'module': 'project.handlers.ext.main.Main'},
-			'forms': {'enabled':True,'module': 'project.handlers.ext.main.Forms'},			
-			'social': {'enabled':True,'module': 'project.handlers.ext.main.Social'},
-			'spinewsfeed': {'enabled': True, 'module': 'project.handlers.ext.main.Newsfeed'},				
+			'newsfeed': {'enabled': True, 'module': 'project.handlers.ext.main.Newsfeed'},				
 			'jquery':{'enabled':True,'module':'project.handlers.ext.jquery.jQuery'},
 			'plupload':{'enabled':True,'module':'project.handlers.ext.plupload.Plupload'},
 			'tracking':{'enabled':True,'module':'project.handlers.ext.tracking.GoogleAnalytics'},
 			'datagrid':{'enabled':True,'module':'project.handlers.ext.datagrid.DataGrid'},
 			'fancybox':{'enabled':True,'module':'project.handlers.ext.fancybox.Fancybox'},
-			'spisearch':{'enabled':True,'module':'project.handlers.ext.spisearch.Search'},
-			'markitup':{'enabled':True,'module':'project.handlers.ext.markitup.MarkItUp'},
 			'fonts':{'enabled':True,'module':'project.handlers.ext.googlefonts.GoogleFonts'},
 			'autocomplete':{'enabled':True,'module':'project.handlers.ext.autocomplete.AutoComplete'},
 			'jcrop':{'enabled':True,'module':'project.handlers.ext.jcrop.JCrop'},
 		
 		},
 		
-		'always_include':['main','fonts','jquery','forms','datagrid','social', 'tracking']
+		'always_include': ['main', 'fonts', 'jquery', 'datagrid', 'tracking']
 	}
 
 }

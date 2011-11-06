@@ -23,19 +23,20 @@ config['apptools.project.services'] = {
 	# Installed API's
 	'services': {
 	
-		## Debug, development, uptime, etc methods for infrastructure/testing/monitoring use
-		'system': {
+		## ContentItem Data Service
+		'ContentItem': {
+		
 			'enabled': True,
-			'service': 'apptools.services.SystemAPIService',
-			'methods': ['echo', 'hello'],
+			'service': 'project.services.data.content_item.ContentItemService',
+			'methods': ['list', 'byRepository', 'byTag', 'byUser', 'byCategory', 'recentlyCreated', 'recentlyModified'],
 			
 			'config': {
 				'caching': 'none',
 				'security': 'none',
 				'recording': 'none'
 			}
-		}
-		
+		},
+				
 	} ## End services
 
 } ## End services

@@ -1,7 +1,7 @@
 import logging
-from tipfy.ext.wtforms import fields
-from wirestone.spi.models.search import *
-from wirestone.spi.models.content import ContentItemCategory
+from wtforms import fields
+from project.models.search import *
+from project.models.content import ContentItemCategory
 
 
 class TagListField(fields.TextField):

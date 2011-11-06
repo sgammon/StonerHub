@@ -12,6 +12,7 @@ from wtforms import widgets
 from project.core import security as WirestoneSecurity
 
 from project.models import SPIModel
+from project.models import BaseSPIModel
 from project.models import SPIPolyModel
 from project.models import SPIExpandoModel
 from project.models import UserAuditMixin
@@ -49,7 +50,7 @@ def getContentItemCategoryOptions(limit=80):
 	else: return m
 	
 
-class ContentItem(SPIPolyModel, CreatedModifiedMixin, UserAuditMixin):
+class ContentItem(SPIPolyModel, FormGeneratorMixin, GridGeneratorMixin, CreatedModifiedMixin, UserAuditMixin):
 
 	''' An actual content item. '''
 	
@@ -140,3 +141,73 @@ class ContentItem(SPIPolyModel, CreatedModifiedMixin, UserAuditMixin):
 	def deleteAsset(self):
 		self.asset.deleteData()
 		self.asset.delete()
+		
+		
+class File(ContentItem):
+
+	''' File-based content item. '''
+
+	data = blobstore.BlobReferenceProperty()
+
+
+class Webpage(ContentItem):
+
+	''' A webpage added to the system. '''
+
+	data = db.LinkProperty()
+
+
+class DimensionedContent(File):
+
+	''' A content item that has dimension properties. '''
+
+	width = db.IntegerProperty()
+	height = db.IntegerProperty()
+
+
+class Image(DimensionedContent):
+
+	''' An uploaded image. '''
+	pass
+
+
+class Audio(File):
+
+	''' An uploaded audio file. '''
+	pass
+
+
+class Video(DimensionedContent):
+
+	''' An uploaded video. '''
+	pass
+
+
+class Archive(File):
+
+	''' An uploaded archive (zip). '''
+	pass
+
+
+class Drawing(File):
+
+	''' An uploaded drawing (PSD/EPS/DXF/PSD/AI/etc) '''
+	pass
+
+
+class Document(File):
+
+	''' An uploaded document (e.x. PDF). '''
+	pass
+
+
+class Spreadsheet(File):
+
+	''' An uploaded spreadsheet (e.x. XLS) '''
+	pass
+
+
+class Presentation(File):
+
+	''' An uploaded document (e.x. PDF). '''
+	pass

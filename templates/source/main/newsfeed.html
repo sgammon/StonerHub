@@ -1,9 +1,9 @@
 {% extends "layouts/main-twocolumn.html" %}
 
-{% block title %}Newsfeed{% endblock %}
+{% block title %}newsfeed{% endblock %}
 
 {% block header %}
-<h1><b>Stonerhub - Newsfeed</b></h1>
+<h1><b>StonerHub - Newsfeed</b></h1>
 
 {% endblock %}
 
@@ -69,6 +69,6 @@
 
 {% block postsouth %}
 <script type='text/javascript'>
-	retrieveNewsfeed("{{ util.api.users.get_current_user().key().name() }}");
+	retrieveNewsfeed("{{ api.users.current_user().nickname() }}");
 </script>
 {% endblock %}

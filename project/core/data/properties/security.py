@@ -17,7 +17,7 @@ class UserReferenceProperty(KeyProperty):
 		super(UserReferenceProperty, self).__init__(**kwargs)
 
 	def default_value(self):
-		from wirestone.spi.core import security
+		from project.core import security
 		
 		## Since this is only executed on 'default' (when the property is left empty), we add the user if either flag is true...
 		if self._auto_current_user or self._auto_current_user_add:
@@ -26,7 +26,7 @@ class UserReferenceProperty(KeyProperty):
 		return None
 		
 	def validate(self, value):
-		from wirestone.spi.core import security
+		from project.core import security
 
 		if self._auto_current_user:
 			if security.get_current_user() is not None:

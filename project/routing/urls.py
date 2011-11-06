@@ -53,6 +53,9 @@ rules = [
 		# Queue Handlers
 		Route('/_workers/mail/outbound', name='outbound-mail', handler='workers.mail.OutgoingMail'),
 
+		# Admin Handlers
+		Route('/manage', name='admin-index', handler='admin.Index'),
+
 		# ==== Dev Handlers ==== #
 		HandlerPrefixRoute('dev.', [
 		
@@ -189,7 +192,7 @@ rules = [
 			Route('/_media/blob/download/<blobkey>/<filename>', name='media-download-blob-filename', handler='SPIDownloadHandler'),
 
 			# == Profile Images Service == #
-			Route('/_media/img/profile/serve/<username>-profile.<format>', name='media-serve-profile-pic', handler='media.ProfilePic')
+			Route('/_media/img/profile/serve/<username>-profile.<format>', name='media-serve-profile-pic', handler='ProfilePic')
 		
 		]),
 		

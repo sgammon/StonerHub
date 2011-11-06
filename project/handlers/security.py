@@ -6,6 +6,17 @@ import datetime
 import urlparse
 import mimetypes
 
+try:
+	import json
+except ImportError:
+	try:
+		import simplejson as json
+	except ImportError:
+		try:
+			from django.utils import simplejson as json
+		except ImportError:
+			logging.critical('No compatible JSON adapter found.')
+
 from webapp2 import cached_property
 
 from google.appengine.ext import db
@@ -36,6 +47,8 @@ from project.models.security import AuthSession as WirestoneSession
 class Login(WebHandler):
 	
 	''' Login handler for Wirestone OpenID provider.. '''
+	
+	skipAuth = True
 	
 	def get(self):
 		
@@ -193,7 +206,7 @@ class Login(WebHandler):
 
 		self.session['auth_ticket'] = session_id.name()
 		self.session['auth_continue_url'] = self.makeContinueURL()
-		self.session['auth_begin'] = datetime.datetime.now()
+		self.session['auth_begin'] = datetime.datetime.now().isoformat()
 		
 		if do_log:
 			logging.info('SessionID: '+str(session_id))
@@ -297,18 +310,17 @@ class Login(WebHandler):
 				ticket.add_to_cache()
 			
 				# Set up legit session
-				session_cookie = self.get_secure_cookie('wirestone.spi.session', override=True)
-				session_cookie['key'] = ticket.key().name()
+				self.session['auth_ticket'] = ticket.key().name()
 				
 				if do_log:
-					logging.info('Wrote session key "'+str(session_cookie['key'])+'" to auth cookie.')
+					logging.info('Wrote session key "'+str(self.session['auth_ticket'])+'" to auth cookie.')
 			
 				# Get continue URL and redirect
 				if not self.session.get('continue'):
 					
 					if do_log: logging.debug('Redirecting to manufactured continue URL...')
-					
 					return self.redirect(self.makeContinueURL())
+					
 				else:
 
 					if do_log: logging.debug('Redirecting to explicit continue URL...')
@@ -331,7 +343,7 @@ class Login(WebHandler):
 				self.response.write('<b>Request blocked because of improper provider response. Please retry your authentication request.</b>')
 				
 		else:
-			return self.response.write('<b>No LOGON</b>')
+			self.response.write('<b>No LOGON</b>')
 				
 	
 	def finishOpenIDAuthSession(self):
@@ -376,7 +388,7 @@ class Login(WebHandler):
 		if do_log:
 			logging.debug('Processing attempted SPI logon.')
 
-		if self.request.get('action') == 'spi-logon':
+		if self.request.get('action') == 'spi-phase2':
 			
 			if do_log: logging.info('Processing for action "spi-logon".')
 			
@@ -434,7 +446,7 @@ class Login(WebHandler):
 		session_id = WirestoneSession.provisionTicket()
 		self.session['auth_ticket'] = session_id
 		self.session['auth_continue_url'] = self.makeContinueURL()
-		self.session['auth_begin'] = datetime.datetime.now()
+		self.session['auth_begin'] = datetime.datetime.now().isoformat()
 
 		claimed_id = self.request.get('username', 'sam.gammon')
 
@@ -515,7 +527,7 @@ class Login(WebHandler):
 
 	def openIDdebugResponse(self, openid_result, data):
 		response = '<b>Phase 2</b><br /><br />Args:<ul>'
-		for key, value in self.request.args.items(True):
+		for key, value in self.request.items(True):
 			response = response+'<li><b>'+str(key)+'</b>: '+str(value)
 		
 		response = response+'</ul><br /><br /><b>Check Result:</b><br /><br />'
@@ -524,7 +536,7 @@ class Login(WebHandler):
 		response = response+'<b>Data:</b> '+str(data)+'<br /><br />'
 
 		response = response+'<b>Done.</b>'
-		return self.response.write(response)
+		self.response.write(response)
 		
 		
 	def startSPIAuthSession(self):
@@ -540,7 +552,7 @@ class Login(WebHandler):
 			
 		if do_log: logging.info('Rendering logon page.')
 			
-		return self.render_response('security/logon.html', logon_form=l, notice=notice)
+		self.render('security/logon.html', logon_form=l, notice=notice)
 		
 		
 class ClaimToken(WebHandler):
@@ -565,7 +577,7 @@ class ClaimToken(WebHandler):
 			else:
 				notice = 'This token will create an account under the name "'+t.username+'".'
 			
-			return self.render_response('security/token.html', token=db.get(db.Key(token)), claim_form=TokenClaimForm(self.request), notice=notice)
+			self.render('security/token.html', token=db.get(db.Key(token)), claim_form=TokenClaimForm(self.request), notice=notice)
 		
 		except AssertionError, db.Error:
 			self.abort(404)
@@ -648,8 +660,10 @@ class RegisterBeta(WebHandler):
 
 	''' Signup handler. '''
 	
+	skipAuth = True
+	
 	def get(self, step=None, ticket=None):
-		return self.render('security/signup/rewrite.html', dependencies=['fancybox', 'plupload'], ticket='sample')
+		return self.render('security/signup/rewrite.html', dependencies=['fancybox', 'plupload'], ticket=str(self.ws_auth_cookie))
 		
 	def post(self, step=None, ticket=None):
 		pass
@@ -658,6 +672,8 @@ class RegisterBeta(WebHandler):
 class RegisterBetaFrame(WebHandler):
 	
 	''' Signup iFrame handler. Pulled in as modal content. '''
+	
+	skipAuth = True
 	
 	def get(self, step=None, ticket=None):
 		
@@ -668,10 +684,10 @@ class RegisterBetaFrame(WebHandler):
 			return
 		
 		if step == 0:
-			return self.render('security/signup/frame/intro.html')
+			self.render('security/signup/frame/intro.html')
 			
 		elif step == 1:
-			return self.render('security/signup/frame/step1-basic.html', form=RegistrationForm(self.request).set_method('POST').set_action(self.url_for('auth/signup/frame', step=1, ticket=ticket)))
+			self.render('security/signup/frame/step1-basic.html', form=RegistrationForm(self.request).set_method('POST').set_action(self.url_for('auth/signup/frame', step=1, ticket=ticket)))
 		
 		elif step == 2:
 
@@ -683,30 +699,35 @@ class RegisterBetaFrame(WebHandler):
 			step2_action = self.url_for('auth/signup/frame', step=2, ticket=ticket)
 			profile_create_form.set_action(step2_action)
 			
-			return self.render('security/signup/frame/step2-profile.html', form=profile_create_form)
+			self.render('security/signup/frame/step2-profile.html', form=profile_create_form)
 			
 		elif step == 3:
-			return self.render('security/signup/frame/step3-settings.html')
+			self.render('security/signup/frame/step3-settings.html')
 			
 	def encode(self, struct):
-		return json.dumps(struct)
+		self.response.write(json.dumps(struct))
+		return
 		
 	def success(self, response):
 		return self.encode({'result': 'success', 'response': response})
 		
 	def error(self, errors):
 		return self.encode({'result': 'failure', 'errors': [{'message': value[0], 'field': key} for key, value in errors.items()]})
-			
+		
 	def post(self, step=None, ticket=None):
 		
 		try:
 			step = int(step)
 		except ValueError:
 			self.response.out.write('VALUEERROR: INVALID STEP')
+			logging.info('VALUEERROR: INVALID STEP "'+str(step)+'"')
 			return
 		
 		## Basic Registration
 		if step == 1:
+			
+			logging.info('Request params: '+str(self.request.params))
+			logging.info('POST params: '+str(self.request.POST))
 			
 			# Construct & Validate Form
 			f = RegistrationForm(self.request)
@@ -777,10 +798,11 @@ class RegisterBetaFrame(WebHandler):
 					profile_replacements['devFlag'] = 'unhide'
 
 				# Return success
-				return self.success({'user_key': w_key, 'dom_inserts':[{'id': key, 'value': value} for key, value in profile_replacements.items()]})
+				return self.success({'user_key': str(w_key), 'dom_inserts':[{'id': key, 'value': value} for key, value in profile_replacements.items()]})
 				
 			# Validation fail
 			else:
+				logging.warning('Registration form failed to pass validation.')
 				return self.error(f.errors)
 				
 			

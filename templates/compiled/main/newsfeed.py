@@ -14,16 +14,16 @@ def run(environment):
 
     def block_title(context, environment=environment):
         if 0: yield None
-        yield u'Newsfeed'
+        yield u'newsfeed'
 
     def block_content_body_header(context, environment=environment):
         if 0: yield None
 
     def block_postsouth(context, environment=environment):
-        l_util = context.resolve('util')
+        l_api = context.resolve('api')
         if 0: yield None
         yield u'\n<script type=\'text/javascript\'>\n\tretrieveNewsfeed("%s");\n</script>\n' % (
-            context.call(environment.getattr(context.call(environment.getattr(context.call(environment.getattr(environment.getattr(environment.getattr(l_util, 'api'), 'users'), 'get_current_user')), 'key')), 'name')), 
+            context.call(environment.getattr(context.call(environment.getattr(environment.getattr(l_api, 'users'), 'current_user')), 'nickname')), 
         )
 
     def block_landing_page_search_box(context, environment=environment):
@@ -36,7 +36,7 @@ def run(environment):
 
     def block_header(context, environment=environment):
         if 0: yield None
-        yield u'\n<h1><b>Stonerhub - Newsfeed</b></h1>\n\n'
+        yield u'\n<h1><b>StonerHub - Newsfeed</b></h1>\n\n'
 
     def block_sidebar_header(context, environment=environment):
         if 0: yield None

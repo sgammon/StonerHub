@@ -4,8 +4,7 @@ from project.handlers.ext import OutputPackage
 
 class GoogleAnalytics(OutputPackage):
 	
-	@classmethod
-	def north(cls):
+	def south(self):
 		
 		gv_tracking = config.config.get('wirestone.spi.tracking')['google_analytics_account']
 		
@@ -16,4 +15,4 @@ var _gaq = _gaq || [];_gaq.push(['_setAccount', '%s']);_gaq.push(['_trackPagevie
 </script>
 		''' % str(gv_tracking))
 		
-		return [html]
+		return [('raw', '<script type="text/javascript" src="http://www.google-analytics.com/ga.js"></script>', html)]

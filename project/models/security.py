@@ -3,8 +3,7 @@ import string
 import random
 import datetime
 
-from webapp2 import Router
-url_for = Router.build
+from webapp2 import uri_for as url_for
 
 from google.appengine.ext import db
 from google.appengine.api import memcache

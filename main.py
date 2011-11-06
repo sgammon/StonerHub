@@ -56,7 +56,7 @@ def run(app):
 def run_wsgi(app, environ, start_response):
 	
 	""" Run in WSGI mode with the Python 2.7 runtime. """
-	
+	bootstrap.AppBootstrapper.prepareImports()
 	return app(environ, start_response)
 	
 	
@@ -135,20 +135,29 @@ def main(environ=None, start_response=None):
 
 
 def services(environ=None, start_response=None):
-	import services as APIServices	
+	import services as APIServices
+	bootstrap.AppBootstrapper.prepareImports()	
 	return APIServices.main(environ, start_response)
 
 def pipelines(environ=None, start_response=None):
 	from pipeline.handlers import _APP as PipelinesApp	
+	bootstrap.AppBootstrapper.prepareImports()	
 	return PipelinesApp(environ, start_response)
 	
 def warmup(environ=None, start_response=None):
 	from warmup import Warmup as WarmupApp
+	bootstrap.AppBootstrapper.prepareImports()	
 	return WarmupApp(environ, start_response)
 	
 def backend(environ=None, start_response=None):
 	logging.info('==== BACKEND STARTING ====')
+	bootstrap.AppBootstrapper.prepareImports()	
 	return warmup(environ, start_response)
+	
+def mapreduce(environ=None, start_response=None):
+	from mapreduce.main import APP as mapreduce
+	bootstrap.AppBootstrapper.prepareImports()
+	return mapreduce(environ, start_response)
 
 if __name__ == '__main__':
 	main()

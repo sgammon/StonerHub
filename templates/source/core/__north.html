@@ -1,11 +1,12 @@
 {% include "core/__meta.html" %}
 
-<title>{% block title %}{% if title %}{{ title }}{% endif %}{% endblock title %} - stonerhub, by [wire] stone</title>
-
 <!-- Stylesheets -->
 <link href='http://fonts.googleapis.com/css?family=Maven+Pro:regular,bold,900' rel='stylesheet' type='text/css'>
 <!-- <link href='http://fonts.googleapis.com/css?family=Pacifico&v1' rel='stylesheet' type='text/css'> -->
 <link href='http://fonts.googleapis.com/css?family=Dancing+Script&v2' rel='stylesheet' type='text/css'>
+
+<!-- Legacy Stylesheets -->
+<link rel="stylesheet" href="/assets/style/static/spi/legacy.css">
 
 {% if page.ie %}
 	<link rel="stylesheet" href="{{ asset.style('ie', 'compiled') }}">

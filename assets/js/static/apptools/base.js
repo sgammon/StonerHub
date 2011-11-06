@@ -1,698 +1,775 @@
-(function( global, undefined ) {
-
-var slice = [].slice,
-	subscriptions = {};
-
-var amplify = global.amplify = {
-	publish: function( topic ) {
-		var args = slice.call( arguments, 1 ),
-			subscription,
-			length,
-			i = 0,
-			ret;
-
-		if ( !subscriptions[ topic ] ) {
-			return true;
-		}
-
-		for ( length = subscriptions[ topic ].length; i < length; i++ ) {
-			subscription = subscriptions[ topic ][ i ];
-			ret = subscription.callback.apply( subscription.context, args );
-			if ( ret === false ) {
-				break;
-			}
-		}
-		return ret !== false;
-	},
-
-	subscribe: function( topic, context, callback, priority ) {
-		if ( arguments.length === 3 && typeof callback === "number" ) {
-			priority = callback;
-			callback = context;
-			context = null;
-		}
-		if ( arguments.length === 2 ) {
-			callback = context;
-			context = null;
-		}
-		priority = priority || 10;
-
-		var topicIndex = 0,
-			topics = topic.split( /\s/ ),
-			topicLength = topics.length;
-		for ( ; topicIndex < topicLength; topicIndex++ ) {
-			topic = topics[ topicIndex ];
-			if ( !subscriptions[ topic ] ) {
-				subscriptions[ topic ] = [];
-			}
-	
-			var i = subscriptions[ topic ].length - 1,
-				subscriptionInfo = {
-					callback: callback,
-					context: context,
-					priority: priority
-				};
-	
-			for ( ; i >= 0; i-- ) {
-				if ( subscriptions[ topic ][ i ].priority <= priority ) {
-					subscriptions[ topic ].splice( i + 1, 0, subscriptionInfo );
-					return callback;
-				}
-			}
-	
-			subscriptions[ topic ].unshift( subscriptionInfo );
-		}
-
-		return callback;
-	},
-
-	unsubscribe: function( topic, callback ) {
-		if ( !subscriptions[ topic ] ) {
-			return;
-		}
-
-		var length = subscriptions[ topic ].length,
-			i = 0;
-
-		for ( ; i < length; i++ ) {
-			if ( subscriptions[ topic ][ i ].callback === callback ) {
-				subscriptions[ topic ].splice( i, 1 );
-				break;
-			}
-		}
-	}
-};
-
-}( this ) );
-/*!
- * Amplify Store - Persistent Client-Side Storage 1.0.0
- * 
- * Copyright 2011 appendTo LLC. (http://appendto.com/team)
- * Dual licensed under the MIT or GPL licenses.
- * http://appendto.com/open-source-licenses
- * 
- * http://amplifyjs.com
- */
-(function( amplify, undefined ) {
-
-var store = amplify.store = function( key, value, options, type ) {
-	var type = store.type;
-	if ( options && options.type && options.type in store.types ) {
-		type = options.type;
-	}
-	return store.types[ type ]( key, value, options || {} );
-};
-
-store.types = {};
-store.type = null;
-store.addType = function( type, storage ) {
-	if ( !store.type ) {
-		store.type = type;
-	}
-
-	store.types[ type ] = storage;
-	store[ type ] = function( key, value, options ) {
-		options = options || {};
-		options.type = type;
-		return store( key, value, options );
-	};
-}
-store.error = function() {
-	return "amplify.store quota exceeded"; 
-};
-
-var rprefix = /^__amplify__/;
-function createFromStorageInterface( storageType, storage ) {
-	store.addType( storageType, function( key, value, options ) {
-		var storedValue, parsed, i, remove,
-			ret = value,
-			now = (new Date()).getTime();
-
-		if ( !key ) {
-			ret = {};
-			remove = [];
-			i = 0;
-			try {
-				// accessing the length property works around a localStorage bug
-				// in Firefox 4.0 where the keys don't update cross-page
-				// we assign to key just to avoid Closure Compiler from removing
-				// the access as "useless code"
-				// https://bugzilla.mozilla.org/show_bug.cgi?id=662511
-				key = storage.length;
-
-				while ( key = storage.key( i++ ) ) {
-					if ( rprefix.test( key ) ) {
-						parsed = JSON.parse( storage.getItem( key ) );
-						if ( parsed.expires && parsed.expires <= now ) {
-							remove.push( key );
-						} else {
-							ret[ key.replace( rprefix, "" ) ] = parsed.data;
-						}
-					}
-				}
-				while ( key = remove.pop() ) {
-					storage.removeItem( key );
-				}
-			} catch ( error ) {}
-			return ret;
-		}
-
-		// protect against name collisions with direct storage
-		key = "__amplify__" + key;
-
-		if ( value === undefined ) {
-			storedValue = storage.getItem( key );
-			parsed = storedValue ? JSON.parse( storedValue ) : { expires: -1 };
-			if ( parsed.expires && parsed.expires <= now ) {
-				storage.removeItem( key );
-			} else {
-				return parsed.data;
-			}
-		} else {
-			if ( value === null ) {
-				storage.removeItem( key );
-			} else {
-				parsed = JSON.stringify({
-					data: value,
-					expires: options.expires ? now + options.expires : null
-				});
-				try {
-					storage.setItem( key, parsed );
-				// quota exceeded
-				} catch( error ) {
-					// expire old data and try again
-					store[ storageType ]();
-					try {
-						storage.setItem( key, parsed );
-					} catch( error ) {
-						throw store.error();
-					}
-				}
-			}
-		}
-
-		return ret;
-	});
-}
-
-// localStorage + sessionStorage
-// IE 8+, Firefox 3.5+, Safari 4+, Chrome 4+, Opera 10.5+, iPhone 2+, Android 2+
-for ( var webStorageType in { localStorage: 1, sessionStorage: 1 } ) {
-	// try/catch for file protocol in Firefox
-	try {
-		if ( window[ webStorageType ].getItem ) {
-			createFromStorageInterface( webStorageType, window[ webStorageType ] );
-		}
-	} catch( e ) {}
-}
-
-// globalStorage
-// non-standard: Firefox 2+
-// https://developer.mozilla.org/en/dom/storage#globalStorage
-if ( window.globalStorage ) {
-	// try/catch for file protocol in Firefox
-	try {
-		createFromStorageInterface( "globalStorage",
-			window.globalStorage[ window.location.hostname ] );
-		// Firefox 2.0 and 3.0 have sessionStorage and globalStorage
-		// make sure we default to globalStorage
-		// but don't default to globalStorage in 3.5+ which also has localStorage
-		if ( store.type === "sessionStorage" ) {
-			store.type = "globalStorage";
-		}
-	} catch( e ) {}
-}
-
-// userData
-// non-standard: IE 5+
-// http://msdn.microsoft.com/en-us/library/ms531424(v=vs.85).aspx
 (function() {
-	// IE 9 has quirks in userData that are a huge pain
-	// rather than finding a way to detect these quirks
-	// we just don't register userData if we have localStorage
-	if ( store.types.localStorage ) {
-		return;
-	}
-
-	// append to html instead of body so we can do this from the head
-	var div = document.createElement( "div" ),
-		attrKey = "amplify";
-	div.style.display = "none";
-	document.getElementsByTagName( "head" )[ 0 ].appendChild( div );
-	if ( div.addBehavior ) {
-		div.addBehavior( "#default#userdata" );
-
-		store.addType( "userData", function( key, value, options ) {
-			div.load( attrKey );
-			var attr, parsed, prevValue, i, remove,
-				ret = value,
-				now = (new Date()).getTime();
-
-			if ( !key ) {
-				ret = {};
-				remove = [];
-				i = 0;
-				while ( attr = div.XMLDocument.documentElement.attributes[ i++ ] ) {
-					parsed = JSON.parse( attr.value );
-					if ( parsed.expires && parsed.expires <= now ) {
-						remove.push( attr.name );
-					} else {
-						ret[ attr.name ] = parsed.data;
-					}
-				}
-				while ( key = remove.pop() ) {
-					div.removeAttribute( key );
-				}
-				div.save( attrKey );
-				return ret;
-			}
-
-			// convert invalid characters to dashes
-			// http://www.w3.org/TR/REC-xml/#NT-Name
-			// simplified to assume the starting character is valid
-			// also removed colon as it is invalid in HTML attribute names
-			key = key.replace( /[^-._0-9A-Za-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u37f-\u1fff\u200c-\u200d\u203f\u2040\u2070-\u218f]/g, "-" );
-
-			if ( value === undefined ) {
-				attr = div.getAttribute( key );
-				parsed = attr ? JSON.parse( attr ) : { expires: -1 };
-				if ( parsed.expires && parsed.expires <= now ) {
-					div.removeAttribute( key );
-				} else {
-					return parsed.data;
-				}
-			} else {
-				if ( value === null ) {
-					div.removeAttribute( key );
-				} else {
-					// we need to get the previous value in case we need to rollback
-					prevValue = div.getAttribute( key );
-					parsed = JSON.stringify({
-						data: value,
-						expires: (options.expires ? (now + options.expires) : null)
-					});
-					div.setAttribute( key, parsed );
-				}
-			}
-
-			try {
-				div.save( attrKey );
-			// quota exceeded
-			} catch ( error ) {
-				// roll the value back to the previous value
-				if ( prevValue === null ) {
-					div.removeAttribute( key );
-				} else {
-					div.setAttribute( key, prevValue );
-				}
-
-				// expire old data and try again
-				store.userData();
-				try {
-					div.setAttribute( key, parsed );
-					div.save( attrKey );
-				} catch ( error ) {
-					// roll the value back to the previous value
-					if ( prevValue === null ) {
-						div.removeAttribute( key );
-					} else {
-						div.setAttribute( key, prevValue );
-					}
-					throw store.error();
-				}
-			}
-			return ret;
-		});
-	}
-}() );
-
-// in-memory storage
-// fallback for all browsers to enable the API even if we can't persist data
-(function() {
-	var memory = {};
-
-	function copy( obj ) {
-		return obj === undefined ? undefined : JSON.parse( JSON.stringify( obj ) );
-	}
-
-	store.addType( "memory", function( key, value, options ) {
-		if ( !key ) {
-			return copy( memory );
-		}
-
-		if ( value === undefined ) {
-			return copy( memory[ key ] );
-		}
-
-		if ( value === null ) {
-			delete memory[ key ];
-			return null;
-		}
-
-		memory[ key ] = value;
-		if ( options.expires ) {
-			setTimeout(function() {
-				delete memory[ key ];
-			}, options.expires );
-		}
-
-		return value;
-	});
-}() );
-
-}( this.amplify = this.amplify || {} ) );
-/*!
- * Amplify Request 1.0.0
- * 
- * Copyright 2011 appendTo LLC. (http://appendto.com/team)
- * Dual licensed under the MIT or GPL licenses.
- * http://appendto.com/open-source-licenses
- * 
- * http://amplifyjs.com
- */
-(function( amplify, undefined ) {
-
-function noop() {}
-function isFunction( obj ) {
-	return ({}).toString.call( obj ) === "[object Function]";
-}
-
-amplify.request = function( resourceId, data, callback ) {
-	// default to an empty hash just so we can handle a missing resourceId
-	// in one place
-	var settings = resourceId || {};
-
-	if ( typeof settings === "string" ) {
-		if ( isFunction( data ) ) {
-			callback = data;
-			data = {};
-		}
-		settings = {
-			resourceId: resourceId,
-			data: data || {},
-			success: callback
-		};
-	}
-
-	var request = { abort: noop },
-		resource = amplify.request.resources[ settings.resourceId ],
-		success = settings.success || noop,
-		error = settings.error || noop;
-	settings.success = function( data, status ) {
-		status = status || "success";
-		amplify.publish( "request.success", settings, data, status );
-		amplify.publish( "request.complete", settings, data, status );
-		success( data, status );
-	};
-	settings.error = function( data, status ) {
-		status = status || "error";
-		amplify.publish( "request.error", settings, data, status );
-		amplify.publish( "request.complete", settings, data, status );
-		error( data, status );
-	};
-
-	if ( !resource ) {
-		if ( !settings.resourceId ) {
-			throw "amplify.request: no resourceId provided";
-		}
-		throw "amplify.request: unknown resourceId: " + settings.resourceId;
-	}
-
-	if ( !amplify.publish( "request.before", settings ) ) {
-		settings.error( null, "abort" );
-		return;
-	}
-
-	amplify.request.resources[ settings.resourceId ]( settings, request );
-	return request;
-};
-
-amplify.request.types = {};
-amplify.request.resources = {};
-amplify.request.define = function( resourceId, type, settings ) {
-	if ( typeof type === "string" ) {
-		if ( !( type in amplify.request.types ) ) {
-			throw "amplify.request.define: unknown type: " + type;
-		}
-
-		settings.resourceId = resourceId;
-		amplify.request.resources[ resourceId ] =
-			amplify.request.types[ type ]( settings );
-	} else {
-		// no pre-processor or settings for one-off types (don't invoke)
-		amplify.request.resources[ resourceId ] = type;
-	}
-};
-
-}( amplify ) );
-
-
-
-
-
-(function( amplify, $, undefined ) {
-
-var xhrProps = [ "status", "statusText", "responseText", "responseXML", "readyState" ],
-    rurlData = /\{([^\}]+)\}/g;
-
-amplify.request.types.ajax = function( defnSettings ) {
-	defnSettings = $.extend({
-		type: "GET"
-	}, defnSettings );
-
-	return function( settings, request ) {
-		var xhr,
-			url = defnSettings.url,
-			data = settings.data,
-			abort = request.abort,
-			ajaxSettings = {},
-			mappedKeys = [],
-			aborted = false,
-			ampXHR = {
-				readyState: 0,
-				setRequestHeader: function( name, value ) {
-					return xhr.setRequestHeader( name, value );
-				},
-				getAllResponseHeaders: function() {
-					return xhr.getAllResponseHeaders();
-				},
-				getResponseHeader: function( key ) {
-					return xhr.getResponseHeader( key );
-				},
-				overrideMimeType: function( type ) {
-					return xhr.overrideMideType( type );
-				},
-				abort: function() {
-					aborted = true;
-					try {
-						xhr.abort();
-					// IE 7 throws an error when trying to abort
-					} catch( e ) {}
-					handleResponse( null, "abort" );
-				},
-				success: function( data, status ) {
-					settings.success( data, status );
-				},
-				error: function( data, status ) {
-					settings.error( data, status );
-				}
-			};
-
-		if ( typeof data !== "string" ) {
-			data = $.extend( true, {}, defnSettings.data, data );
-			
-			url = url.replace( rurlData, function ( m, key ) {
-				if ( key in data ) {
-				    mappedKeys.push( key );
-				    return data[ key ];
-				}
-			});
-			
-			// We delete the keys later so duplicates are still replaced
-			$.each( mappedKeys, function ( i, key ) {
-				delete data[ key ];
-			});
-		}
-
-		$.extend( ajaxSettings, defnSettings, {
-			url: url,
-			type: defnSettings.type,
-			data: data,
-			dataType: defnSettings.dataType,
-			success: function( data, status ) {
-				handleResponse( data, status );
-			},
-			error: function( _xhr, status ) {
-				handleResponse( null, status );
-			},
-			beforeSend: function( _xhr, _ajaxSettings ) {
-				xhr = _xhr;
-				ajaxSettings = _ajaxSettings;
-				var ret = defnSettings.beforeSend ?
-					defnSettings.beforeSend.call( this, ampXHR, ajaxSettings ) : true;
-				return ret && amplify.publish( "request.before.ajax",
-					defnSettings, settings, ajaxSettings, ampXHR );
-			}
-		});
-		$.ajax( ajaxSettings );
-
-		function handleResponse( data, status ) {
-			$.each( xhrProps, function( i, key ) {
-				try {
-					ampXHR[ key ] = xhr[ key ];
-				} catch( e ) {}
-			});
-			// Playbook returns "HTTP/1.1 200 OK"
-			// TODO: something also returns "OK", what?
-			if ( /OK$/.test( ampXHR.statusText ) ) {
-				ampXHR.statusText = "success";
-			}
-			if ( data === undefined ) {
-				// TODO: add support for ajax errors with data
-				data = null;
-			}
-			if ( aborted ) {
-				status = "abort";
-			}
-			if ( /timeout|error|abort/.test( status ) ) {
-				ampXHR.error( data, status );
-			} else {
-				ampXHR.success( data, status );
-			}
-			// avoid handling a response multiple times
-			// this can happen if a request is aborted
-			// TODO: figure out if this breaks polling or multi-part responses
-			handleResponse = $.noop;
-		}
-
-		request.abort = function() {
-			ampXHR.abort();
-			abort.call( this );
-		};
-	};
-};
-
-
-
-var cache = amplify.request.cache = {
-	_key: function( resourceId, url, data ) {
-		data = url + data;
-		var length = data.length,
-			i = 0,
-			checksum = chunk();
-
-		while ( i < length ) {
-			checksum ^= chunk();
-		}
-
-		function chunk() {
-			return data.charCodeAt( i++ ) << 24 |
-				data.charCodeAt( i++ ) << 16 |
-				data.charCodeAt( i++ ) << 8 |
-				data.charCodeAt( i++ ) << 0;
-		}
-
-		return "request-" + resourceId + "-" + checksum;
-	},
-
-	_default: (function() {
-		var memoryStore = {};
-		return function( resource, settings, ajaxSettings, ampXHR ) {
-			// data is already converted to a string by the time we get here
-			var cacheKey = cache._key( settings.resourceId,
-					ajaxSettings.url, ajaxSettings.data ),
-				duration = resource.cache;
-
-			if ( cacheKey in memoryStore ) {
-				ampXHR.success( memoryStore[ cacheKey ] );
-				return false;
-			}
-			var success = ampXHR.success;
-			ampXHR.success = function( data ) {
-				memoryStore[ cacheKey ] = data;
-				if ( typeof duration === "number" ) {
-					setTimeout(function() {
-						delete memoryStore[ cacheKey ];
-					}, duration );
-				}
-				success.apply( this, arguments );
-			};
-		};
-	}())
-};
-
-if ( amplify.store ) {
-	$.each( amplify.store.types, function( type ) {
-		cache[ type ] = function( resource, settings, ajaxSettings, ampXHR ) {
-			var cacheKey = cache._key( settings.resourceId,
-					ajaxSettings.url, ajaxSettings.data ),
-				cached = amplify.store[ type ]( cacheKey );
-
-			if ( cached ) {
-				ajaxSettings.success( cached );
-				return false;
-			}
-			var success = ampXHR.success;
-			ampXHR.success = function( data ) {	
-				amplify.store[ type ]( cacheKey, data, { expires: resource.cache.expires } );
-				success.apply( this, arguments );
-			};
-		};
-	});
-	cache.persist = cache[ amplify.store.type ];
-}
-
-amplify.subscribe( "request.before.ajax", function( resource ) {
-	var cacheType = resource.cache;
-	if ( cacheType ) {
-		// normalize between objects and strings/booleans/numbers
-		cacheType = cacheType.type || cacheType;
-		return cache[ cacheType in cache ? cacheType : "_default" ]
-			.apply( this, arguments );
-	}
-});
-
-
-
-amplify.request.decoders = {
-	// http://labs.omniti.com/labs/jsend
-	jsend: function( data, status, ampXHR, success, error ) {
-		if ( data.status === "success" ) {
-			success( data.data );
-		} else if ( data.status === "fail" ) {
-			error( data.data, "fail" );
-		} else if ( data.status === "error" ) {
-			delete data.status;
-			error( data, "error" );
-		}
-	}
-};
-
-amplify.subscribe( "request.before.ajax", function( resource, settings, ajaxSettings, ampXHR ) {
-	var _success = ampXHR.success,
-		_error = ampXHR.error,
-		decoder = $.isFunction( resource.decoder )
-			? resource.decoder
-			: resource.decoder in amplify.request.decoders
-				? amplify.request.decoders[ resource.decoder ]
-				: amplify.request.decoders._default;
-
-	if ( !decoder ) {
-		return;
-	}
-
-	function success( data, status ) {
-		_success( data, status );
-	}
-	function error( data, status ) {
-		_error( data, status );
-	}
-	ampXHR.success = function( data, status ) {
-		decoder( data, status, ampXHR, success, error );
-	};
-	ampXHR.error = function( data, status ) {
-		decoder( data, status, ampXHR, success, error );
-	};
-});
-
-}( amplify, jQuery ) );
+  var AppTools, CoreAPI, CoreAgentAPI, CoreDevAPI, CoreEventsAPI, CorePushAPI, CoreRPCAPI, CoreUserAPI, RPCAPI, RPCRequest;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+    for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
+    function ctor() { this.constructor = child; }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor;
+    child.__super__ = parent.prototype;
+    return child;
+  }, __slice = Array.prototype.slice;
+  CoreAPI = (function() {
+    function CoreAPI() {}
+    return CoreAPI;
+  })();
+  CoreDevAPI = (function() {
+    __extends(CoreDevAPI, CoreAPI);
+    function CoreDevAPI(fcm) {
+      this.verbose = __bind(this.verbose, this);
+      this.error = __bind(this.error, this);
+      this.eventlog = __bind(this.eventlog, this);
+      this.log = __bind(this.log, this);
+      this.setDebug = __bind(this.setDebug, this);      this.config = {};
+      this.environment = {};
+      this.performance = {};
+      this.debug = {
+        logging: true,
+        eventlog: true,
+        verbose: true
+      };
+    }
+    CoreDevAPI.prototype.setDebug = function(debug) {
+      this.debug = debug;
+      return console.log("[CoreDev] Debug has been set.", this.debug);
+    };
+    CoreDevAPI.prototype.log = function() {
+      var context, message, module;
+      module = arguments[0], message = arguments[1], context = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
+      if (!(context != null)) {
+        context = '{no context}';
+      }
+      if (this.debug.logging === true) {
+        console.log.apply(console, ["[" + module + "] INFO: " + message].concat(__slice.call(context)));
+      }
+    };
+    CoreDevAPI.prototype.eventlog = function() {
+      var context, sublabel;
+      sublabel = arguments[0], context = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      if (!(context != null)) {
+        context = '{no context}';
+      }
+      if (this.debug.eventlog === true) {
+        console.log.apply(console, ["[EventLog] " + sublabel].concat(__slice.call(context)));
+      }
+    };
+    CoreDevAPI.prototype.error = function() {
+      var context, message, module;
+      module = arguments[0], message = arguments[1], context = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
+      if (this.debug.logging === true) {
+        console.log.apply(console, ["[" + module + "] ERROR: " + message].concat(__slice.call(context)));
+      }
+    };
+    CoreDevAPI.prototype.verbose = function() {
+      var context, message, module;
+      module = arguments[0], message = arguments[1], context = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
+      if (this.debug.verbose === true) {
+        this.log.apply(this, [module, message].concat(__slice.call(context)));
+      }
+    };
+    return CoreDevAPI;
+  })();
+  CoreAgentAPI = (function() {
+    __extends(CoreAgentAPI, CoreAPI);
+    function CoreAgentAPI(fcm) {
+      this._data = {};
+      this.platform = {};
+      this.capabilities = {};
+      this._data = {
+        browsers: [
+          {
+            string: navigator.userAgent,
+            subString: "Chrome",
+            identity: "Chrome"
+          }, {
+            string: navigator.userAgent,
+            subString: "OmniWeb",
+            versionSearch: "OmniWeb/",
+            identity: "OmniWeb"
+          }, {
+            string: navigator.vendor,
+            subString: "Apple",
+            identity: "Safari",
+            versionSearch: "Version"
+          }, {
+            prop: window.opera,
+            identity: "Opera"
+          }, {
+            string: navigator.vendor,
+            subString: "iCab",
+            identity: "iCab"
+          }, {
+            string: navigator.vendor,
+            subString: "KDE",
+            identity: "Konqueror"
+          }, {
+            string: navigator.userAgent,
+            subString: "Firefox",
+            identity: "Firefox"
+          }, {
+            string: navigator.vendor,
+            subString: "Camino",
+            identity: "Camino"
+          }, {
+            string: navigator.userAgent,
+            subString: "Netscape",
+            identity: "Netscape"
+          }, {
+            string: navigator.userAgent,
+            subString: "MSIE",
+            identity: "Explorer",
+            versionSearch: "MSIE"
+          }, {
+            string: navigator.userAgent,
+            subString: "Gecko",
+            identity: "Mozilla",
+            versionSearch: "rv"
+          }, {
+            string: navigator.userAgent,
+            subString: "Mozilla",
+            identity: "Netscape",
+            versionSearch: "Mozilla"
+          }
+        ],
+        os: [
+          {
+            string: navigator.platform,
+            subString: "Win",
+            identity: "Windows"
+          }, {
+            string: navigator.platform,
+            subString: "Mac",
+            identity: "Mac"
+          }, {
+            string: navigator.userAgent,
+            subString: "iPhone",
+            identity: "iPhone/iPod"
+          }, {
+            string: navigator.platform,
+            subString: "Linux",
+            identity: "Linux"
+          }
+        ]
+      };
+    }
+    CoreAgentAPI.prototype._makeMatch = function(data) {
+      var prop, string, value, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = data.length; _i < _len; _i++) {
+        value = data[_i];
+        string = value.string;
+        prop = value.prop;
+        this._data.versionSearchString = value.versionSearch || value.identity;
+        if (string !== null) {
+          if (value.string.indexOf(value.subString) !== -1) {
+            return value.identity;
+          }
+        } else if (prop) {
+          return value.identity;
+        }
+      }
+      return _results;
+    };
+    CoreAgentAPI.prototype._makeVersion = function(dataString) {
+      var index;
+      index = dataString.indexOf(this._data.versionSearchString);
+      if (index === -1) {} else {
+        return parseFloat(dataString.substring(index + this._data.versionSearchString.length + 1));
+      }
+    };
+    CoreAgentAPI.prototype.discover = function() {
+      var browser, mobile, os, type, version;
+      browser = this._makeMatch(this._data.browsers) || "unknown";
+      version = this._makeVersion(navigator.userAgent) || this._makeVersion(navigator.appVersion) || "unknown";
+      os = this._makeMatch(this._data.os) || "unknown";
+      if (browser === 'iPod/iPhone' || browser === 'Android') {
+        type = 'mobile';
+        mobile = false;
+      }
+      this.platform = {
+        os: os,
+        type: type,
+        vendor: navigator.vendor,
+        product: navigator.product,
+        browser: browser,
+        version: version,
+        flags: {
+          mobile: mobile,
+          webkit: $.browser.webkit,
+          msie: $.browser.msie,
+          opera: $.browser.opera,
+          mozilla: $.browser.mozilla
+        }
+      };
+      return this.capabilities = {
+        cookies: navigator.cookieEnabled,
+        ajax: $.support.ajax,
+        canvas: Modernizr.canvas,
+        geolocation: Modernizr.geolocation,
+        svg: Modernizr.svg,
+        workers: Modernizr.webworkers,
+        history: Modernizr.history,
+        sockets: Modernizr.websockets,
+        storage: {
+          local: Modernizr.localstorage,
+          session: Modernizr.sessionstorage,
+          websql: Modernizr.websqldatabase,
+          object: Modernizr.indexeddb
+        }
+      };
+    };
+    return CoreAgentAPI;
+  })();
+  CoreEventsAPI = (function() {
+    __extends(CoreEventsAPI, CoreAPI);
+    function CoreEventsAPI(apptools) {
+      ({
+        registry: [],
+        callchain: {},
+        history: []
+      });
+      this.triggerEvent = function() {};
+      this.registerEvent = function() {};
+      this.registerHook = function() {};
+    }
+    return CoreEventsAPI;
+  })();
+  RPCAPI = (function() {
+    function RPCAPI(name, base_uri, methods, config) {
+      var method, _i, _len, _ref;
+      this.name = name;
+      this.base_uri = base_uri;
+      this.methods = methods;
+      this.config = config;
+      if (this.methods.length > 0) {
+        _ref = this.methods;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          method = _ref[_i];
+          this[method] = this._buildRPCMethod(method, base_uri, config);
+        }
+      }
+    }
+    RPCAPI.prototype._buildRPCMethod = function(method, base_uri, config) {
+      var api, rpcMethod;
+      api = this.name;
+      rpcMethod = __bind(function(params, callbacks, async, opts) {
+        if (params == null) {
+          params = {};
+        }
+        if (callbacks == null) {
+          callbacks = null;
+        }
+        if (async == null) {
+          async = false;
+        }
+        if (opts == null) {
+          opts = {};
+        }
+        return __bind(function(params, callbacks, async, opts) {
+          var request;
+          if (params == null) {
+            params = {};
+          }
+          if (callbacks == null) {
+            callbacks = null;
+          }
+          if (async == null) {
+            async = false;
+          }
+          if (opts == null) {
+            opts = {};
+          }
+          request = $.apptools.api.rpc.createRPCRequest({
+            method: method,
+            api: api,
+            params: params || {},
+            opts: opts || {},
+            async: async || false
+          });
+          if (callbacks !== null) {
+            return request.fulfill(callbacks);
+          } else {
+            return request;
+          }
+        }, this)(params, callbacks, async, opts);
+      }, this);
+      $.apptools.api.registerAPIMethod(api, method, base_uri, config);
+      return rpcMethod;
+    };
+    return RPCAPI;
+  })();
+  RPCRequest = (function() {
+    function RPCRequest(id, opts, agent) {
+      this.params = {};
+      this.action = null;
+      this.method = null;
+      this.api = null;
+      this.base_uri = null;
+      this.envelope = {
+        id: null,
+        opts: {},
+        agent: {}
+      };
+      this.ajax = {
+        accepts: 'application/json',
+        async: false,
+        cache: true,
+        global: true,
+        http_method: 'POST',
+        crossDomain: false,
+        processData: false,
+        ifModified: false,
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8'
+      };
+      if (id != null) {
+        this.envelope.id = id;
+      }
+      if (opts != null) {
+        this.envelope.opts = opts;
+      }
+      if (agent != null) {
+        this.envelope.agent = agent;
+      }
+    }
+    RPCRequest.prototype.fulfill = function() {
+      var callbacks, config, defaultFailureCallback, defaultSuccessCallback;
+      callbacks = arguments[0], config = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      if (!(callbacks != null ? callbacks.success : void 0)) {
+        defaultSuccessCallback = __bind(function(context) {
+          return $.apptools.dev.log('RPC', 'RPC succeeded but had no success callback.', this);
+        }, this);
+        callbacks.success = defaultSuccessCallback;
+      }
+      if (!(callbacks != null ? callbacks.failure : void 0)) {
+        defaultFailureCallback = __bind(function(context) {
+          return $.apptools.dev.error('RPC', 'RPC failed but had no failure callback.', this);
+        }, this);
+        callbacks.failure = defaultFailureCallback;
+      }
+      return $.apptools.api.rpc.fulfillRPCRequest(config, this, callbacks);
+    };
+    RPCRequest.prototype.setAsync = function(async) {
+      var _ref, _ref2;
+      if ((_ref = this.ajax) != null) {
+        if ((_ref2 = _ref.async) == null) {
+          _ref.async = async;
+        }
+      }
+      return this;
+    };
+    RPCRequest.prototype.setOpts = function(opts) {
+      var _ref, _ref2;
+      if ((_ref = this.envelope) != null) {
+        if ((_ref2 = _ref.opts) == null) {
+          _ref.opts = opts;
+        }
+      }
+      return this;
+    };
+    RPCRequest.prototype.setAgent = function(agent) {
+      var _ref, _ref2;
+      if ((_ref = this.envelope) != null) {
+        if ((_ref2 = _ref.agent) == null) {
+          _ref.agent = agent;
+        }
+      }
+      return this;
+    };
+    RPCRequest.prototype.setAction = function(action) {
+      this.action = action;
+      return this;
+    };
+    RPCRequest.prototype.setMethod = function(method) {
+      this.method = method;
+      return this;
+    };
+    RPCRequest.prototype.setAPI = function(api) {
+      this.api = api;
+      return this;
+    };
+    RPCRequest.prototype.setBaseURI = function(base_uri) {
+      this.base_uri = base_uri;
+      return this;
+    };
+    RPCRequest.prototype.setParams = function(params) {
+      this.params = params != null ? params : {};
+      return this;
+    };
+    RPCRequest.prototype.payload = function() {
+      var _payload;
+      _payload = {
+        id: this.envelope.id,
+        opts: this.envelope.opts,
+        agent: this.envelope.agent,
+        request: {
+          params: this.params,
+          method: this.method,
+          api: this.api
+        }
+      };
+      return _payload;
+    };
+    return RPCRequest;
+  })();
+  CoreRPCAPI = (function() {
+    __extends(CoreRPCAPI, CoreAPI);
+    function CoreRPCAPI(apptools) {
+      var original_xhr, _ref;
+      apptools.events.registerEvent('RPC_CREATE');
+      apptools.events.registerEvent('RPC_FULFILL');
+      apptools.events.registerEvent('RPC_SUCCESS');
+      apptools.events.registerEvent('RPC_ERROR');
+      apptools.events.registerEvent('RPC_COMPLETE');
+      apptools.events.registerEvent('RPC_PROGRESS');
+      if (window.amplify != null) {
+        apptools.dev.verbose('RPC', 'AmplifyJS detected. Registering.');
+        if (apptools != null ? (_ref = apptools.sys) != null ? _ref.drivers : void 0 : void 0) {
+          apptools.sys.drivers.register('transport', 'amplify', window.amplify, true, true);
+        }
+      }
+      this.base_rpc_uri = '/_api/rpc';
+      original_xhr = $.ajaxSettings.xhr;
+      this.internals = {
+        transports: {
+          xhr: {
+            factory: __bind(function() {
+              var req;
+              req = original_xhr();
+              if (req) {
+                if (typeof req.addEventListener === 'function') {
+                  req.addEventListener("progress", __bind(function(ev) {
+                    return apptools.events.triggerEvent('RPC_PROGRESS', {
+                      event: ev
+                    });
+                  }, this), false);
+                }
+              }
+              return req;
+            }, this)
+          }
+        }
+      };
+      $.ajaxSetup({
+        global: true,
+        xhr: __bind(function() {
+          return this.internals.transports.xhr.factory();
+        }, this)
+      });
+      this.rpc = {
+        lastRequest: null,
+        lastFailure: null,
+        lastResponse: null,
+        action_prefix: null,
+        history: {},
+        used_ids: [],
+        factory: function(name, base_uri, methods, config) {
+          return $.apptools.api[name] = new RPCAPI(name, base_uri, methods, config);
+        },
+        _assembleRPCURL: function(method, api, prefix, base_uri) {
+          if (api == null) {
+            api = null;
+          }
+          if (prefix == null) {
+            prefix = null;
+          }
+          if (base_uri == null) {
+            base_uri = null;
+          }
+          if (api === null && base_uri === null) {
+            throw "[RPC] Error: Must specify either an API or base URI to generate an RPC endpoint.";
+          } else {
+            if (base_uri === null) {
+              base_uri = $.apptools.api.base_rpc_uri + '/' + api;
+            }
+            if (prefix !== null) {
+              return [prefix + base_uri, method].join('.');
+            } else {
+              return [base_uri, method].join('.');
+            }
+          }
+        },
+        provisionRequestID: function() {
+          var id;
+          if (this.used_ids.length > 0) {
+            id = Math.max.apply(this, this.used_ids) + 1;
+            this.used_ids.push(id);
+            return id;
+          } else {
+            this.used_ids.push(1);
+            return 1;
+          }
+        },
+        decodeRPCResponse: function(data, status, xhr, success, error) {
+          return success(data, status);
+        },
+        createRPCRequest: function(config) {
+          var request;
+          request = new RPCRequest(this.provisionRequestID());
+          if (config.api != null) {
+            request.setAPI(config.api);
+          }
+          if (config.method != null) {
+            request.setMethod(config.method);
+          }
+          if (config.agent != null) {
+            request.setAgent(config.agent);
+          }
+          if (config.opts != null) {
+            request.setOpts(config.opts);
+          }
+          if (config.base_uri != null) {
+            request.setBaseURI(config.base_uri);
+          }
+          if (config.params != null) {
+            request.setParams(config.params);
+          }
+          if (config.async != null) {
+            request.setAsync(config.async);
+          }
+          $.apptools.dev.log('RPC', 'New Request', request, config);
+          request.setAction(this._assembleRPCURL(request.method, request.api, this.action_prefix, this.base_rpc_uri));
+          return request;
+        },
+        fulfillRPCRequest: function(config, request, callbacks) {
+          var context;
+          $.apptools.dev.log('RPC', 'Fulfill', config, request, callbacks);
+          this.lastRequest = request;
+          this.history[request.envelope.id] = {
+            request: request,
+            config: config,
+            callbacks: callbacks
+          };
+          if (request.action === null) {
+            if (request.method === null) {
+              throw "[RPC] Error: Request must specify at least an action or method.";
+            }
+            if (request.base_uri === null) {
+              if (request.api === null) {
+                throw "[RPC] Error: Request must have an API or explicity BASE_URI.";
+              } else {
+                request.action = this._assembleRPCURL(request.method, request.api, this.action_prefix);
+              }
+            } else {
+              request.action = this._assembleRPCURL(request.method, null, this.action_prefix, request.base_uri);
+            }
+          }
+          if (request.action === null || request.action === void 0) {
+            throw '[RPC] Error: Could not determine RPC action.';
+          }
+          context = {
+            config: config,
+            request: request,
+            callbacks: callbacks
+          };
+          $.apptools.events.triggerEvent('RPC_FULFILL', context);
+          (function(request, callbacks) {
+            var amplify, fatcatmap, xhr, xhr_action, xhr_settings, _ref2, _ref3;
+            fatcatmap = window.fatcatmap;
+            xhr_settings = {
+              resourceId: request.api + '.' + request.method,
+              url: request.action,
+              data: JSON.stringify(request.payload()),
+              async: request.ajax.async,
+              global: request.ajax.global,
+              type: request.ajax.http_method,
+              accepts: request.ajax.accepts,
+              crossDomain: request.ajax.crossDomain,
+              dataType: request.ajax.dataType,
+              processData: false,
+              ifModified: request.ajax.ifModified,
+              contentType: request.ajax.contentType,
+              beforeSend: __bind(function(xhr, settings) {
+                $.apptools.api.rpc.history[request.envelope.id].xhr = xhr;
+                if (callbacks != null) {
+                  if (typeof callbacks.status === "function") {
+                    callbacks.status('beforeSend');
+                  }
+                }
+                return xhr;
+              }, this),
+              error: __bind(function(xhr, status, error) {
+                if (callbacks != null) {
+                  if (typeof callbacks.status === "function") {
+                    callbacks.status('error');
+                  }
+                }
+                $.apptools.dev.error('RPC', 'Error: ', {
+                  error: error,
+                  status: status,
+                  xhr: xhr
+                });
+                fatcatmap.rpc.api.lastFailure = error;
+                $.apptools.api.rpc.history[request.envelope.id].xhr = xhr;
+                $.apptools.api.rpc.history[request.envelope.id].status = status;
+                $.apptools.api.rpc.history[request.envelope.id].failure = error;
+                context = {
+                  xhr: xhr,
+                  status: status,
+                  error: error
+                };
+                $.apptools.events.triggerEvent('RPC_ERROR', context);
+                $.apptools.events.triggerEvent('RPC_COMPLETE', context);
+                return callbacks != null ? typeof callbacks.failure === "function" ? callbacks.failure(error) : void 0 : void 0;
+              }, this),
+              success: __bind(function(data, status, xhr) {
+                if (data.status === 'ok') {
+                  if (callbacks != null) {
+                    if (typeof callbacks.status === "function") {
+                      callbacks.status('success');
+                    }
+                  }
+                  $.apptools.dev.log('RPC', 'Success', data, status, xhr);
+                  $.apptools.api.rpc.lastResponse = data;
+                  $.apptools.api.rpc.history[request.envelope.id].xhr = xhr;
+                  $.apptools.api.rpc.history[request.envelope.id].status = status;
+                  $.apptools.api.rpc.history[request.envelope.id].response = data;
+                  context = {
+                    xhr: xhr,
+                    status: status,
+                    data: data
+                  };
+                  $.apptools.events.triggerEvent('RPC_SUCCESS', context);
+                  $.apptools.events.triggerEvent('RPC_COMPLETE', context);
+                  $.apptools.dev.verbose('RPC', 'Success callback', callbacks);
+                  return callbacks != null ? typeof callbacks.success === "function" ? callbacks.success(data.response.content, data.response.type, data) : void 0 : void 0;
+                } else if (data.status === 'failure') {
+                  if (callbacks != null) {
+                    if (typeof callbacks.status === "function") {
+                      callbacks.status('error');
+                    }
+                  }
+                  $.apptools.dev.error('RPC', 'Error: ', {
+                    error: error,
+                    status: status,
+                    xhr: xhr
+                  });
+                  $.apptools.api.rpc.lastFailure = error;
+                  $.apptools.api.rpc.history[request.envelope.id].xhr = xhr;
+                  $.apptools.api.rpc.history[request.envelope.id].status = status;
+                  $.apptools.api.rpc.history[request.envelope.id].failure = error;
+                  context = {
+                    xhr: xhr,
+                    status: status,
+                    error: error
+                  };
+                  $.apptools.events.triggerEvent('RPC_ERROR', context);
+                  $.apptools.events.triggerEvent('RPC_COMPLETE', context);
+                  return callbacks != null ? typeof callbacks.failure === "function" ? callbacks.failure(error) : void 0 : void 0;
+                }
+              }, this),
+              statusCode: {
+                404: function() {
+                  $.apptools.dev.error('RPC', 'HTTP/404', 'Could not resolve RPC action URI.');
+                  return $.apptools.events.triggerEvent('RPC_ERROR', {
+                    message: 'RPC 404: Could not resolve RPC action URI.',
+                    code: 404
+                  });
+                },
+                403: function() {
+                  $.apptools.dev.error('RPC', 'HTTP/403', 'Not authorized to access the specified endpoint.');
+                  return $.apptools.events.triggerEvent('RPC_ERROR', {
+                    message: 'RPC 403: Not authorized to access the specified endpoint.',
+                    code: 403
+                  });
+                },
+                500: function() {
+                  $.apptools.dev.error('RPC', 'HTTP/500', 'Internal server error.');
+                  return $.apptools.events.triggerEvent('RPC_ERROR', {
+                    message: 'RPC 500: Woops! Something went wrong. Please try again.',
+                    code: 500
+                  });
+                }
+              }
+            };
+            if ((_ref2 = $.apptools) != null ? (_ref3 = _ref2.sys) != null ? _ref3.drivers : void 0 : void 0) {
+              amplify = $.apptools.sys.drivers.resolve('transport', 'amplify');
+              if ((amplify != null) && amplify === !false) {
+                $.apptools.dev.verbose('RPC', 'Fulfilling with AmplifyJS adapter.');
+                xhr_action = amplify.request;
+                xhr = xhr_action(xhr_settings);
+              } else {
+                $.apptools.dev.verbose('RPC', 'Fulfilling with AJAX adapter.', xhr_settings);
+                xhr = $.ajax(xhr_settings.url, xhr_settings);
+              }
+            } else {
+              $.apptools.dev.verbose('RPC', 'Fulfilling with AJAX adapter.', xhr_settings);
+              xhr = $.ajax(xhr_settings.url, xhr_settings);
+            }
+            return $.apptools.dev.verbose('RPC', 'Resulting XHR: ', xhr);
+          })(request, callbacks);
+          return {
+            id: request.envelope.id,
+            request: request
+          };
+        }
+      };
+      this.ext = null;
+      this.registerAPIMethod = function(api, name, base_uri, config) {
+        var amplify, base_settings, resourceId, _ref2, _ref3;
+        if ((_ref2 = $.apptools) != null ? (_ref3 = _ref2.sys) != null ? _ref3.drivers : void 0 : void 0) {
+          amplify = $.apptools.sys.drivers.resolve('transport', 'amplify');
+          if (amplify !== false) {
+            $.apptools.dev.log('RPCAPI', 'Registering request procedure "' + api + '.' + name + '" with AmplifyJS.');
+            resourceId = api + '.' + name;
+            base_settings = {
+              accepts: 'application/json'
+            };
+            ({
+              type: 'POST',
+              dataType: 'json',
+              contentType: 'application/json',
+              url: this.api._assembleRPCURL(name, api, null, base_uri),
+              decoder: this.api.decodeRPCResponse
+            });
+            if (config.caching != null) {
+              if (config.caching === true) {
+                base_settings.caching = 'persist';
+              }
+              return amplify.request.define(resourceId, "ajax", base_settings);
+            } else {
+              return amplify.request.define(resourceId, "ajax", base_settings);
+            }
+          }
+        }
+      };
+    }
+    return CoreRPCAPI;
+  })();
+  window.RPCAPI = RPCAPI;
+  window.RPCRequest = RPCRequest;
+  CoreUserAPI = (function() {
+    __extends(CoreUserAPI, CoreAPI);
+    function CoreUserAPI(apptools) {}
+    CoreUserAPI.prototype.setUserInfo = function() {
+      return console.log('USERINFO: ', arguments);
+    };
+    return CoreUserAPI;
+  })();
+  CorePushAPI = (function() {
+    __extends(CorePushAPI, CoreAPI);
+    function CorePushAPI() {
+      CorePushAPI.__super__.constructor.apply(this, arguments);
+    }
+    return CorePushAPI;
+  })();
+  AppTools = (function() {
+    function AppTools(config) {
+      this.config = config;
+      this.dev = new CoreDevAPI(this);
+      this.agent = new CoreAgentAPI(this);
+      this.agent.discover();
+      this.events = new CoreEventsAPI(this);
+      this.user = new CoreUserAPI(this);
+      this.api = new CoreRPCAPI(this);
+      this.push = new CorePushAPI(this);
+      return this;
+    }
+    return AppTools;
+  })();
+  window.apptools = new AppTools();
+  if (typeof $ !== "undefined" && $ !== null) {
+    $.extend({
+      apptools: window.apptools
+    });
+  }
+}).call(this);
