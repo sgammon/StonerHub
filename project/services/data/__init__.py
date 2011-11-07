@@ -4,9 +4,6 @@ import logging
 
 from protorpc import remote
 
-from google.appengine.ext import db
-from google.appengine.api import memcache
-
 import webapp2
 
 from project.services import RemoteService
@@ -100,7 +97,7 @@ class DataService(RemoteService):
 		query_id, query_obj = self._flattenQuery(query, limit, offset)
 		
 		if self.config['query_caching']['enable'] == True:
-			m = memcache.get('SPIDataAPI//QueryResult-'+query_id)
+			m = self.api.memcache.get('SPIDataAPI//QueryResult-'+query_id)
 			if self.config['query_caching']['log_cache_rpcs'] == True: logging.info('--DataAPI Cacher: Checking for cached results at key "SPIDataAPI//QueryResult-'+str(query_id)+'".')
 		else:
 			m = None
@@ -125,20 +122,20 @@ class DataService(RemoteService):
 				elif isinstance(result_obj['data'], list):
 					result_data = result_obj['data']
 				for result_item in result_data:
-					if not isinstance(result_item, (db.Key, db.Model)):
+					if not isinstance(result_item, (self.api.db.Key, self.api.db.db.Model)):
 						continue
-					if isinstance(result_item, db.Model):
+					if isinstance(result_item, self.api.db.Model):
 						result_item = result_item.key()
-					block = memcache.get('SPIDataAPI//CacheHint-'+str(result_item))
+					block = self.api.memcache.get('SPIDataAPI//CacheHint-'+str(result_item))
 					if block is not None:
 						block['QueryResults'].append('QueryResult-'+query_id)
 					else:
 						block = {'QueryResults':['QueryResult-'+query_id]}
 					cache_blocks[str(result_item)] = block
 				if len(cache_blocks) > 0:
-					memcache.set_multi(cache_blocks, time=self.config['query_caching']['ttl'], key_prefix='SPIDataAPI//CacheHint-')
+					self.api.memcache.set_multi(cache_blocks, time=self.config['query_caching']['ttl'], key_prefix='SPIDataAPI//CacheHint-')
 	
-				memcache.set('SPIDataAPI//QueryResult-'+query_id, query_obj, time=self.config['query_caching']['ttl'])
+				self.api.memcache.set('SPIDataAPI//QueryResult-'+query_id, query_obj, time=self.config['query_caching']['ttl'])
 				if self.config['query_caching']['log_cache_rpcs'] == True: logging.info('--DataAPI Cacher: Placing query cache results: "SPIDataAPI//QueryResult-'+str(query_id)+'": '+str(query_obj))
 			return (result_obj['count'], result_obj['length'], result_obj['data'], result_obj['cursor'], self.buildDataTableResponse())
 		else:
@@ -170,7 +167,7 @@ def QueryResponder(func):
 		result = func(self, *args, **kwargs)
 		
 		## If it's a query, fetch results according to params and return
-		if isinstance(result, (db.Query)):
+		if isinstance(result, (self.api.db.Query)):
 			
 			if 'keys_only' in query:
 				result.keys_only = True

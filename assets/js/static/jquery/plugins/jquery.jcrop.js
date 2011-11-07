@@ -1,9 +1,3 @@
-/**
- * Jcrop v.0.9.8 (minimized)
- * (c) 2008 Kelly Hallman and DeepLiquid.com
- * More information: http://deepliquid.com/content/Jcrop.html
- * Released under MIT License - this header must remain with code
- */
 
 
 (function($){$.Jcrop=function(obj,opt)

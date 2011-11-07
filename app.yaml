@@ -1,8 +1,8 @@
 application: stonerhub
-version: dev-2
+version: dev-4
 runtime: python27
 api_version: 1
-threadsafe: no
+threadsafe: yes
 
 default_expiration: "365d"
 
@@ -82,8 +82,8 @@ handlers:
 
 ###### Asset Handlers
 
-- url: /_backend/mapreduce(.*)
-  script: mapreduce/main.py
+- url: /_ah/mapreduce(.*)
+  script: main.mapreduce
   login: admin
 
 # Images (Static)

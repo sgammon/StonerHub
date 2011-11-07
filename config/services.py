@@ -24,11 +24,11 @@ config['apptools.project.services'] = {
 	'services': {
 	
 		## ContentItem Data Service
-		'ContentItem': {
+		'content': {
 		
 			'enabled': True,
 			'service': 'project.services.data.content_item.ContentItemService',
-			'methods': ['list', 'byRepository', 'byTag', 'byUser', 'byCategory', 'recentlyCreated', 'recentlyModified'],
+			'methods': ['list', 'by_repository', 'by_tag', 'by_user', 'by_category', 'recently_created', 'recently_modified'],
 			
 			'config': {
 				'caching': 'none',
@@ -36,6 +36,94 @@ config['apptools.project.services'] = {
 				'recording': 'none'
 			}
 		},
+		
+		## Feed service - for RSS/Atom, etc
+		'feed': {
+			
+			'enabled': True,
+			'service': 'project.services.feed.FeedService',
+			'methods': ['feed', 'subscribe', 'unsubscribe'],
+			
+			'config': {
+				'caching': 'none',
+				'security': 'none',
+				'recording': 'none'
+			}
+		},
+		
+		## Newsfeed service - for outputting news to a user about what's been going on, content-wise or social-wise, in mini or full format
+		'newsfeed': {
+		
+			'enabled': True,
+			'service': 'project.services.newsfeed.NewsfeedService',
+			'methods': ['mini', 'full', 'social', 'content'],
+			
+			'config': {
+				'caching': 'none',
+				'security': 'none',
+				'recording': 'none'
+			}
+		
+		},
+		
+		## Search service - for autocomplete + searching of content item's + asset data
+		'search': {
+		
+			'enabled': True,
+			'service': 'project.services.search.SearchService',
+			'methods': ['quicksearch', 'fullsearch', 'autocomplete'],
+			
+			'config': {
+				'caching': 'none',
+				'security': 'none',
+				'recording': 'none'
+			}
+		
+		},
+		
+		## Social service - for performing social actions, or getting them raw (for summaries, see newsfeed service)
+		'social': {
+		
+			'enabled': True,
+			'service': 'project.services.social.SocialService',
+			'methods': ['like', 'comment', 'share', 'suggest_tag', 'get_likes', 'get_comments', 'star'],
+			
+			'config': {
+				'caching': 'none',
+				'security': 'none',
+				'recording': 'none'
+			}
+		
+		},
+		
+		## Upload service - for creating/updating upload session tickets and getting blob upload URLs
+		'upload': {
+		
+			'enabled': True,
+			'service': 'project.services.upload.UploadService',
+			'methods': ['generate_upload_url'],
+			
+			'config': {
+				'caching': 'none',
+				'security': 'none',
+				'recording': 'none'
+			}
+		
+		},
+		
+		## User service - for editing/getting user profile data
+		'user': {
+		
+			'enabled': True,
+			'service': 'project.services.user.UserService',
+			'methods': ['stats', 'profile_pic', 'actions', 'notifications', 'edit_profile', 'starred_items'],
+			
+			'config': {
+				'caching': 'none',
+				'security': 'none',
+				'recording': 'none'
+			}
+		}
 				
 	} ## End services
 

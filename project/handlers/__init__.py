@@ -7,6 +7,9 @@ import logging
 from webapp2 import cached_property
 from webapp2_extras import sessions
 
+from webapp2_extras import sessions_ndb
+from webapp2_extras import sessions_memcache
+
 ## AppTools Imports
 from apptools.core import BaseHandler
 
@@ -40,7 +43,15 @@ class WebHandler(BaseHandler, security.WirestoneOpenIDAuthMixin):
 	
 	@cached_property
 	def session(self):
-		return self.session_store.get_session()
+		return self.session_store.get_session(backend='memcache', factory=sessions_memcache.MemcacheSessionFactory)
+		
+	@cached_property
+	def cookie_session(self):
+		return self.session_store.get_session(backend='securecookie')
+		
+	@cached_property
+	def datastore_session(self):
+		return self.session_store.get_session(name='db_session', factory=sessions_ndb.DatastoreSessionFactory)
 		
 	def get_model_form(self, *args, **kwargs):
 		return get_model_form(*args, **kwargs)
@@ -69,6 +80,7 @@ class WebHandler(BaseHandler, security.WirestoneOpenIDAuthMixin):
 				return super(WebHandler, self).dispatch()
 			finally:
 				self.session_store.save_sessions(self.response)
+				
 
 	## Cached Properties
 	@cached_property

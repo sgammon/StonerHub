@@ -1,13 +1,3 @@
-/*
- * FaceList 2.0 - Facebook Style List Box
- *
- * Copyright (c) 2010 Ian Tearle (iantearle.com)
- * Original take by Xavier Domenech 
- * Original autocomplete  by Dylan Verheul, Dan G. Switzer, Anjesh Tuladhar, Jörn Zaefferer
- *
- * $Date: 2009-06-11 16:09:52 -0000 (Fri, 06 Nov 2008) 
- *
- */
 (function($){
 	$.fn.faceList = function(data, options) {
 		var defaults = { 

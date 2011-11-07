@@ -1,0 +1,374 @@
+/* ===== Search Controls =====
+
+#quicksearch
+  -webkit-appearance: textfield
+  margin-top: 7px
+  height: 30px
+  width: 360px
+  display: inline
+
+#inlinesearch
+  float: left
+  line-height: 100px
+  padding-left: 20px
+  width: 47%
+
+#inlineupload
+  float: right
+  line-height: 80px
+  margin-right: 20px
+  padding-left: 10px
+  padding-top: 5px
+  padding-right: 10px
+  width: 45%
+  height: 80px
+  margin-top: 5px
+  border-radius: 20px
+  -moz-border-radius: 20px
+  -webkit-border-radius: 20px
+
+.uploadDragDrop
+  padding-top: 0px !important
+  border: 5px black dashed !important
+
+#uploaddrop
+  position: absolute
+  border: 4px gray dashed
+  border-radius: 15px
+  height: 80px
+  width: 350px
+  margin-top: 5px
+  -moz-border-radius: 15px
+  -webkit-border-radius: 15px
+
+#searchWindow
+  padding: 20px
+
+/* ===== Content Body Wrapper & Content Body =====
+
+#content_body_wrapper_search
+  margin: 20px
+  height: 100%
+  background: #E5E5E5
+  a:hover
+    background-color: #30c
+  #content_body_search
+    position: relative
+    display: block
+    top: -20px
+    z-index: 10
+    /*padding-top:21px;
+     */*padding-left:25px;
+     *padding-right:25px;
+    padding-bottom: 25px
+    background: white !important
+    min-height: 500px
+    margin-left: 5px
+    margin-right: 5px
+    -webkit-box-shadow: #BBB 3px 3px 4px
+    -webkit-border-bottom-right-radius: 25px
+    -moz-box-shadow: #BBB 3px 3px 4px
+    -moz-border-bottom-right-radius: 25px
+    box-shadow: #BBB 3px 3px 4px
+    border-bottom-right-radius: 25px
+    h2
+      display: inline
+  #results_pane
+    width: 90%
+    float: left
+  #sidebar_pane
+    margin-right: 5px
+    background: #FFC
+    margin-top: 5px
+    width: 100px
+    float: right
+    #sidebar_pane_header
+      background: #FFFF76
+      text-align: center
+      text-decoration: underline
+      font-size: 20px
+      height: 45px
+      line-height: 45px
+    #sidebar_pane_content
+      padding-top: 15px
+      border-top: 1px solid orange
+      display: none
+
+/* === Two-Column Layout ===
+
+/* ===== Content Body Header =====
+
+#content_body_header_search
+  background: #C5E2E9
+  height: 45px
+  div
+    padding-left: 15px
+    padding-right: 15px
+    padding-top: 15px
+
+#search-form-wrapper
+  padding-top: 10px
+  margin-left: auto
+  margin-right: auto
+  width: 850px
+  height: 70px
+  #searchleft
+    float: left
+  #searchright
+    float: right
+    padding-top: 5px
+
+/* ===== Search Form =====
+
+#search-form
+  padding-bottom: 3px
+  z-index: 1000
+  /*overflow:hidden;
+  padding-left: 20px
+  padding-right: 20px
+  padding-top: 15px
+  #search-unibox
+    width: 500px
+    padding-left: 5px
+    display: inline
+    height: 30px
+    font-size: 20px
+    position: relative
+    top: 0
+    left: 0
+    &.noquery
+      color: #777 !important
+      border-radius: 0
+      -webkit-appearance: textfield
+    &.query
+      color: #555 !important
+      border-radius: 0
+      -webkit-appearance: textfield
+  #search-submit
+    padding-left: 7px
+    padding-right: 7px
+    font-size: 20px
+    margin: 0
+    height: 30px
+    display: inline
+
+/* ===== Search Unibox =====
+
+/* ===== Search Submit =====
+
+/* ===== Search Options Pane =====
+
+#search-options-pane
+  font-size: 12px
+  display: none
+  position: relative
+  top: 10
+  height: 100px
+  z-index: 2010
+  text-align: left
+  padding: 0
+  margin: 0
+  padding-left: 20px
+  padding-right: 20px
+  padding-bottom: 20px
+  div.box
+    position: relative
+    float: left
+    top: 10
+    width: 200px
+    margin: 0
+
+/* ===== Sidebar =====
+
+div.meta_pane
+  min-width: 120px
+  margin-left: 10px
+  margin-right: 10px
+  margin-bottom: 20px
+  background: #FFFF76
+  height: 30px
+  p
+    display: inline
+    font-size: 13px
+  a:hover
+    background: orange
+  div
+    &.meta_pane_header
+      color: #333
+      padding: 7px
+      p span
+        font-size: 14px
+        &:hover
+          background: orange
+          color: white
+          cursor: pointer
+    &.meta_pane_content
+      display: none
+      padding: 5px
+      padding-top: 15px
+      ul
+        list-style: none
+        padding: 0
+        margin: 0
+
+/* ==== SEARCH RESULTS =====
+
+a:link
+  cursor: pointer
+
+.resultHref
+  &:active, &:visited
+    cursor: pointer
+  &:hover
+    color: white !important
+    text-decoration: none
+
+ol, ul
+  border: 0px
+  margin: 0px
+  padding: 0px
+
+li
+  border: 0px
+  margin: 0px
+  padding: 0px
+  line-height: 1.2
+
+.searchResultsList
+  margin-top: 25px
+  margin-left: 20px
+
+.searchResultContainer
+  font-family: arial, verdana
+  margin-top: 0px
+  margin-bottom: 20px
+
+.searchResult
+  width: 700px
+
+.searchSpacer
+  display: inline-block
+  position: relative
+
+h3
+  font-size: medium
+  display: inline
+
+.resultText
+  max-width: 43em
+  font-size: small
+
+cite
+  color: #0E774A !important
+  font-style: normal
+  cursor: pointer
+  a
+    text-decoration: none !important
+    color: #0E774A !important
+    &:hover
+      background: white !important
+
+em
+  font-style: normal
+  font-weight: bold
+
+.gl
+  white-space: nowrap
+
+.resultTags a
+  color: #4272DB
+  margin-right: 5px
+  &:hover
+    background: white !important
+
+.socialHint
+  font-size: small
+
+/* ==== Result ButtonBoxes ====
+
+.likesCountButtonBox
+  background: url('/assets/img/static/icons/heart.png') no-repeat 0 50%
+
+.commentsCountButtonBox
+  background: url('/assets/img/static/icons/comment.png') no-repeat 0 50%
+
+/* ==== Tag Results ====
+
+.tagResultsList
+  margin-top: 23px
+  margin-left: 30px
+  list-style: none
+  ol
+    list-style: none
+
+.tagResultList ol li
+  list-style: none
+
+.tagResult
+  ul
+    list-style: none
+    text-indent: 25px
+    li
+      padding-top: 5px
+      padding-bottom: 5px
+      list-style: none
+  p
+    display: inline
+
+/* jude edits
+
+#content_body_wrapper_search
+  margin: 0 2%
+  min-width: 960px
+  background: transparent none
+  #results_pane
+    width: 73%
+  #content_body_search
+    position: relative
+    top: auto
+    z-index: auto
+    margin: 0
+    -moz-box-shadow: none
+    -webkit-box-shadow: none
+    box-shadow: none
+  #sidebar_pane
+    background-color: #333132
+    background-color: rgba(255, 255, 255, 0.1)
+    color: #929292
+    font-size: 13px
+    min-height: inherit
+    width: 25%
+  #content_body_search
+    -moz-border-radius: 0
+    -webkit-border-radius: 0
+    border-radius: 0
+
+#content_body_header_search
+  background-color: #CB7C22
+
+#content_header a
+  color: white
+  font-size: 12px
+
+#searchWindow
+  background-color: white
+
+#content_body_wrapper_search #sidebar_pane #sidebar_pane_header
+  background-color: rgba(226, 138, 38, 0.25)
+  color: $main
+  font-size: 14px
+  font-weight: bold
+  text-align: left
+  padding: 10px
+  height: auto
+  line-height: normal
+
+div.meta_pane div.meta_pane_header
+  background-color: #BBBBBB
+
+#content_body_wrapper_search #sidebar_pane #sidebar_pane_content
+  border: 0
+
+#search-form
+  #search-submit, #search-unibox
+    font-size: 14px

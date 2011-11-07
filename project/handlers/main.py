@@ -20,7 +20,7 @@ class Landing(WebHandler):
 		
 		grid = ContentItem.generateGrid()
 
-		grid.set_service('ContentItem')
+		grid.set_service('content')
 		grid.set_method('list')
 		
 		context = {'grid': grid}

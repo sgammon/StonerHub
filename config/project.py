@@ -15,11 +15,11 @@ config['apptools.project'] = {
 	'name': 'StonerHub',
 
 	'version': {
-		'major': 4,
-		'minor': 0,
-		'micro': 0,
-		'build': 20111028,
-		'release': 'BETA'
+		'major': 3,
+		'minor': 9,
+		'micro': 1687,
+		'build': 20111107,
+		'release': 'DEV'
 	}
 
 }
@@ -364,7 +364,7 @@ config['wirestone.spi.notifications'] = {
 		'enabled': True,
 
 		'config':{
-			'sender': 'Wirestone <social@wirestone-spi.appspotmail.com>',
+			'sender': 'stonerbot <stonerbot@stonerhub.com>',
 		}
 	},
 	
@@ -372,7 +372,7 @@ config['wirestone.spi.notifications'] = {
 		'enabled': False,
 
 		'config':{
-			'name': 'Wirestone UCR',
+			'name': 'StonerHub',
 		}
 	}
 

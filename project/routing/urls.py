@@ -196,16 +196,21 @@ rules = [
 		
 		]),
 		
+		## Upload callback handlers
+		HandlerPrefixRoute('upload.', [
+		
+			Route('/_api/rpc/upload.generate_upload_url', name='ajax-upload-generate-url', handler='ajax.upload.GenerateUploadURL'),		
+		
+			Route('/_ajax/upload/callback/uploadSuccess', name='ajax-upload-success', handler='UploadCallback'),
+			Route('/_ajax/upload/callback/uploadSuccess/<string:sessionkey>', name='ajax-upload-success-with-session', handler='UploadCallback'),
+			Route('/_ajax/upload/callback/passThrough/<string:blobkey>', name='ajax-upload-success-passthrough', handler='UploadCallback'),
+			Route('/_ajax/upload/callback/passThrough/<string:sessionkey>/<string:blobkey>', name='ajax-upload-success-passthrough-with-session', handler='UploadCallback')
+		
+		]),
+		
 		## AJAX Handlers
 		HandlerPrefixRoute('ajax.', [
-		
-			# == AJAX Upload URL Service == #
-			Route('/_ajax/upload/generateURL', name='ajax-upload-generate-url', handler='upload.GenerateUploadURL'),
-			Route('/_ajax/upload/callback/uploadSuccess', name='ajax-upload-success', handler='upload.UploadCallback'),			
-			Route('/_ajax/upload/callback/uploadSuccess/<string:sessionkey>', name='ajax-upload-success-with-session', handler='upload.UploadCallback'),
-			Route('/_ajax/upload/callback/passThrough/<string:blobkey>', name='ajax-upload-success-passthrough', handler='upload.UploadCallback'),
-			Route('/_ajax/upload/callback/passThrough/<string:sessionkey>/<string:blobkey>', name='ajax-upload-success-passthrough-with-session', handler='upload.UploadCallback'),			
-		
+				
 			# == Social Actions/Notifications Service == #
 			Route('/_ajax/social/<string:action>/<string:document>', name='ajax-social', handler='social.SocialAction'),
 			Route('/_ajax/social/notification/<string:key>/<string:action>', name='ajax-social-notification', handler='social.SocialNotification'),

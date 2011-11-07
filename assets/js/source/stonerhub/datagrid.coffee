@@ -44,7 +44,7 @@ class DatagridController extends StonerHubController
 							row.push data_item[field]
 							obj[field] = data_item[field]
 						grid_data.push row
-						$.stonerhub.models.ContentItem.register data_item.key.value, obj
+						$.stonerhub.models[data_item.key.kind].register data_item.key.value, obj
 					
 													
 					$.apptools.dev.verbose 'Stonerhub:Datagrid', 'Translated data map: ', grid_data

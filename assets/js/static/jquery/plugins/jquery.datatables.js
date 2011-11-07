@@ -1,27 +1,4 @@
 /*
- * File:        jquery.dataTables.js
- * Version:     1.8.2
- * Description: Paginate, search and sort HTML tables
- * Author:      Allan Jardine (www.sprymedia.co.uk)
- * Created:     28/3/2008
- * Language:    Javascript
- * License:     GPL v2 or BSD 3 point style
- * Project:     Mtaala
- * Contact:     allan.jardine@sprymedia.co.uk
- * 
- * Copyright 2008-2011 Allan Jardine, all rights reserved.
- *
- * This source file is free software, under either the GPL v2 license or a
- * BSD style license, as supplied with this software.
- * 
- * This source file is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the license files for details.
- * 
- * For details please refer to: http://www.datatables.net
- */
-
-/*
  * When considering jsLint, we need to allow eval() as it it is used for reading cookies
  */
 /*jslint evil: true, undef: true, browser: true */

@@ -58,7 +58,8 @@ class Login(WebHandler):
 		## Since this is the return_to URL, serve the Yadis OpenID descriptor if something is looking for it
 		if str(self.request.headers.get('http-accept')).find('application/xrds+xml') != -1:
 			logging.info('Remote host '+str(self.request.remote_addr)+' requested Yadis/XRDS OpenID descriptor. Serving.')
-			return self.render('util/openid-discovery.xml', server_name=self.request.host)
+			self.render('util/openid-discovery.xml', server_name=self.request.host)
+			return
 			
 		else:
 			
@@ -222,7 +223,7 @@ class Login(WebHandler):
 		do_log = self.authConfig['debug']
 
 		# Start up consumer
-		auth_request = self.openid_consumer.begin(self.openid_endpoint)
+		auth_request = self.openid_consumer.begin(self.openid_endpoint())
 		
 		if do_log: logging.debug('Instantiated OpenID consumer: '+str(auth_request))
 
@@ -241,6 +242,10 @@ class Login(WebHandler):
 			logging.info('Realm: '+str(realm))
 			logging.info('Return URL: '+str(return_url))
 			logging.info('Immediate: '+str(immediate))
+		
+		#self.session['_openid_consumer_last_token'] = str(self.session['_openid_consumer_last_token'])		
+		#self.session['_yadis_services__openid_consumer_'] = str(self.session['_yadis_services__openid_consumer_'])
+		logging.info('SESSION: '+str(self.session))
 		
 		return self.redirect(auth_request.redirectURL(realm, return_url, immediate=immediate))
 		
@@ -340,7 +345,7 @@ class Login(WebHandler):
 	def finishOpenIDAuthSession(self):
 		
 		# Check authentication
-		openid_response = self.openid_consumer.complete(dict(self.request.args.items(True)), self.request.url.replace('{','%7B').replace('}', '%7D'))
+		openid_response = self.openid_consumer.complete(dict(self.request.params.items()), self.request.url.replace('{','%7B').replace('}', '%7D'))
 		
 		do_log = self.authConfig['debug']
 		if do_log:
@@ -498,12 +503,9 @@ class Login(WebHandler):
 		
 		return continue_url
 
-
-	@cached_property
 	def openid_endpoint(self):
 		return config.config.get('wirestone.spi.auth.openid')['endpoint']
 		
-
 	@cached_property
 	def authConfig(self):
 		return config.config.get('wirestone.spi.auth')

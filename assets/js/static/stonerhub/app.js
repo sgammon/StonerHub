@@ -1,4 +1,4 @@
-(function () {
+(function() {
   var DatagridController, LiveServicesController, NewsfeedController, SocialController, StonerHub, StonerHubController, UploadController;
   var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
@@ -61,7 +61,7 @@
                 obj[field] = data_item[field];
               }
               grid_data.push(row);
-              $.stonerhub.models.ContentItem.register(data_item.key.value, obj);
+              $.stonerhub.models[data_item.key.kind].register(data_item.key.value, obj);
             }
             $.apptools.dev.verbose('Stonerhub:Datagrid', 'Translated data map: ', grid_data);
             response.datagrid.columns.splice(0, 0, 'key');
@@ -96,7 +96,116 @@
   })();
   UploadController = (function() {
     __extends(UploadController, StonerHubController);
-    function UploadController(stonerhub) {}
+    function UploadController(stonerhub) {
+      this.state = {
+        total_upload_files: 0
+      };
+      this.filters = [
+        {
+          title: "Basic Files",
+          extensions: "txt,rtf"
+        }, {
+          title: "Image Files",
+          extensions: "jpg,jpeg,gif,png,tiff,ico,svg"
+        }, {
+          title: "Document Files",
+          extensions: "doc,docx,dot,pdf,rtf,txt"
+        }, {
+          title: "Spreadsheet Files",
+          extensions: "xls,xlsx"
+        }, {
+          title: "Presentation Files",
+          extensions: "ppt,pptx"
+        }, {
+          title: "Movie Files",
+          extensions: "mpg,mov,avi,wmv"
+        }, {
+          title: "Drawing Files",
+          extensions: "ai,eps,ps,dxf,ttf,psd"
+        }, {
+          title: "Sound Files",
+          extensions: "mp3,m4a,wav,flag,ogg"
+        }, {
+          title: "Web Files",
+          extensions: "html,css,sass,js,coffee,appcache,manifest"
+        }, {
+          title: "Source Files",
+          extensions: "py,rb,c,cpp,php,java"
+        }, {
+          title: "Archive Files",
+          extensions: "zip"
+        }
+      ];
+      this.create_uploader = __bind(function(selector, runtimes, browse_button, drag_drop, drop_element, swf, silverlight) {
+        var create_queue;
+        this.selector = selector;
+        this.runtimes = runtimes;
+        this.browse_button = browse_button;
+        this.drag_drop = drag_drop != null ? drag_drop : true;
+        this.drop_element = drop_element != null ? drop_element : none;
+        this.swf = swf != null ? swf : 'runtime.flash-0.2.swf';
+        this.silverlight = silverlight != null ? silverlight : 'runtime.silverlight-0.2.xap';
+        this.swf = '/assets/ext/static/plupload/' + this.swf;
+        this.silverlight = '/assets/ext/static/plupload/' + this.silverlight;
+        return create_queue = __bind(function() {
+          return $(this.selector).plupload({
+            runtimes: this.runtimes,
+            browse_button: this.browse_button,
+            preinit: this._bind_uploader_events,
+            url: '#',
+            use_query_string: false,
+            multipart: true,
+            drop_element: this.drop_element,
+            flash_swf_url: this.swf,
+            silverlight_xap_url: this.silverlight,
+            dragdrop: this.drag_drop,
+            filters: this.filters
+          });
+        }, this);
+      }, this);
+      this._bind_uploader_events = __bind(function(uploader) {
+        uploader.bind('UploadFile', this.events.upload_file);
+        uploader.bind('FileUploaded', this.events.file_uploaded);
+        return uploader.bind('QueueChanged', this.events.queue_changed);
+      }, this);
+      this.events = {
+        upload_file: __bind(function(up, file) {
+          var mime_type, request;
+          mime_type = this.get_mime(file.name);
+          if (this.session_key != null) {
+            request = $.apptools.api.upload.generate_upload_url({
+              upload_count: up.total.queued,
+              upload_session: this.session_key
+            });
+          } else {
+            request = $.apptools.api.upload.generate_upload_url({
+              upload_count: up.total.queued,
+              new_session: true
+            });
+          }
+          return request.fulfill({
+            success: __bind(function(response) {
+              up.settings.url = response.upload_url;
+              return up.settings.multipart_params = {
+                session_key: this.session_key,
+                blob_content_type: mime_type
+              };
+            }, this),
+            failure: __bind(function(response) {
+              alert('There was an error generating an upload endpoing. See console.');
+              return $.apptools.dev.error('upload', 'Uploader error: ', response);
+            }, this)
+          });
+        }, this),
+        file_uploaded: __bind(function(up, file, raw_api_response) {
+          this.state.total_upload_files--;
+          return console.log('FILE UPLOAD RESPONSE', up, file, raw_api_response);
+        }, this),
+        queue_changed: __bind(function(up, files) {
+          return this.state.total_upload_files = up.files.length;
+        }, this)
+      };
+    }
     return UploadController;
   })();
   NewsfeedController = (function() {
