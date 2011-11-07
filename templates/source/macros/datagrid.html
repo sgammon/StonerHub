@@ -20,7 +20,7 @@ function makeGridRPC(sSource, aoData, fnCallback)
 
 	/* Add to RPC tracker and fire */
 	rpcTracker.Requests[aoData['sEcho']] = {source: sSource, grid: aoData, callback: fnCallback, method: sMethod, params:oParams};
-	loadSpiDatagrid("{{ grid.get_service() }}", sSource, sMethod, oParams, aoData, fnCallback);
+	$.stonerhub.datatables.load("{{ grid.get_service() }}", sSource, sMethod, oParams, aoData, fnCallback);
 }
 
 dataGridOptions = {};

@@ -19,7 +19,8 @@ class ProfilePic(WebHandler):
 			asset = db.get(key)
 		
 			if format.lower() != 'png' or format.lower() != 'jpeg':
-				r = self.response('<b>Invalid format provided. Options are "png" or "jpeg".')
+				self.response.write('<b>Invalid format provided. Options are "png" or "jpeg".')
+				return
 			if format.lower() == 'jpg':
 				format = 'jpeg'
 		

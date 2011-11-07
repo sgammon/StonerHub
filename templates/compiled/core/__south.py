@@ -4,14 +4,15 @@ def run(environment):
     name = 'source/core/__south.html'
 
     def root(context, environment=environment):
+        l_tpl = context.resolve('tpl')
         l_util = context.resolve('util')
         l_api = context.resolve('api')
         l_asset = context.resolve('asset')
         l_render_page_object = context.resolve('render_page_object')
-        l_tpl = context.resolve('tpl')
         l_page = context.resolve('page')
         if 0: yield None
-        yield u'<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>\n<script>window.jQuery || document.write(\'<script src="js/libs/jquery-1.6.2.min.js"><\\/script>\')</script>\n\n<!-- Base Scripts -->\n<script src="%s"></script>\n<script src="%s"></script>\n\n<!-- Project Scripts -->\n\n' % (
+        yield u'<!-- Base Scripts -->\n<script src="%s"></script>\n<script src="%s"></script>\n<script src="%s"></script>\n\n<!-- Project Scripts -->\n' % (
+            context.call(environment.getattr(l_asset, 'script'), 'underscore', 'core'), 
             context.call(environment.getattr(l_asset, 'script'), 'modernizr', 'core'), 
             context.call(environment.getattr(l_asset, 'script'), 'base', 'apptools'), 
         )
@@ -29,14 +30,6 @@ def run(environment):
             )
             context.eval_ctx.revert(t_1)
             yield u'\n'
-        yield u'\n\n'
-        if environment.getattr(l_page, 'analytics'):
-            if 0: yield None
-            yield u'\n<script>\n\t'
-            template = environment.get_template('snippets/google_analytics.js', 'source/core/__south.html')
-            for event in template.root_render_func(template.new_context(context.parent, True, locals())):
-                yield event
-            yield u'\n</script>\n'
         yield u'\n\n<!--[if lt IE 7 ]>\n\t<script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.2/CFInstall.min.js"></script>\n\t<script>window.attachEvent("onload",function(){CFInstall.check({mode:"overlay"})})</script>\n<![endif]-->\n\n'
         if environment.getattr(l_page, 'services'):
             if 0: yield None
@@ -44,13 +37,21 @@ def run(environment):
             included_template = environment.get_template('macros/page_object.js', 'source/core/__south.html').module
             l_render_page_object = getattr(included_template, 'render_page_object', missing)
             if l_render_page_object is missing:
-                l_render_page_object = environment.undefined("the template %r (imported on line 29 in 'source/core/__south.html') does not export the requested name 'render_page_object'" % included_template.__name__, name='render_page_object')
+                l_render_page_object = environment.undefined("the template %r (imported on line 20 in 'source/core/__south.html') does not export the requested name 'render_page_object'" % included_template.__name__, name='render_page_object')
             context.vars['render_page_object'] = l_render_page_object
             context.exported_vars.discard('render_page_object')
-            yield u'\n\t%s\n</script>\n' % (
+            yield u'\n\t%s\n\n\t' % (
                 context.call(l_render_page_object, environment.getattr(environment.getattr(l_page, 'services'), 'services_manifest'), environment.getattr(environment.getattr(l_page, 'services'), 'config'), l_util, environment.getattr(l_api, 'users')), 
             )
+            if environment.getattr(l_page, 'analytics'):
+                if 0: yield None
+                yield u'\n\t\t'
+                template = environment.get_template('snippets/google_analytics.js', 'source/core/__south.html')
+                for event in template.root_render_func(template.new_context(context.parent, True, locals())):
+                    yield event
+                yield u'\n\t'
+            yield u'\n</script>\n'
 
     blocks = {}
-    debug_info = '5=15&6=16&10=18&11=26&12=27&16=33&18=36&27=41&29=44&30=51'
+    debug_info = '2=15&3=16&4=17&7=19&8=27&9=28&18=34&20=37&21=44&23=46&24=49'
     return locals()

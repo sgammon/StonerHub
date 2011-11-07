@@ -33,7 +33,7 @@ class ContentItemService(DataService):
 
 	def run_ci_query(self, query, request):
 		
-		if hasattr(request, 'options'):
+		if hasattr(request, 'options') and request.options is not None:
 			result_struct = self.runQuery(query, request.options.limit, request.options.page, request.options.offset)
 		else:
 			result_struct = self.runQuery(query, 15, 1, None)
@@ -64,7 +64,7 @@ class ContentItemService(DataService):
 		return messages.ContentItemListResponse(resultset=messages.ResultSetMeta(
 													results_count=query.count(), returned_count=len(results),
 													cursor=query.cursor()),
-												content_items=results, timestamp=datetime.datetime.now().isoformat(), datagrid=datatables_meta)
+												data=results, timestamp=datetime.datetime.now().isoformat(), datagrid=datatables_meta)
 		
 	
 	@remote.method(messages.ContentItemsListRequest, messages.ContentItemListResponse)

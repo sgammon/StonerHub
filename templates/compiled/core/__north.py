@@ -11,7 +11,7 @@ def run(environment):
         template = environment.get_template('core/__meta.html', 'source/core/__north.html')
         for event in template.root_render_func(template.new_context(context.parent, True, locals())):
             yield event
-        yield u"\n\n<!-- Stylesheets -->\n<link href='http://fonts.googleapis.com/css?family=Maven+Pro:regular,bold,900' rel='stylesheet' type='text/css'>\n<!-- <link href='http://fonts.googleapis.com/css?family=Pacifico&v1' rel='stylesheet' type='text/css'> -->\n<link href='http://fonts.googleapis.com/css?family=Dancing+Script&v2' rel='stylesheet' type='text/css'>\n\n"
+        yield u'\n\n<!-- Stylesheets -->\n<link href=\'http://fonts.googleapis.com/css?family=Maven+Pro:regular,bold,900\' rel=\'stylesheet\' type=\'text/css\'>\n<!-- <link href=\'http://fonts.googleapis.com/css?family=Pacifico&v1\' rel=\'stylesheet\' type=\'text/css\'> -->\n<link href=\'http://fonts.googleapis.com/css?family=Dancing+Script&v2\' rel=\'stylesheet\' type=\'text/css\'>\n\n<!-- Legacy Stylesheets -->\n<link rel="stylesheet" href="/assets/style/static/spi/legacy.css">\n\n'
         if environment.getattr(l_page, 'ie'):
             if 0: yield None
             yield u'\n\t<link rel="stylesheet" href="%s">\n' % (
@@ -34,5 +34,5 @@ def run(environment):
             yield u'\n'
 
     blocks = {}
-    debug_info = '1=11&8=15&9=18&12=21&13=29&14=30'
+    debug_info = '1=11&11=15&12=18&15=21&16=29&17=30'
     return locals()

@@ -41,7 +41,7 @@ def run(environment):
 
     def block_content(context, environment=environment):
         if 0: yield None
-        yield u"\n\n<div>\n\n\t<div id='gridTitle'><h2>Recent Uploads</h2></div>\n\n\t<div id='results'>\n\t\tWaiting for results...\n\t</div>\t\n</div>\n\n"
+        yield u"\n\n<div>\n\n\t<div id='gridTitle'><h2>Recent Uploads</h2></div>\n\n\t<div id='results'>\n\t\tWaiting for results...\n\t</div>\n</div>\n\n"
 
     def block_header(context, environment=environment):
         if 0: yield None

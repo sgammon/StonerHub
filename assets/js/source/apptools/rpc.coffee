@@ -264,7 +264,7 @@ class CoreRPCAPI extends CoreAPI
 				$.apptools.events.triggerEvent('RPC_FULFILL', context)
 				
 				do (request, callbacks) ->
-					fatcatmap = window.fatcatmap
+					apptools = window.apptools
 					
 					xhr_settings =
 						resourceId: request.api+'.'+request.method
@@ -289,7 +289,7 @@ class CoreRPCAPI extends CoreAPI
 						error: (xhr, status, error) =>
 							callbacks?.status?('error')
 							$.apptools.dev.error('RPC', 'Error: ', {error: error, status: status, xhr: xhr})
-							fatcatmap.rpc.api.lastFailure = error
+							$.apptools.api.rpc.lastFailure = error
 							$.apptools.api.rpc.history[request.envelope.id].xhr = xhr
 							$.apptools.api.rpc.history[request.envelope.id].status = status
 							$.apptools.api.rpc.history[request.envelope.id].failure = error

@@ -20,7 +20,7 @@ def run(environment):
 
     def block_prenorth(context, environment=environment):
         if 0: yield None
-        yield u'\n<meta name="google-site-verification" content="GNpWBXBMCFjW7thMuE06UvfgI4mktA9EcsevLda9VPU" />\n'
+        yield u'\n<meta name="google-site-verification" content="GNpWBXBMCFjW7thMuE06UvfgI4mktA9EcsevLda9VPU" />\n\n<style>\nbody\n{\n\tfont-family:"Lucida Grande", Arial;\n\tbackground: url(\'/assets/img/static/layout/ws-dark-stripes.png\') repeat transparent;\n}\n.hidden { display:none; }\n#wrapper\n{\n\theight:100%;\n\twidth:100%;\n\tdisplay:table;\n\tposition: relative;\n}\n#content\n{\n\ttop:50%;\n\tdisplay:table-cell;\n\tvertical-align:middle;\n\toverflow:hidden;\n}\n#splash\n{\n\twidth:1000px;\n\theight:300px;\n\tbackground:white;\n\tdisplay:table;\n\tmargin-left:20px;\n\t\n}\n#content_box\n{\n\tdisplay:table-cell;\n\tvertical-align:middle;\n}\n#left\n{\n\tfloat:left;\n\tbackground:white;\n\tpadding-left:15px;\n\tborder:1px solid #c2c3c3;\n\twidth:240px;\n\theight:200px;\n\tmargin-left:30px;\n}\n#right\n{\n\tfloat:left;\n\theight:200px;\n\tpadding-left:20px;\n\tbackground:white;\n}\n#ws_logo\n{\n\twidth:100%;\n\theight:100%;\n\tdisplay:table;\n}\n#ws_logo div\n{\n\tdisplay:table-cell;\n\tvertical-align:middle;\n}\n\n/* === Form styles === */\n#username-box\n{\n\tmargin-top:35px !important;\n\tfont-family:"Lucida Grande", Arial;\n\twidth: 200px;\n}\n#password-box\n{\n\tmargin-top:3px !important;\n\tfont-family:"Lucida Grande", Arial;\n\twidth: 200px;\n}\n#password_1-box\n{\n\twidth:200px;\n}\n#password_2-box\n{\n\twidth:200px;\n}\n#logon-button\n{\n\tmargin-top:10px;\n}\n#notice\n{\n\tdisplay:inline;\n\theight:20px;\n\tpadding:15px;\n\tpadding-left:10px;\n}\n#notice div\n{\t\n\tbackground:yellow;\n\tpadding:3px;\n\tpadding-left:5px;\n\tpadding-right:5px;\n\tmin-width:100px;\n}\n#notice div span\n{\n\tbackground: url(\'/assets/img/static/icons/error.png\') no-repeat 0 50%;\n\tpadding-left:25px;\t\n}\n.unsupportedBrowser\n{\n\topacity:0.35 !important;\n}\n#unsupportedBrowserWarning\n{\n\topacity:0.83;\n\tposition:absolute;\n\twidth:1000px;\n\theight:300px;\n\tbackground:#111;\n}\n#unsupportedBrowserWarning p\n{\n\tbackground:#333;\n\tpadding:3px;\n\tmargin-left:15px;\n\tmargin-right:15px;\n\tcolor:#999;\n}\n#unsupportedBrowserWarning p a\n{\n\tcolor:#E5EBF7;\n}\n#unsupportedBrowserWarning p a:hover\n{\n\tcolor:#111;\n\tbackground:#E5EBF7;\n}\n</style>\n\n'
 
     def block__wrapper(context, environment=environment):
         l_notice = context.resolve('notice')
@@ -44,5 +44,5 @@ def run(environment):
         yield u'Login'
 
     blocks = {'prenorth': block_prenorth, '_wrapper': block__wrapper, 'title': block_title}
-    debug_info = '1=9&2=12&6=21&10=25&26=32&27=33&37=35&4=42'
+    debug_info = '1=9&2=12&6=21&151=25&167=32&168=33&178=35&4=42'
     return locals()

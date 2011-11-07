@@ -60,8 +60,7 @@ config['apptools.project.assets'] = {
 			},
 			
 			'assets': {
-				'app': {'version': '0.1'},
-				'newsfeed': {'version': '0.1'}
+				'main': {'name': 'app', 'version': '0.1'}, # all of stonerhub's js, written in coffeescript :)
 			}
 		
 		},
@@ -203,8 +202,8 @@ config['apptools.project.assets'] = {
 			},
 			
 			'assets': {
-				'main': {'name': 'app', 'version': '1.0'}, # main stonerhub styles (combines main, search, security, social, fonts + forms)
-				'newsfeed': {'name': 'newsfeed', 'version': '1.0'} # newsfeed styles for user's newsfeed at /newsfeed
+				'main': {'name': 'app', 'version': '1.0'}, # main stonerhub styles (combines main, search, security, social, fonts + forms, newsfeed)
+				'security': {'name': 'security', 'version': '1.0'} # security styles (/login, /logout, etc)
 			}
 		
 		},

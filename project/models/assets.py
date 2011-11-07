@@ -36,7 +36,7 @@ class StoredAsset(SPIModel, CreatedModifiedMixin, UserAuditMixin):
 	size = db.IntegerProperty()
 	mime_type = db.StringProperty(default='application/octet-stream')
 	asset_type = db.ReferenceProperty(AssetType, collection_name='assets')
-	version = db.IntegerProperty(default=1)
+	version = db.FloatProperty(default=1.0)
 	
 	# Storage properties
 	storage_mode = db.StringProperty(choices=['blobstore', 'datastore'])

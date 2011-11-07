@@ -563,8 +563,8 @@
           };
           $.apptools.events.triggerEvent('RPC_FULFILL', context);
           (function(request, callbacks) {
-            var amplify, fatcatmap, xhr, xhr_action, xhr_settings, _ref2, _ref3;
-            fatcatmap = window.fatcatmap;
+            var amplify, xhr, xhr_action, xhr_settings, _ref2, _ref3;
+            apptools = window.apptools;
             xhr_settings = {
               resourceId: request.api + '.' + request.method,
               url: request.action,
@@ -598,7 +598,7 @@
                   status: status,
                   xhr: xhr
                 });
-                fatcatmap.rpc.api.lastFailure = error;
+                $.apptools.api.rpc.lastFailure = error;
                 $.apptools.api.rpc.history[request.envelope.id].xhr = xhr;
                 $.apptools.api.rpc.history[request.envelope.id].status = status;
                 $.apptools.api.rpc.history[request.envelope.id].failure = error;

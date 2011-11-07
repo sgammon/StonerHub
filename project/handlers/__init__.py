@@ -47,9 +47,6 @@ class WebHandler(BaseHandler, security.WirestoneOpenIDAuthMixin):
 	
 	def dispatch(self):
 		
-		logging.info('DISPATCH HAPPENING??')
-		logging.info('REQUEST: '+str(self.request))
-		
 		self.session_store = sessions.get_store(request=self.request)
 		
 		if self.adminOnly:

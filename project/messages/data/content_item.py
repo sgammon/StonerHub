@@ -82,7 +82,7 @@ class ContentItemListResponse(messages.Message):
 
 	resultset = messages.MessageField(ResultSetMeta, 1)
 	timestamp = messages.StringField(2)
-	content_items = messages.MessageField(ContentItemResponse, 3, repeated=True)
+	data = messages.MessageField(ContentItemResponse, 3, repeated=True)
 	datagrid = messages.MessageField(DatagridMeta, 4)
 
 
